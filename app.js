@@ -737,9 +737,9 @@ function checkout(){
   const payEl=document.getElementById('co-pay-display');
   if(payEl) payEl.innerHTML=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="16" height="16">${payIcons[payMethod]||payIcons.Cartão}</svg>${payMethod}`;
   // Show/hide payment-specific panels
-  document.getElementById('co-cash-panel')?.style.display=payMethod==='Numerário'?'block':'none';
-  document.getElementById('co-mbway-panel')?.style.display=payMethod==='MB Way'?'block':'none';
-  document.getElementById('co-card-panel')?.style.display=payMethod==='Cartão'?'block':'none';
+  const cashP=document.getElementById('co-cash-panel');if(cashP)cashP.style.display=payMethod==='Numerário'?'block':'none';
+  const mbwayP=document.getElementById('co-mbway-panel');if(mbwayP)mbwayP.style.display=payMethod==='MB Way'?'block':'none';
+  const cardP=document.getElementById('co-card-panel');if(cardP)cardP.style.display=payMethod==='Cartão'?'block':'none';
   // Update totals
   updateCoTotals();
   document.getElementById('checkout-modal')?.classList.remove('hidden');
