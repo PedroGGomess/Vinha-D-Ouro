@@ -3535,5 +3535,195 @@ hr {
 }
 
 /* ============================================================================
+   MISSING UI COMPONENT STYLES (v12.0)
+   ============================================================================ */
+
+/* Chart SVG containers */
+.chart-svg {
+  width: 100%;
+  height: auto;
+  border-radius: var(--r-md);
+  overflow: hidden;
+}
+
+/* Table wrapper for horizontal scroll */
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: var(--r-md);
+}
+
+.table-wrapper::-webkit-scrollbar {
+  height: 6px;
+}
+
+.table-wrapper::-webkit-scrollbar-track {
+  background: var(--bg-surface);
+}
+
+.table-wrapper::-webkit-scrollbar-thumb {
+  background: var(--gold-dim);
+  border-radius: var(--r-full);
+}
+
+/* Grid loading state */
+.grid-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--sp-12) var(--sp-6);
+  color: var(--text-muted);
+  font-size: 0.9375rem;
+  font-family: var(--font-body);
+  letter-spacing: 0.01em;
+}
+
+.grid-loading::before {
+  content: '';
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(201, 168, 76, 0.15);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-right: var(--sp-3);
+}
+
+/* Payment info text */
+.payment-info {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  padding: var(--sp-4);
+  background: var(--bg-elevated);
+  border-radius: var(--r-md);
+  border: 1px solid var(--border);
+  text-align: center;
+  font-family: var(--font-body);
+}
+
+/* Display field (read-only value) */
+.display-field {
+  font-size: 1.25rem;
+  font-weight: 600;
+  font-family: var(--font-heading);
+  color: var(--gold);
+  padding: var(--sp-3) var(--sp-4);
+  background: var(--bg-elevated);
+  border: 1px solid var(--gold-border);
+  border-radius: var(--r-md);
+  text-align: center;
+  letter-spacing: 0.02em;
+}
+
+/* Size selection options (loja size modal) */
+.size-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--sp-3);
+  padding: var(--sp-2) 0;
+}
+
+.size-options .size-btn,
+.size-options button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-1);
+  padding: var(--sp-4);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all var(--t-fast) var(--ease);
+}
+
+.size-options .size-btn:hover,
+.size-options button:hover {
+  border-color: var(--gold);
+  background: var(--gold-subtle);
+  transform: translateY(-1px);
+}
+
+/* Wine checkbox grid (provas modal) */
+.wine-checks-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: var(--sp-2);
+  max-height: 200px;
+  overflow-y: auto;
+  padding: var(--sp-2);
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+}
+
+.wine-checks-grid::-webkit-scrollbar {
+  width: 4px;
+}
+
+.wine-checks-grid::-webkit-scrollbar-thumb {
+  background: var(--gold-dim);
+  border-radius: var(--r-full);
+}
+
+.wine-checks-grid label {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-3);
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+  transition: background var(--t-fast) var(--ease);
+}
+
+.wine-checks-grid label:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+/* Small modal variant */
+.modal-small .modal-content {
+  max-width: 420px;
+}
+
+/* Cart count badge */
+.cart-count-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: var(--r-full);
+  background: var(--gold);
+  color: var(--bg-base);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  font-family: var(--font-body);
+  line-height: 1;
+  margin-left: var(--sp-2);
+}
+
+/* Payment panel */
+.payment-panel {
+  padding: var(--sp-4);
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  margin-top: var(--sp-3);
+}
+
+.payment-panel.hidden {
+  display: none;
+}
+
+/* ============================================================================
    END OF STYLESHEET
    ============================================================================ */
