@@ -9,101 +9,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
-  <style>
-    .stock-filter-bar {
-      display: flex;
-      gap: var(--sp-3);
-      flex-wrap: wrap;
-      margin-bottom: var(--sp-4);
-      align-items: center;
-    }
-
-    .stock-filter-group {
-      display: flex;
-      gap: var(--sp-2);
-      flex: 1;
-      min-width: 250px;
-    }
-
-    .stock-status-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 12px;
-      border-radius: var(--r-full);
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .stock-status-badge.high {
-      background: rgba(46, 204, 107, 0.1);
-      color: var(--success);
-      border: 1px solid rgba(46, 204, 107, 0.3);
-    }
-
-    .stock-status-badge.medium {
-      background: rgba(232, 160, 32, 0.1);
-      color: var(--warning);
-      border: 1px solid rgba(232, 160, 32, 0.3);
-    }
-
-    .stock-status-badge.low {
-      background: rgba(232, 69, 58, 0.1);
-      color: var(--danger);
-      border: 1px solid rgba(232, 69, 58, 0.3);
-    }
-
-    .stock-status-badge::before {
-      content: '';
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: currentColor;
-    }
-
-    .data-table tbody tr:hover {
-      background: rgba(255, 255, 255, 0.03);
-    }
-
-    .action-buttons {
-      display: flex;
-      gap: 6px;
-    }
-
-    .action-btn {
-      width: 28px;
-      height: 28px;
-      border-radius: 4px;
-      border: 1px solid var(--border-light);
-      background: var(--bg-card);
-      color: var(--text-secondary);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all var(--t-fast);
-      font-size: 11px;
-      outline: 2px solid transparent;
-      outline-offset: 1px;
-    }
-
-    .action-btn:hover {
-      background: var(--bg-card-hover);
-      border-color: var(--accent-gold);
-      color: var(--accent-gold);
-    }
-
-    .action-btn:focus {
-      outline-color: var(--accent-gold);
-    }
-
-    .action-btn svg {
-      width: 14px;
-      height: 14px;
-    }
-  </style>
 </head>
 <body>
   <a href="#main-content" class="skip-to-content">Ir para conteúdo principal</a>
@@ -113,22 +18,33 @@
     <aside class="sidebar">
       <div class="sidebar-brand">
         <div class="sidebar-brand-logo">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 22h8M12 11v11M7 11c0 2.8 2.2 5 5 5s5-2.2 5-5V3H7v8z"/><path d="M7 8h10"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M8 22h8M12 11v11M7 11c0 2.8 2.2 5 5 5s5-2.2 5-5V3H7v8z"/>
+            <path d="M7 8h10"/>
+          </svg>
         </div>
-        <div class="sidebar-brand-text"><h2>Vinha D'Ouro</h2><p>Armazém</p></div>
+        <div class="sidebar-brand-text">
+          <h2>Vinha D'Ouro</h2>
+          <p>Stock</p>
+        </div>
       </div>
 
       <nav class="sidebar-nav">
         <p class="sidebar-section-label">Inventário</p>
         <li class="sidebar-nav-item">
           <a href="stock.html" class="sidebar-nav-link active" aria-current="page">
-            <svg class="sidebar-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
+            <svg class="sidebar-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
+            </svg>
             Inventário
           </a>
         </li>
         <li class="sidebar-nav-item">
           <a href="caves.html" class="sidebar-nav-link">
-            <svg class="sidebar-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            <svg class="sidebar-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+              <polyline points="9 22 9 12 15 12 15 22"/>
+            </svg>
             Caves
           </a>
         </li>
@@ -136,19 +52,29 @@
         <p class="sidebar-section-label">Navegação</p>
         <li class="sidebar-nav-item">
           <a href="gerente.html" class="sidebar-nav-link">
-            <svg class="sidebar-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+            <svg class="sidebar-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="3" y="3" width="7" height="7" rx="1"/>
+              <rect x="14" y="3" width="7" height="7" rx="1"/>
+              <rect x="3" y="14" width="7" height="7" rx="1"/>
+              <rect x="14" y="14" width="7" height="7" rx="1"/>
+            </svg>
             Dashboard
           </a>
         </li>
         <li class="sidebar-nav-item">
           <a href="provas.html" class="sidebar-nav-link">
-            <svg class="sidebar-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 8h1a4 4 0 010 8h-1"/><path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/></svg>
+            <svg class="sidebar-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M18 8h1a4 4 0 010 8h-1"/>
+              <path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/>
+            </svg>
             Provas
           </a>
         </li>
         <li class="sidebar-nav-item">
           <a href="loja.html" class="sidebar-nav-link">
-            <svg class="sidebar-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/></svg>
+            <svg class="sidebar-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+            </svg>
             Ponto de Venda
           </a>
         </li>
@@ -160,7 +86,7 @@
           <div class="sidebar-user-avatar" id="user-avatar">A</div>
           <div class="sidebar-user-info">
             <h4 id="user-name">Armazenista</h4>
-            <p>Inventário</p>
+            <p>Caves & Stock</p>
           </div>
         </div>
         <p style="margin-top: var(--sp-3); font-size: 10px;">Pedro Gomes - Eduardo Lourenço</p>
@@ -171,20 +97,18 @@
     <div class="main-content">
       <header class="topbar">
         <div class="topbar-title">
-          <h1>Gestão de Inventário</h1>
-          <p>Controlo de stock e reposição</p>
+          <h1>Inventário</h1>
+          <p>Gestão de stock e catálogo de vinhos</p>
         </div>
         <div class="topbar-actions">
           <div class="api-badge offline" id="api-badge" role="status" aria-live="polite">
             <span class="api-dot"></span>
             <span id="api-label">Verificando...</span>
           </div>
-          <button class="btn btn-primary btn-sm" onclick="openAddModal()" aria-label="Adicionar novo vinho">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            Adicionar Vinho
-          </button>
           <button class="icon-btn" onclick="logout()" title="Sair" aria-label="Terminar sessão">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/>
+            </svg>
           </button>
         </div>
       </header>
@@ -196,35 +120,54 @@
           <span class="breadcrumb-item active">Inventário</span>
         </nav>
 
-        <!-- Stats Row -->
-        <div class="kpi-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-bottom: var(--sp-5);">
+        <!-- KPI Grid -->
+        <div class="kpi-grid" style="margin-bottom: var(--sp-5);">
           <div class="kpi-card">
             <div class="kpi-card-accent"></div>
-            <div class="kpi-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 22h8M12 11v11M7 11c0 2.8 2.2 5 5 5s5-2.2 5-5V3H7v8z"/></svg></div>
+            <div class="kpi-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M8 22h8M12 11v11M7 11c0 2.8 2.2 5 5 5s5-2.2 5-5V3H7v8z"/>
+                <path d="M7 8h10"/>
+              </svg>
+            </div>
             <div class="kpi-label">Total Vinhos</div>
-            <div class="kpi-value" id="stat-total">—</div>
-            <div class="kpi-meta">Referências em catálogo</div>
+            <div class="kpi-value" id="stat-total">0</div>
           </div>
+
           <div class="kpi-card">
             <div class="kpi-card-accent"></div>
-            <div class="kpi-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg></div>
+            <div class="kpi-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
+              </svg>
+            </div>
             <div class="kpi-label">Total Unidades</div>
-            <div class="kpi-value" id="stat-units">—</div>
-            <div class="kpi-meta">Garrafas em armazém</div>
+            <div class="kpi-value" id="stat-units">0</div>
           </div>
+
           <div class="kpi-card">
             <div class="kpi-card-accent"></div>
-            <div class="kpi-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+            <div class="kpi-icon" style="color: var(--danger);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+                <line x1="12" y1="9" x2="12" y2="13"/>
+                <line x1="12" y1="17" x2="12.01" y2="17"/>
+              </svg>
+            </div>
             <div class="kpi-label">Stock Crítico</div>
-            <div class="kpi-value" id="stat-critico">—</div>
-            <div class="kpi-meta">Abaixo do mínimo</div>
+            <div class="kpi-value" id="stat-critico">0</div>
           </div>
+
           <div class="kpi-card">
             <div class="kpi-card-accent"></div>
-            <div class="kpi-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
+            <div class="kpi-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <line x1="12" y1="1" x2="12" y2="23"/>
+                <path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
+              </svg>
+            </div>
             <div class="kpi-label">Valor Total</div>
-            <div class="kpi-value" id="stat-valor">—</div>
-            <div class="kpi-meta">Valor do inventário</div>
+            <div class="kpi-value" id="stat-valor">€0.00</div>
           </div>
         </div>
 
@@ -232,26 +175,36 @@
         <div class="card">
           <div class="card-header">
             <div>
-              <div class="card-title">
-                <svg class="card-title-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
-                Catálogo de Vinhos
-              </div>
+              <div class="card-title">Catálogo de Vinhos</div>
               <div class="card-subtitle" id="table-count">A carregar...</div>
             </div>
-            <div class="stock-filter-bar">
-              <div class="stock-filter-group">
-                <div class="search-wrap" style="flex: 1; min-width: 220px;">
-                  <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                  <input type="text" class="form-input" id="stock-search" placeholder="Pesquisar..." style="padding-left: 38px;" aria-label="Pesquisar vinhos por nome ou região">
-                </div>
-                <select class="form-select" id="tipo-filter" style="width: 140px;" aria-label="Filtrar por tipo de vinho">
-                  <option value="">Todos os tipos</option>
-                  <option>Tinto</option><option>Branco</option>
-                  <option>Rosé</option><option>Espumante</option><option>Porto</option>
-                </select>
-              </div>
-            </div>
+            <button class="btn btn-gold btn-sm" onclick="openAddModal()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19"/>
+                <line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+              Adicionar Vinho
+            </button>
           </div>
+
+          <div style="display: flex; gap: var(--sp-3); padding: var(--sp-4) 0; flex-wrap: wrap; align-items: center; border-bottom: 1px solid var(--border-subtle);">
+            <div class="search-wrap" style="flex: 1; min-width: 220px;">
+              <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"/>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+              <input type="text" class="form-input" id="stock-search" placeholder="Pesquisar..." style="padding-left: 38px;" aria-label="Pesquisar vinhos">
+            </div>
+            <select class="form-select" id="tipo-filter" aria-label="Filtrar por tipo">
+              <option value="">Todos</option>
+              <option value="Tinto">Tinto</option>
+              <option value="Branco">Branco</option>
+              <option value="Rosé">Rosé</option>
+              <option value="Espumante">Espumante</option>
+              <option value="Porto">Porto</option>
+            </select>
+          </div>
+
           <div class="table-wrap">
             <table class="data-table" role="grid">
               <thead>
@@ -268,9 +221,11 @@
                 </tr>
               </thead>
               <tbody id="stock-table">
-                <tr><td colspan="9" style="text-align: center; padding: 50px;">
-                  <div class="skeleton skeleton-text" style="width: 150px; margin: 0 auto;"></div>
-                </td></tr>
+                <tr>
+                  <td colspan="9" style="text-align: center; padding: 50px;">
+                    <div class="skeleton skeleton-text" style="width: 150px; margin: 0 auto;"></div>
+                  </td>
+                </tr>
               </tbody>
             </table>
           </div>
@@ -279,68 +234,74 @@
     </div>
   </div>
 
-  <!-- Add/Edit Wine Modal -->
+  <!-- Wine Modal -->
   <div class="modal-overlay hidden" id="wine-modal" onclick="if(event.target===this)closeModal()">
     <div class="modal" style="max-width: 520px;">
       <div class="modal-header">
         <div class="modal-title" id="modal-title">Adicionar Vinho</div>
         <button class="modal-close" onclick="closeModal()" aria-label="Fechar">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
         </button>
       </div>
       <div class="modal-body">
         <input type="hidden" id="wine-id">
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-4);">
-          <div class="form-group" style="grid-column: 1/-1;">
+          <div class="form-group" style="grid-column: 1 / -1;">
             <label class="form-label">Nome do Vinho <span style="color: var(--danger);">*</span></label>
-            <input type="text" class="form-input" id="wine-nome" placeholder="ex: Quinta do Crasto Reserva" aria-required="true">
+            <input type="text" class="form-input" id="wine-nome" placeholder="ex: Quinta do Crasto Reserva" required>
           </div>
           <div class="form-group">
             <label class="form-label">Tipo <span style="color: var(--danger);">*</span></label>
-            <select class="form-select" id="wine-tipo" aria-required="true">
-              <option>Tinto</option><option>Branco</option>
-              <option>Rosé</option><option>Espumante</option><option>Porto</option>
+            <select class="form-select" id="wine-tipo" required>
+              <option value="Tinto">Tinto</option>
+              <option value="Branco">Branco</option>
+              <option value="Rosé">Rosé</option>
+              <option value="Espumante">Espumante</option>
+              <option value="Porto">Porto</option>
             </select>
           </div>
           <div class="form-group">
             <label class="form-label">Região <span style="color: var(--danger);">*</span></label>
-            <input type="text" class="form-input" id="wine-regiao" placeholder="ex: Douro" aria-required="true">
+            <input type="text" class="form-input" id="wine-regiao" placeholder="ex: Douro" required>
           </div>
           <div class="form-group">
             <label class="form-label">Produtor</label>
             <input type="text" class="form-input" id="wine-produtor" placeholder="ex: Quinta do Crasto">
           </div>
           <div class="form-group">
-            <label class="form-label">Ano de Colheita</label>
+            <label class="form-label">Ano</label>
             <input type="number" class="form-input" id="wine-ano" placeholder="ex: 2020" min="1900" max="2030">
           </div>
           <div class="form-group">
             <label class="form-label">Preço (€) <span style="color: var(--danger);">*</span></label>
-            <input type="number" class="form-input" id="wine-preco" placeholder="0.00" step="0.01" min="0" aria-required="true">
+            <input type="number" class="form-input" id="wine-preco" placeholder="0.00" step="0.01" min="0" required>
           </div>
-          <div class="form-group">
-            <label class="form-label">Quantidade em Stock <span style="color: var(--danger);">*</span></label>
-            <input type="number" class="form-input" id="wine-qty" placeholder="0" min="0" aria-required="true">
+          <div class="form-group" style="grid-column: 1 / -1;">
+            <label class="form-label">Quantidade <span style="color: var(--danger);">*</span></label>
+            <input type="number" class="form-input" id="wine-qty" placeholder="0" min="0" required>
           </div>
         </div>
       </div>
       <div class="modal-footer">
         <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
-        <button class="btn btn-primary" id="save-btn" onclick="saveWine()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-          Guardar
-        </button>
+        <button class="btn btn-gold" id="save-btn" onclick="saveWine()">Guardar</button>
       </div>
     </div>
   </div>
 
-  <!-- Stock Update Modal -->
+  <!-- Stock Modal -->
   <div class="modal-overlay hidden" id="stock-modal" onclick="if(event.target===this)closeStockModal()">
     <div class="modal" style="max-width: 360px;">
       <div class="modal-header">
         <div class="modal-title">Atualizar Stock</div>
         <button class="modal-close" onclick="closeStockModal()" aria-label="Fechar">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
         </button>
       </div>
       <div class="modal-body">
@@ -351,15 +312,12 @@
         </div>
         <div class="form-group">
           <label class="form-label">Nova Quantidade <span style="color: var(--danger);">*</span></label>
-          <input type="number" class="form-input" id="stock-qty" min="0" placeholder="0" aria-required="true" aria-label="Nova quantidade em stock">
+          <input type="number" class="form-input" id="stock-qty" min="0" placeholder="0" required>
         </div>
       </div>
       <div class="modal-footer">
         <button class="btn btn-ghost" onclick="closeStockModal()">Cancelar</button>
-        <button class="btn btn-primary" onclick="saveStock()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-          Atualizar
-        </button>
+        <button class="btn btn-gold" onclick="updateStockFromModal()">Atualizar</button>
       </div>
     </div>
   </div>

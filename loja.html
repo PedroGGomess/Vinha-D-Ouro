@@ -78,7 +78,6 @@
       font-weight: 700;
       font-size: 32px;
       color: rgba(255,255,255,0.6);
-      margin-bottom: var(--sp-3);
     }
 
     .wine-image.tinto { background: linear-gradient(135deg, #4A1219, #8B2F3A); }
@@ -240,7 +239,7 @@
       background: rgba(232,69,58,0.1);
     }
 
-    .pos-cart-totals {
+    .cart-total {
       padding: var(--sp-4);
       border-bottom: 1px solid var(--border-subtle);
     }
@@ -430,19 +429,29 @@
 
   <div class="app">
     <!-- Sidebar -->
-    <aside class="sidebar" id="sidebar">
+    <aside class="sidebar">
       <div class="sidebar-brand">
         <div class="sidebar-brand-logo">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 22h8M12 11v11M7 11c0 2.8 2.2 5 5 5s5-2.2 5-5V3H7v8z"/><path d="M7 8h10"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M8 22h8M12 11v11M7 11c0 2.8 2.2 5 5 5s5-2.2 5-5V3H7v8z"/>
+            <path d="M7 8h10"/>
+          </svg>
         </div>
-        <div class="sidebar-brand-text"><h2>Vinha D'Ouro</h2><p>Loja</p></div>
+        <div class="sidebar-brand-text">
+          <h2>Vinha D'Ouro</h2>
+          <p>Loja</p>
+        </div>
       </div>
 
       <nav class="sidebar-nav">
         <p class="sidebar-section-label">Vendas</p>
         <li class="sidebar-nav-item">
           <a href="loja.html" class="sidebar-nav-link active" aria-current="page">
-            <svg class="sidebar-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+            <svg class="sidebar-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+              <line x1="3" y1="6" x2="21" y2="6"/>
+              <path d="M16 10a4 4 0 01-8 0"/>
+            </svg>
             Ponto de Venda
           </a>
         </li>
@@ -450,7 +459,9 @@
         <p class="sidebar-section-label">Navegação</p>
         <li class="sidebar-nav-item">
           <a href="stock.html" class="sidebar-nav-link">
-            <svg class="sidebar-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
+            <svg class="sidebar-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
+            </svg>
             Inventário
           </a>
         </li>
@@ -462,7 +473,7 @@
           <div class="sidebar-user-avatar" id="user-avatar">L</div>
           <div class="sidebar-user-info">
             <h4 id="user-name">Funcionário</h4>
-            <p>PDV Completo</p>
+            <p>Acesso PDV</p>
           </div>
         </div>
         <p style="margin-top: var(--sp-3); font-size: 10px;">
@@ -476,15 +487,18 @@
       <header class="topbar">
         <div class="topbar-title">
           <h1>Ponto de Venda</h1>
-          <p id="time-display">Carregando hora...</p>
+          <p>Vendas e atendimento ao cliente</p>
         </div>
         <div class="topbar-actions">
+          <div class="time-display" id="time-display">Carregando hora...</div>
           <div class="api-badge offline" id="api-badge" role="status" aria-live="polite">
             <span class="api-dot"></span>
             <span id="api-label">Verificando...</span>
           </div>
           <button class="icon-btn" onclick="logout()" title="Sair" aria-label="Terminar sessão">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/>
+            </svg>
           </button>
         </div>
       </header>
@@ -497,22 +511,25 @@
         </nav>
 
         <div class="pos-layout">
-          <!-- Catalog -->
+          <!-- Catalog Section -->
           <div class="pos-catalog">
-            <div style="display: flex; flex-direction: column; gap: var(--sp-3);">
-              <div class="search-wrap">
-                <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                <input type="text" class="form-input search-input" id="wine-search" placeholder="Pesquisar vinho, região, produtor..." aria-label="Pesquisar vinhos">
-              </div>
-              <div class="pos-filters" role="group" aria-label="Filtros de tipo de vinho">
-                <button class="filter-btn active" data-filter="todos">✦ Todos</button>
-                <button class="filter-btn" data-filter="Tinto">🍷 Tinto</button>
-                <button class="filter-btn" data-filter="Branco">🥂 Branco</button>
-                <button class="filter-btn" data-filter="Rosé">🌸 Rosé</button>
-                <button class="filter-btn" data-filter="Espumante">✨ Espumante</button>
-                <button class="filter-btn" data-filter="Porto">🏺 Porto</button>
-              </div>
+            <div class="search-wrap">
+              <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"/>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+              <input type="text" class="form-input search-input" id="wine-search" placeholder="Pesquisar vinhos..." aria-label="Pesquisar vinhos">
             </div>
+
+            <div class="pos-filters" role="group" aria-label="Filtros de tipo de vinho">
+              <button class="filter-btn active" data-filter="todos">Todos</button>
+              <button class="filter-btn" data-filter="Tinto">Tinto</button>
+              <button class="filter-btn" data-filter="Branco">Branco</button>
+              <button class="filter-btn" data-filter="Rosé">Rosé</button>
+              <button class="filter-btn" data-filter="Espumante">Espumante</button>
+              <button class="filter-btn" data-filter="Porto">Porto</button>
+            </div>
+
             <div class="wine-grid" id="wine-grid" role="grid" aria-label="Catálogo de vinhos">
               <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; color: var(--text-muted); font-size: 13px;">
                 <div class="skeleton skeleton-text" style="width: 200px; margin: 0 auto;"></div>
@@ -520,50 +537,75 @@
             </div>
           </div>
 
-          <!-- Shopping Cart -->
-          <div class="pos-cart">
+          <!-- Cart Panel -->
+          <div class="pos-cart cart-panel">
             <div class="pos-cart-header">
               <div class="pos-cart-title">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+                  <line x1="3" y1="6" x2="21" y2="6"/>
+                  <path d="M16 10a4 4 0 01-8 0"/>
+                </svg>
                 Carrinho
                 <span class="cart-count-badge" id="cart-count">0</span>
               </div>
-              <button class="btn btn-ghost btn-sm" onclick="clearCart()" aria-label="Limpar carrinho">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
-                Limpar
-              </button>
             </div>
 
             <div class="pos-cart-items" id="cart-items">
               <div id="cart-empty" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: var(--text-muted); gap: var(--sp-3); padding: var(--sp-8); text-align: center;">
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" opacity="0.3"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
-                <p style="font-size: 13px;">Selecione vinhos do catálogo</p>
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" opacity="0.3">
+                  <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+                  <line x1="3" y1="6" x2="21" y2="6"/>
+                  <path d="M16 10a4 4 0 01-8 0"/>
+                </svg>
+                <p style="font-size: 13px;">Carrinho vazio</p>
               </div>
             </div>
 
-            <div class="pos-cart-totals">
-              <div class="cart-total-row"><span class="label">Subtotal</span><span class="value" id="cart-subtotal">0,00 €</span></div>
-              <div class="cart-total-row"><span class="label">IVA (23%)</span><span class="value" id="cart-iva">0,00 €</span></div>
-              <div class="cart-total-row grand"><span>Total</span><span id="cart-total">0,00 €</span></div>
+            <div class="cart-total">
+              <div class="cart-total-row">
+                <span class="label">Subtotal</span>
+                <span class="value" id="cart-subtotal">0,00 €</span>
+              </div>
+              <div class="cart-total-row">
+                <span class="label">IVA 23%</span>
+                <span class="value" id="cart-iva">0,00 €</span>
+              </div>
+              <div class="cart-total-row grand">
+                <span>Total</span>
+                <span id="cart-total">0,00 €</span>
+              </div>
             </div>
 
             <div class="pos-cart-checkout">
               <div class="payment-methods" id="payment-methods" role="group" aria-label="Métodos de pagamento">
-                <button class="pay-method active" data-method="Cartão" tabindex="0">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                <button class="pay-method active" data-method="Cartão">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <rect x="1" y="4" width="22" height="16" rx="2"/>
+                    <line x1="1" y1="10" x2="23" y2="10"/>
+                  </svg>
                   Cartão
                 </button>
                 <button class="pay-method" data-method="Numerário">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
-                  Dinheiro
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <line x1="12" y1="1" x2="12" y2="23"/>
+                    <path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
+                  </svg>
+                  Numerário
                 </button>
                 <button class="pay-method" data-method="MB Way">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <rect x="5" y="2" width="14" height="20" rx="2"/>
+                    <line x1="12" y1="18" x2="12.01" y2="18"/>
+                  </svg>
                   MB Way
                 </button>
               </div>
-              <button class="btn btn-primary w-full btn-lg" id="checkout-btn" onclick="checkout()" disabled aria-label="Finalizar venda">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+
+              <button class="btn btn-gold w-full" id="checkout-btn" onclick="checkout()" disabled aria-label="Finalizar venda">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
                 Finalizar Venda
               </button>
             </div>
@@ -573,22 +615,28 @@
     </div>
   </div>
 
-  <!-- Size Selector Modal -->
+  <!-- Size Selection Modal -->
   <div class="modal-overlay hidden" id="size-modal" onclick="if(event.target===this)closeSizeModal()">
     <div class="modal" style="max-width: 400px;">
       <div class="modal-header">
         <div class="modal-title">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="17" height="17"><path d="M8 22h8M12 11v11M7 11c0 2.8 2.2 5 5 5s5-2.2 5-5V3H7v8z"/><path d="M7 8h10"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="17" height="17">
+            <path d="M8 22h8M12 11v11M7 11c0 2.8 2.2 5 5 5s5-2.2 5-5V3H7v8z"/>
+            <path d="M7 8h10"/>
+          </svg>
           Selecionar Formato
         </div>
         <button class="modal-close" onclick="closeSizeModal()" aria-label="Fechar">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
         </button>
       </div>
       <div class="modal-body" style="padding: var(--sp-5);">
         <div id="size-wine-name" style="font-family: var(--font-display); font-size: 17px; font-weight: 700; color: var(--text-primary); line-height: 1.3; margin-bottom: var(--sp-4); padding-bottom: var(--sp-3); border-bottom: 1px solid var(--border-subtle);"></div>
         <p style="font-size: 12px; color: var(--text-muted); margin-bottom: var(--sp-3);">Escolha o formato da garrafa:</p>
-        <div class="size-options-grid" id="size-options" style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-3);"></div>
+        <div id="size-options" style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-3);"></div>
       </div>
     </div>
   </div>
@@ -598,17 +646,23 @@
     <div class="modal" style="max-width: 520px;">
       <div class="modal-header">
         <div class="modal-title">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="17" height="17"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="17" height="17">
+            <rect x="1" y="4" width="22" height="16" rx="2"/>
+            <line x1="1" y1="10" x2="23" y2="10"/>
+          </svg>
           Finalizar Venda
         </div>
         <button class="modal-close" onclick="closeCheckoutModal()" aria-label="Fechar">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
         </button>
       </div>
       <div class="modal-body" style="padding: var(--sp-5); display: flex; flex-direction: column; gap: var(--sp-4); max-height: 70vh; overflow-y: auto;">
         <div>
           <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: var(--sp-2);">Artigos</div>
-          <div class="checkout-items-list" id="co-items"></div>
+          <div id="co-items"></div>
         </div>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-3);">
@@ -623,18 +677,27 @@
         </div>
 
         <div class="checkout-totals-box">
-          <div class="checkout-total-line"><span style="color: var(--text-muted);">Subtotal</span><span id="co-subtotal">—</span></div>
-          <div class="checkout-total-line" id="co-discount-line" style="display: none;"><span style="color: var(--success);">Desconto aplicado</span><span style="color: var(--success);" id="co-discount-val">—</span></div>
-          <div class="checkout-total-line"><span style="color: var(--text-muted);">IVA (23%)</span><span id="co-iva">—</span></div>
+          <div class="checkout-total-line">
+            <span style="color: var(--text-muted);">Subtotal</span>
+            <span id="co-subtotal">—</span>
+          </div>
+          <div class="checkout-total-line" id="co-discount-line" style="display: none;">
+            <span style="color: var(--success);">Desconto aplicado</span>
+            <span style="color: var(--success);" id="co-discount-val">—</span>
+          </div>
+          <div class="checkout-total-line">
+            <span style="color: var(--text-muted);">IVA (23%)</span>
+            <span id="co-iva">—</span>
+          </div>
           <div class="checkout-total-line grand">
             <span style="font-family: var(--font-display); font-size: 15px; font-weight: 700;">Total</span>
-            <span style="font-family: var(--font-display); font-size: 22px; font-weight: 700; color: var(--text-gold);" id="co-total">—</span>
+            <span style="font-family: var(--font-display); font-size: 22px; font-weight: 700; color: var(--accent-gold);" id="co-total">—</span>
           </div>
         </div>
 
         <div>
           <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: var(--sp-2);">Método de Pagamento</div>
-          <div class="co-pay-method" id="co-pay-display">—</div>
+          <div id="co-pay-display">—</div>
           <div id="co-cash-panel" style="display: none; margin-top: var(--sp-3);">
             <label class="form-label">Valor Entregue pelo Cliente</label>
             <input type="number" class="form-input" id="co-cash-received" placeholder="0,00" step="0.01" min="0" oninput="calcTroco()" aria-label="Valor em dinheiro recebido">
@@ -658,7 +721,9 @@
       <div class="modal-footer">
         <button class="btn btn-ghost" onclick="closeCheckoutModal()">Cancelar</button>
         <button class="btn btn-primary btn-lg" id="process-btn" onclick="processPayment()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="20 6 9 17 4 12"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
           Confirmar Pagamento
         </button>
       </div>
@@ -670,7 +735,9 @@
     <div class="modal" style="max-width: 420px;">
       <div class="modal-body" style="padding: var(--sp-6); display: flex; flex-direction: column; align-items: center; gap: var(--sp-4); text-align: center;">
         <div style="width: 60px; height: 60px; border-radius: 50%; background: var(--success-bg); border: 2px solid var(--success-border); display: flex; align-items: center; justify-content: center;">
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2.5">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
         </div>
         <div>
           <div style="font-family: var(--font-display); font-size: 22px; font-weight: 700; color: var(--text-primary); margin-bottom: 6px;">Venda Concluída!</div>
@@ -679,11 +746,18 @@
         <div class="receipt-box w-full" id="receipt-content"></div>
         <div style="display: flex; gap: var(--sp-3); width: 100%;">
           <button class="btn btn-secondary" style="flex: 1;" onclick="window.print()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="15" height="15"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="15" height="15">
+              <polyline points="6 9 6 2 18 2 18 9"/>
+              <path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/>
+              <rect x="6" y="14" width="12" height="8"/>
+            </svg>
             Imprimir
           </button>
           <button class="btn btn-primary" style="flex: 1;" onclick="closeReceiptAndReset()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
+              <line x1="12" y1="5" x2="12" y2="19"/>
+              <line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
             Nova Venda
           </button>
         </div>
@@ -692,6 +766,7 @@
   </div>
 
   <div class="toast-container" id="toasts"></div>
+
   <script src="app.js"></script>
   <script>
     function updateClock() {

@@ -14,15 +14,6 @@
       display: grid;
       grid-template-columns: 300px 1fr;
       gap: var(--sp-4);
-      height: calc(100vh - 128px);
-    }
-
-    .cave-panel {
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--r-lg);
-      padding: var(--sp-4);
-      animation: slideUp var(--t-slow);
     }
 
     .cave-legend-item {
@@ -41,8 +32,7 @@
     }
 
     .cave-slot {
-      width: 60px;
-      height: 60px;
+      aspect-ratio: 1;
       border-radius: var(--r-md);
       border: 2px solid var(--border-subtle);
       cursor: pointer;
@@ -71,7 +61,7 @@
       cursor: pointer;
     }
 
-    .cave-grid-container {
+    .cave-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, 70px);
       gap: var(--sp-3);
@@ -82,14 +72,26 @@
       overflow: auto;
     }
 
-    .temperature-gauge {
+    .cave-conditions {
       display: flex;
       flex-direction: column;
-      align-items: center;
+      gap: var(--sp-3);
+    }
+
+    .cave-gauge-item {
+      display: flex;
+      flex-direction: column;
       gap: var(--sp-2);
     }
 
-    .gauge-bar {
+    .cave-gauge-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--sp-2);
+    }
+
+    .cave-gauge-bar {
       width: 100%;
       height: 8px;
       background: var(--bg-raised);
@@ -98,7 +100,7 @@
       position: relative;
     }
 
-    .gauge-fill {
+    .cave-gauge-fill {
       height: 100%;
       background: linear-gradient(90deg, var(--info), var(--success));
       border-radius: 99px;
@@ -107,7 +109,6 @@
     @media (max-width: 1024px) {
       .cave-layout {
         grid-template-columns: 1fr;
-        height: auto;
       }
     }
 
@@ -116,7 +117,7 @@
         grid-template-columns: 1fr;
       }
 
-      .cave-grid-container {
+      .cave-grid {
         grid-template-columns: repeat(auto-fill, 60px);
       }
     }
@@ -131,25 +132,11 @@
         <div class="sidebar-brand-logo">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 22h8M12 11v11M7 11c0 2.8 2.2 5 5 5s5-2.2 5-5V3H7v8z"/><path d="M7 8h10"/></svg>
         </div>
-        <div class="sidebar-brand-text"><h2>Vinha D'Ouro</h2><p>Armazém</p></div>
+        <div class="sidebar-brand-text"><h2>Vinha D'Ouro</h2><p>Caves</p></div>
       </div>
 
       <nav class="sidebar-nav">
-        <p class="sidebar-section-label">Principal</p>
-        <li class="sidebar-nav-item">
-          <a href="gerente.html" class="sidebar-nav-link">
-            <svg class="sidebar-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-            Dashboard
-          </a>
-        </li>
-        <li class="sidebar-nav-item">
-          <a href="provas.html" class="sidebar-nav-link">
-            <svg class="sidebar-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 8h1a4 4 0 010 8h-1"/><path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/></svg>
-            Provas
-          </a>
-        </li>
-        <div class="sidebar-divider"></div>
-        <p class="sidebar-section-label">Operações</p>
+        <p class="sidebar-section-label">Inventário</p>
         <li class="sidebar-nav-item">
           <a href="stock.html" class="sidebar-nav-link">
             <svg class="sidebar-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
@@ -160,6 +147,21 @@
           <a href="caves.html" class="sidebar-nav-link active" aria-current="page">
             <svg class="sidebar-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
             Caves
+          </a>
+        </li>
+
+        <div class="sidebar-divider"></div>
+        <p class="sidebar-section-label">Navegação</p>
+        <li class="sidebar-nav-item">
+          <a href="gerente.html" class="sidebar-nav-link">
+            <svg class="sidebar-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+            Dashboard
+          </a>
+        </li>
+        <li class="sidebar-nav-item">
+          <a href="provas.html" class="sidebar-nav-link">
+            <svg class="sidebar-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 8h1a4 4 0 010 8h-1"/><path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/></svg>
+            Provas
           </a>
         </li>
         <li class="sidebar-nav-item">
@@ -176,26 +178,26 @@
           <div class="sidebar-user-avatar" id="user-avatar">A</div>
           <div class="sidebar-user-info"><h4 id="user-name">Armazenista</h4><p>Caves &amp; Stock</p></div>
         </div>
-        <p style="margin-top: var(--sp-3); font-size: 10px;">Pedro Gomes - Eduardo Lourenço</p>
+        <p style="margin-top: var(--sp-3); font-size: 10px;">Eduardo Saavedra Lourenço - Kollan Andre Gafuro Intacua - Pedro Gabriel Matias Gomes</p>
       </div>
     </aside>
 
     <div class="main-content">
       <header class="topbar">
         <div class="topbar-title">
-          <h1>Caves de Vinho</h1>
-          <p>Gestão física das caves e posições das garrafas</p>
+          <h1>Gestão de Caves</h1>
+          <p>Monitorização e organização das caves de vinho</p>
         </div>
         <div class="topbar-actions">
+          <select class="form-input" id="cave-select" onchange="loadCave(this.value)" style="min-width: 140px; padding: 6px 12px; font-size: 13px;" aria-label="Selecionar cave">
+            <option value="A">Cave A</option>
+            <option value="B">Cave B</option>
+            <option value="C">Cave C</option>
+          </select>
           <div class="api-badge offline" id="api-badge" role="status" aria-live="polite">
             <span class="api-dot"></span>
             <span id="api-label">Verificando...</span>
           </div>
-          <select class="form-input" id="cave-select" onchange="loadCave(this.value)" style="min-width: 140px; padding: 6px 12px; font-size: 13px;" aria-label="Selecionar cave">
-            <option value="A">Cave A — Principal</option>
-            <option value="B">Cave B — Reserva</option>
-            <option value="C">Cave C — Premium</option>
-          </select>
           <button class="icon-btn" onclick="logout()" title="Sair" aria-label="Terminar sessão">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
           </button>
@@ -209,7 +211,7 @@
           <span class="breadcrumb-item active">Caves</span>
         </nav>
 
-        <!-- Cave Stats -->
+        <!-- KPI Grid -->
         <div class="kpi-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-bottom: var(--sp-5);">
           <div class="kpi-card">
             <div class="kpi-card-accent"></div>
@@ -243,81 +245,107 @@
 
         <!-- Cave Layout -->
         <div class="cave-layout">
+          <!-- Left Panel -->
           <div style="display: flex; flex-direction: column; gap: var(--sp-4); overflow-y: auto;">
-            <!-- Legend -->
-            <div class="cave-panel">
-              <div style="font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: var(--sp-3);">Legenda</div>
-              <div style="display: flex; flex-direction: column; gap: 6px;">
-                <div class="cave-legend-item"><div class="cave-legend-dot" style="background: var(--bg-elevated); border: 1px solid var(--border-subtle);"></div>Vazio</div>
-                <div class="cave-legend-item"><div class="cave-legend-dot" style="background: linear-gradient(135deg, #4A1219, #8B2F3A);"></div>Tinto</div>
-                <div class="cave-legend-item"><div class="cave-legend-dot" style="background: linear-gradient(135deg, #1C3A10, #2ECC6B);"></div>Branco</div>
-                <div class="cave-legend-item"><div class="cave-legend-dot" style="background: linear-gradient(135deg, #561825, #D4788A);"></div>Rosé</div>
-                <div class="cave-legend-item"><div class="cave-legend-dot" style="background: linear-gradient(135deg, #0C2016, #C9A227);"></div>Espumante</div>
-                <div class="cave-legend-item"><div class="cave-legend-dot" style="background: linear-gradient(135deg, #260C06, #E8A020);"></div>Porto</div>
+            <!-- Legend Card -->
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title">Legenda</div>
+              </div>
+              <div class="card-body">
+                <div style="display: flex; flex-direction: column; gap: 6px;">
+                  <div class="cave-legend-item">
+                    <div class="cave-legend-dot" style="background: #1E1012;"></div>
+                    Vazio
+                  </div>
+                  <div class="cave-legend-item">
+                    <div class="cave-legend-dot" style="background: #8B2F3A;"></div>
+                    Tinto
+                  </div>
+                  <div class="cave-legend-item">
+                    <div class="cave-legend-dot" style="background: #2ECC6B;"></div>
+                    Branco
+                  </div>
+                  <div class="cave-legend-item">
+                    <div class="cave-legend-dot" style="background: #D4788A;"></div>
+                    Rosé
+                  </div>
+                  <div class="cave-legend-item">
+                    <div class="cave-legend-dot" style="background: #C9A227;"></div>
+                    Espumante
+                  </div>
+                  <div class="cave-legend-item">
+                    <div class="cave-legend-dot" style="background: #E8A020;"></div>
+                    Porto
+                  </div>
+                </div>
               </div>
             </div>
 
-            <!-- Selected slot info -->
-            <div class="cave-panel" id="slot-info-panel">
-              <div style="font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: var(--sp-3);">Posição Selecionada</div>
-              <div id="slot-info-content" style="font-size: 13px; color: var(--text-muted); font-style: italic;">
-                Clique numa posição para ver os detalhes
+            <!-- Slot Info Card -->
+            <div class="card" id="slot-info-panel">
+              <div class="card-header">
+                <div class="card-title">Posição Selecionada</div>
               </div>
-              <div id="slot-actions" style="display: none; margin-top: var(--sp-4); flex-direction: column; gap: var(--sp-2);">
-                <div style="font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 4px;">Atribuir vinho:</div>
-                <select class="form-input" id="slot-wine-select" style="font-size: 13px;" aria-label="Selecionar vinho para posição"></select>
-                <button class="btn btn-primary btn-sm w-full" onclick="assignWineToSlot()">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polyline points="20 6 9 17 4 12"/></svg>
-                  Atribuir
-                </button>
-                <button class="btn btn-ghost btn-sm w-full" id="clear-slot-btn" onclick="clearSlot()" style="display: none;">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6"/></svg>
-                  Esvaziar Posição
-                </button>
+              <div class="card-body">
+                <div id="slot-info-content" style="font-size: 13px; color: var(--text-muted); font-style: italic;">
+                  Selecione um slot
+                </div>
+                <div id="slot-actions" style="display: none; margin-top: var(--sp-4); flex-direction: column; gap: var(--sp-2);">
+                  <label style="font-size: 12px; font-weight: 600; color: var(--text-muted);">Atribuir vinho:</label>
+                  <select class="form-input" id="slot-wine-select" style="font-size: 13px;" aria-label="Selecionar vinho para posição"></select>
+                  <button class="btn btn-gold btn-sm w-full" onclick="assignWineToSlot()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polyline points="20 6 9 17 4 12"/></svg>
+                    Atribuir
+                  </button>
+                  <button class="btn btn-danger btn-sm w-full" id="clear-slot-btn" onclick="clearSlot()" style="display: none;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6"/></svg>
+                    Esvaziar Posição
+                  </button>
+                </div>
               </div>
             </div>
 
-            <!-- Temperature/conditions -->
-            <div class="cave-panel">
-              <div style="font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: var(--sp-3);">Condições da Cave</div>
-              <div style="display: flex; flex-direction: column; gap: var(--sp-3);">
-                <div class="temperature-gauge">
-                  <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; gap: var(--sp-2);">
-                    <div style="display: flex; align-items: center; gap: 6px;">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="var(--info)" stroke-width="1.5" width="16" height="16"><path d="M14 14.76V3.5a2.5 2.5 0 00-5 0v11.26a4.5 4.5 0 105 0z"/></svg>
-                      <span style="font-size: 12px; color: var(--text-muted);">Temperatura</span>
+            <!-- Conditions Card -->
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title">Condições</div>
+              </div>
+              <div class="card-body">
+                <div class="cave-conditions">
+                  <div class="cave-gauge-item">
+                    <div class="cave-gauge-header">
+                      <div style="display: flex; align-items: center; gap: 6px;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="var(--info)" stroke-width="1.5" width="16" height="16"><path d="M14 14.76V3.5a2.5 2.5 0 00-5 0v11.26a4.5 4.5 0 105 0z"/></svg>
+                        <span style="font-size: 12px; color: var(--text-muted);">Temperatura</span>
+                      </div>
+                      <span style="font-size: 14px; font-weight: 700; font-family: var(--font-display); color: var(--info);">14.2°C</span>
                     </div>
-                    <span style="font-size: 14px; font-weight: 700; font-family: var(--font-display); color: var(--info);">14,2 °C</span>
+                    <div class="cave-gauge-bar"><div class="cave-gauge-fill" style="width: 50%;"></div></div>
                   </div>
-                  <div class="gauge-bar" style="margin-top: 4px;"><div class="gauge-fill" style="width: 50%;"></div></div>
-                </div>
-                <div class="temperature-gauge">
-                  <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; gap: var(--sp-2);">
-                    <div style="display: flex; align-items: center; gap: 6px;">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent-gold)" stroke-width="1.5" width="16" height="16"><path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z"/></svg>
-                      <span style="font-size: 12px; color: var(--text-muted);">Humidade</span>
+                  <div class="cave-gauge-item">
+                    <div class="cave-gauge-header">
+                      <div style="display: flex; align-items: center; gap: 6px;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent-gold)" stroke-width="1.5" width="16" height="16"><path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z"/></svg>
+                        <span style="font-size: 12px; color: var(--text-muted);">Humidade</span>
+                      </div>
+                      <span style="font-size: 14px; font-weight: 700; font-family: var(--font-display); color: var(--text-gold);">72%</span>
                     </div>
-                    <span style="font-size: 14px; font-weight: 700; font-family: var(--font-display); color: var(--text-gold);">72%</span>
+                    <div class="cave-gauge-bar"><div class="cave-gauge-fill" style="width: 72%; background: linear-gradient(90deg, var(--warning), var(--accent-gold));"></div></div>
                   </div>
-                  <div class="gauge-bar" style="margin-top: 4px;"><div class="gauge-fill" style="width: 72%; background: linear-gradient(90deg, var(--warning), var(--accent-gold));"></div></div>
-                </div>
-                <div style="display: flex; align-items: center; gap: 10px; padding-top: var(--sp-2); border-top: 1px solid var(--border-subtle);">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="1.5" width="18" height="18"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                  <div><div style="font-size: 12px; color: var(--text-muted);">Última leitura</div><div style="font-size: 13px; font-weight: 600; color: var(--success);">Condições ideais</div></div>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Right panel: cave grid -->
-          <div class="card" style="overflow: auto;">
+          <!-- Right Panel: Cave Grid -->
+          <div class="card">
             <div class="card-header">
               <div>
                 <div class="card-title">
                   <svg class="card-title-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
-                  Mapa da Cave — <span id="cave-name">Cave A Principal</span>
+                  <span id="cave-name">Cave A — Principal</span>
                 </div>
-                <div class="card-subtitle">Clique numa posição para selecionar e gerir o conteúdo</div>
               </div>
               <button class="btn btn-secondary btn-sm" onclick="loadCave(document.getElementById('cave-select').value)">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polyline points="23 4 23 10 17 10"/><path d="M1 20l4.64 4.36A9 9 0 0020.49 15M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36"/></svg>
@@ -325,8 +353,8 @@
               </button>
             </div>
             <div class="card-body" style="overflow: auto; padding: var(--sp-4);">
-              <div id="cave-grid-container" style="overflow: auto;">
-                <div style="text-align: center; padding: 60px; color: var(--text-muted);">A carregar mapa da cave...</div>
+              <div id="cave-grid-container" class="cave-grid">
+                <div style="text-align: center; padding: 60px; color: var(--text-muted); grid-column: 1 / -1;">A carregar mapa da cave...</div>
               </div>
             </div>
           </div>
@@ -335,7 +363,7 @@
     </div>
   </div>
 
-  <div class="toast-container" id="toasts"></div>
+  <div id="toasts" class="toast-container"></div>
   <script src="app.js"></script>
 </body>
 </html>

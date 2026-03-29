@@ -10,6 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <style>
+    /* ===== LOGIN PAGE LAYOUT ===== */
     .login-page {
       background: var(--bg-void);
       position: relative;
@@ -20,11 +21,12 @@
       justify-content: center;
     }
 
+    /* ===== ANIMATED ORBS (Decorative Background) ===== */
     .orb-animated {
       position: fixed;
       pointer-events: none;
       z-index: 0;
-      animation: float 6s ease-in-out infinite;
+      animation: floatOrb 8s ease-in-out infinite;
     }
 
     .orb-1 {
@@ -32,8 +34,9 @@
       left: 5%;
       width: 300px;
       height: 300px;
-      background: radial-gradient(ellipse, rgba(139,58,68,0.08) 0%, transparent 70%);
+      background: radial-gradient(ellipse at center, rgba(139, 58, 68, 0.12) 0%, transparent 70%);
       border-radius: 50%;
+      filter: blur(40px);
     }
 
     .orb-2 {
@@ -41,27 +44,32 @@
       right: 10%;
       width: 400px;
       height: 400px;
-      background: radial-gradient(ellipse, rgba(201,162,39,0.06) 0%, transparent 70%);
+      background: radial-gradient(ellipse at center, rgba(201, 162, 39, 0.08) 0%, transparent 70%);
       border-radius: 50%;
+      filter: blur(50px);
       animation-delay: 1s;
     }
 
-    @keyframes float {
+    @keyframes floatOrb {
       0%, 100% { transform: translate(0, 0); }
-      50% { transform: translate(30px, -30px); }
+      25% { transform: translate(20px, -25px); }
+      50% { transform: translate(-15px, 20px); }
+      75% { transform: translate(25px, 15px); }
     }
 
+    /* ===== SUBTLE GRID BACKGROUND ===== */
     .login-grid-bg {
       position: fixed;
       inset: 0;
       background-image:
-        linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
-      background-size: 60px 60px;
+        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 80px 80px;
       pointer-events: none;
       z-index: 0;
     }
 
+    /* ===== TOP GOLD GRADIENT LINE ===== */
     .top-bar {
       position: fixed;
       top: 0;
@@ -69,37 +77,42 @@
       right: 0;
       height: 2px;
       background: linear-gradient(90deg, transparent, var(--accent-gold), transparent);
-      z-index: 1;
+      z-index: 2;
+      box-shadow: 0 0 20px rgba(201, 162, 39, 0.3);
     }
 
+    /* ===== LOGIN WRAPPER ===== */
     .login-wrap {
       position: relative;
       z-index: 1;
       width: 100%;
-      max-width: 900px;
+      max-width: 520px;
       padding: var(--sp-4);
     }
 
+    /* ===== HEADER SECTION ===== */
     .login-header-block {
       text-align: center;
-      margin-bottom: var(--sp-12);
-      animation: slideDown var(--t-slow);
+      margin-bottom: var(--sp-10);
+      animation: slideDown 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
     .year-badge {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      padding: 8px 16px;
-      background: rgba(201,162,39,0.08);
-      border: 1px solid var(--border-gold);
+      gap: 8px;
+      padding: 10px 18px;
+      background: rgba(201, 162, 39, 0.1);
+      border: 1.5px solid rgba(201, 162, 39, 0.3);
       border-radius: var(--r-full);
       font-size: 11px;
       font-weight: 700;
       letter-spacing: 1.5px;
       text-transform: uppercase;
       color: var(--text-gold);
-      margin-bottom: var(--sp-5);
+      margin-bottom: var(--sp-6);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
     }
 
     .year-badge::before {
@@ -108,41 +121,53 @@
       height: 6px;
       background: var(--accent-gold);
       border-radius: 50%;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
     }
 
     .login-brand {
       display: flex;
+      flex-direction: column;
       align-items: center;
-      justify-content: center;
       gap: var(--sp-5);
-      margin-bottom: var(--sp-6);
+      margin-bottom: var(--sp-8);
     }
 
     .login-brand-icon {
-      width: 60px;
-      height: 60px;
-      background: linear-gradient(135deg, var(--wine-700), var(--wine-500));
-      border: 1.5px solid var(--border-gold);
-      border-radius: var(--r-md);
+      width: 72px;
+      height: 72px;
+      background: linear-gradient(135deg, var(--wine-700), var(--wine-600));
+      border: 2px solid var(--accent-gold);
+      border-radius: var(--r-lg);
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
+      box-shadow: 0 8px 32px rgba(139, 58, 68, 0.3);
     }
 
     .login-brand-icon svg {
-      width: 32px;
-      height: 32px;
+      width: 38px;
+      height: 38px;
       color: var(--accent-gold);
+      stroke-width: 1.2;
+    }
+
+    .login-brand-text {
+      text-align: center;
     }
 
     .login-brand-text h1 {
       font-family: var(--font-display);
-      font-size: 36px;
+      font-size: 42px;
       font-weight: 700;
       color: var(--text-primary);
-      letter-spacing: -0.5px;
-      line-height: 1.2;
+      letter-spacing: -0.8px;
+      line-height: 1.1;
       margin: 0;
     }
 
@@ -150,14 +175,15 @@
       font-size: 14px;
       color: var(--text-secondary);
       letter-spacing: 0.5px;
-      margin-top: var(--sp-2);
+      margin-top: var(--sp-3);
+      font-weight: 500;
     }
 
     .login-divider {
-      width: 40px;
-      height: 1px;
+      width: 50px;
+      height: 2px;
       background: linear-gradient(90deg, transparent, var(--accent-gold), transparent);
-      margin: var(--sp-6) auto;
+      margin: var(--sp-8) auto;
     }
 
     .login-tagline {
@@ -165,11 +191,180 @@
       color: var(--text-secondary);
       letter-spacing: 0.3px;
       margin: 0;
+      font-weight: 400;
+    }
+
+    /* ===== LOGIN FORM CONTAINER ===== */
+    .login-form-container {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--r-xl);
+      padding: var(--sp-8);
+      backdrop-filter: blur(var(--glass-blur));
+      -webkit-backdrop-filter: blur(var(--glass-blur));
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      animation: slideUp 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s both;
+      margin-bottom: var(--sp-8);
+    }
+
+    .login-form {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-6);
+    }
+
+    /* ===== FORM FIELDS WITH FLOATING LABELS ===== */
+    .form-group {
+      position: relative;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 14px 16px;
+      background: var(--bg-input);
+      border: 1.5px solid var(--border-subtle);
+      border-radius: var(--r-md);
+      font-family: var(--font-body);
+      font-size: 15px;
+      color: var(--text-primary);
+      transition: all var(--t-normal);
+      outline: none;
+    }
+
+    .form-input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .form-input:focus {
+      border-color: var(--accent-gold);
+      background: rgba(201, 162, 39, 0.05);
+      box-shadow: 0 0 0 3px rgba(201, 162, 39, 0.1);
+    }
+
+    .form-label {
+      position: absolute;
+      top: -10px;
+      left: 14px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-gold);
+      background: var(--bg-card);
+      padding: 0 6px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .form-input:focus ~ .form-label,
+    .form-input:not(:placeholder-shown) ~ .form-label {
+      color: var(--accent-gold);
+    }
+
+    /* ===== ERROR MESSAGE ===== */
+    .login-error {
+      padding: var(--sp-4);
+      background: rgba(139, 58, 68, 0.15);
+      border: 1px solid rgba(139, 58, 68, 0.4);
+      border-radius: var(--r-md);
+      color: #ff6b6b;
+      font-size: 13px;
+      display: none;
+      animation: slideDown 0.3s ease-out;
+    }
+
+    .login-error.show {
+      display: block;
+    }
+
+    /* ===== SUBMIT BUTTON ===== */
+    .btn-login {
+      padding: 14px 24px;
+      background: linear-gradient(135deg, var(--wine-700), var(--wine-600));
+      color: var(--text-light);
+      border: none;
+      border-radius: var(--r-md);
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all var(--t-normal);
+      outline: 2px solid transparent;
+      outline-offset: 2px;
+      margin-top: var(--sp-3);
+    }
+
+    .btn-login:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(139, 58, 68, 0.4);
+    }
+
+    .btn-login:focus {
+      outline-color: var(--accent-gold);
+    }
+
+    .btn-login:active {
+      transform: translateY(0);
+    }
+
+    /* ===== FORGOT PASSWORD LINK ===== */
+    .forgot-password-container {
+      text-align: center;
+      margin-top: var(--sp-4);
+    }
+
+    .forgot-password-link {
+      display: inline-block;
+      font-size: 12px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      padding: 8px 14px;
+      transition: all var(--t-normal);
+      outline: 2px solid transparent;
+      outline-offset: 2px;
+      letter-spacing: 0.3px;
+    }
+
+    .forgot-password-link:hover {
+      color: var(--accent-gold);
+    }
+
+    .forgot-password-link:focus {
+      outline-color: var(--accent-gold);
+    }
+
+    /* ===== ROLE CARDS SECTION ===== */
+    .role-section {
+      display: none;
+      animation: slideUp 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .role-section.show {
+      display: block;
+    }
+
+    .role-section-title {
+      text-align: center;
+      margin-bottom: var(--sp-8);
+    }
+
+    .role-section-title h2 {
+      font-family: var(--font-display);
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin: 0;
+      letter-spacing: -0.5px;
+    }
+
+    .role-section-title p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-top: var(--sp-3);
     }
 
     .role-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: var(--sp-6);
       margin-bottom: var(--sp-8);
     }
@@ -178,9 +373,9 @@
       position: relative;
       display: flex;
       flex-direction: column;
-      padding: var(--sp-6);
+      padding: var(--sp-7);
       background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
+      border: 1.5px solid var(--border-subtle);
       border-radius: var(--r-lg);
       backdrop-filter: blur(var(--glass-blur));
       -webkit-backdrop-filter: blur(var(--glass-blur));
@@ -192,75 +387,74 @@
       outline-offset: 2px;
       text-decoration: none;
       color: inherit;
-    }
-
-    .role-card:nth-child(1) { animation-delay: 0.2s; }
-    .role-card:nth-child(2) { animation-delay: 0.4s; }
-    .role-card:nth-child(3) { animation-delay: 0.6s; }
-
-    .role-card:hover {
-      border-color: var(--accent-gold);
-      background: var(--bg-card-hover);
-      transform: translateY(-8px);
-      box-shadow: 0 12px 36px rgba(201,162,39,0.2);
-    }
-
-    .role-card:focus {
-      outline-color: var(--accent-gold);
+      overflow: hidden;
     }
 
     .role-card::before {
       content: '';
       position: absolute;
-      top: 0;
-      right: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(135deg, rgba(201,162,39,0.1) 0%, transparent 100%);
+      inset: 0;
+      background: linear-gradient(135deg, rgba(201, 162, 39, 0.15) 0%, transparent 100%);
       opacity: 0;
       transition: opacity var(--t-slow);
-      border-radius: var(--r-lg);
       pointer-events: none;
+    }
+
+    .role-card:nth-child(1) { animation-delay: 0.1s; }
+    .role-card:nth-child(2) { animation-delay: 0.2s; }
+    .role-card:nth-child(3) { animation-delay: 0.3s; }
+
+    .role-card:hover {
+      border-color: var(--accent-gold);
+      background: var(--bg-card-hover);
+      transform: translateY(-6px);
+      box-shadow: 0 16px 40px rgba(201, 162, 39, 0.25);
     }
 
     .role-card:hover::before {
       opacity: 1;
     }
 
-    .role-card-top {
+    .role-card:focus {
+      outline-color: var(--accent-gold);
+    }
+
+    .role-card-content {
+      position: relative;
+      z-index: 1;
       flex: 1;
       display: flex;
       flex-direction: column;
-      gap: var(--sp-4);
+      gap: var(--sp-5);
       margin-bottom: var(--sp-6);
-      position: relative;
-      z-index: 1;
     }
 
     .role-card-icon {
-      width: 48px;
-      height: 48px;
+      width: 56px;
+      height: 56px;
       background: linear-gradient(135deg, var(--wine-700), var(--wine-600));
       border-radius: var(--r-md);
       display: flex;
       align-items: center;
       justify-content: center;
       transition: transform var(--t-normal);
+      box-shadow: 0 4px 12px rgba(139, 58, 68, 0.2);
     }
 
     .role-card:hover .role-card-icon {
-      transform: scale(1.1) rotate(5deg);
+      transform: scale(1.12) rotate(6deg);
     }
 
     .role-card-icon svg {
-      width: 24px;
-      height: 24px;
+      width: 28px;
+      height: 28px;
       color: var(--accent-gold);
+      stroke-width: 1.3;
     }
 
     .role-card-name {
       font-family: var(--font-display);
-      font-size: 18px;
+      font-size: 20px;
       font-weight: 700;
       color: var(--text-primary);
       letter-spacing: 0.2px;
@@ -269,7 +463,7 @@
     .role-card-desc {
       font-size: 13px;
       color: var(--text-secondary);
-      line-height: 1.5;
+      line-height: 1.6;
     }
 
     .role-card-bottom {
@@ -278,34 +472,36 @@
       justify-content: space-between;
       position: relative;
       z-index: 1;
-      padding-top: var(--sp-4);
+      padding-top: var(--sp-5);
       border-top: 1px solid var(--border-subtle);
     }
 
     .role-card-access {
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 1.2px;
       color: var(--text-gold);
     }
 
     .role-card-arrow {
-      width: 18px;
-      height: 18px;
+      width: 20px;
+      height: 20px;
       color: var(--accent-gold);
       transition: transform var(--t-normal);
+      stroke-width: 2;
     }
 
     .role-card:hover .role-card-arrow {
-      transform: translateX(4px);
+      transform: translateX(5px);
     }
 
+    /* ===== FOOTER ===== */
     .login-footer {
       text-align: center;
       padding-top: var(--sp-8);
       border-top: 1px solid var(--border-subtle);
-      animation: fadeIn var(--t-xslow);
+      animation: fadeIn 1.2s ease-out;
     }
 
     .login-footer p {
@@ -313,6 +509,11 @@
       color: var(--text-muted);
       line-height: 1.8;
       letter-spacing: 0.3px;
+      margin: 0;
+    }
+
+    .login-footer p + p {
+      margin-top: var(--sp-3);
     }
 
     .login-footer span {
@@ -320,46 +521,105 @@
       font-weight: 600;
     }
 
-    .forgot-password-link {
-      display: inline-block;
-      margin-top: var(--sp-6);
-      font-size: 13px;
-      color: var(--text-secondary);
-      text-decoration: none;
-      padding: 8px 16px;
-      border: 1px solid var(--border-light);
-      border-radius: var(--r-md);
-      transition: all var(--t-normal);
-      outline: 2px solid transparent;
-      outline-offset: 2px;
+    /* ===== ANIMATIONS ===== */
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
-    .forgot-password-link:hover {
-      color: var(--accent-gold);
-      border-color: var(--accent-gold);
-      background: rgba(201,162,39,0.05);
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
-    .forgot-password-link:focus {
-      outline-color: var(--accent-gold);
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
     }
 
+    /* ===== RESPONSIVE DESIGN ===== */
     @media (max-width: 768px) {
-      .login-brand {
-        flex-direction: column;
-        gap: var(--sp-3);
+      .login-wrap {
+        max-width: 100%;
+        padding: var(--sp-6) var(--sp-4);
+      }
+
+      .login-header-block {
+        margin-bottom: var(--sp-8);
       }
 
       .login-brand-text h1 {
-        font-size: 28px;
+        font-size: 32px;
+      }
+
+      .login-form-container {
+        padding: var(--sp-6);
       }
 
       .role-grid {
         grid-template-columns: 1fr;
       }
 
+      .login-brand-icon {
+        width: 64px;
+        height: 64px;
+      }
+
+      .login-brand-icon svg {
+        width: 32px;
+        height: 32px;
+      }
+
+      .year-badge {
+        font-size: 10px;
+        padding: 8px 14px;
+      }
+    }
+
+    @media (max-width: 480px) {
       .login-wrap {
-        padding: var(--sp-6) var(--sp-4);
+        padding: var(--sp-4);
+      }
+
+      .login-header-block {
+        margin-bottom: var(--sp-6);
+      }
+
+      .login-brand-text h1 {
+        font-size: 28px;
+      }
+
+      .login-brand-text p {
+        font-size: 13px;
+      }
+
+      .login-form-container {
+        padding: var(--sp-5);
+      }
+
+      .form-input {
+        padding: 12px 14px;
+        font-size: 14px;
+      }
+
+      .role-card {
+        padding: var(--sp-5);
       }
     }
   </style>
@@ -368,13 +628,14 @@
   <a href="#main-content" class="skip-to-content">Ir para conteúdo principal</a>
 
   <div class="login-page">
-    <div class="top-bar" role="presentation"></div>
-    <div class="login-grid-bg" role="presentation"></div>
-    <div class="orb-animated orb-1" role="presentation"></div>
-    <div class="orb-animated orb-2" role="presentation"></div>
+    <!-- Decorative Elements -->
+    <div class="top-bar" role="presentation" aria-hidden="true"></div>
+    <div class="login-grid-bg" role="presentation" aria-hidden="true"></div>
+    <div class="orb-animated orb-1" role="presentation" aria-hidden="true"></div>
+    <div class="orb-animated orb-2" role="presentation" aria-hidden="true"></div>
 
     <div class="login-wrap">
-      <!-- Header -->
+      <!-- Header Section -->
       <div class="login-header-block">
         <div class="year-badge">Sistema Premium · v2.0</div>
 
@@ -391,74 +652,124 @@
           </div>
         </div>
 
-        <div class="login-divider" role="presentation"></div>
-        <p class="login-tagline">Selecione o seu perfil de acesso para continuar</p>
+        <div class="login-divider" role="presentation" aria-hidden="true"></div>
+        <p class="login-tagline">Autenticação de Acesso</p>
       </div>
 
-      <!-- Main content -->
       <main id="main-content">
-        <!-- Role Cards -->
-        <div class="role-grid">
-          <!-- Gerente -->
-          <a href="gerente.html" class="role-card" tabindex="0">
-            <div class="role-card-top">
-              <div class="role-card-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                  <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
-                  <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
-                </svg>
-              </div>
-              <div class="role-card-name">Gerente</div>
-              <div class="role-card-desc">Acesso completo ao dashboard executivo, relatórios, equipa e análises de desempenho</div>
-            </div>
-            <div class="role-card-bottom">
-              <span class="role-card-access">Acesso Total</span>
-              <svg class="role-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-            </div>
-          </a>
+        <!-- Login Form Container -->
+        <div class="login-form-container">
+          <form class="login-form" id="loginForm">
+            <!-- Error Message Area -->
+            <div id="loginError" class="login-error"></div>
 
-          <!-- Loja -->
-          <a href="loja.html" class="role-card" tabindex="0">
-            <div class="role-card-top">
-              <div class="role-card-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
-                  <line x1="3" y1="6" x2="21" y2="6"/>
-                  <path d="M16 10a4 4 0 01-8 0"/>
-                </svg>
-              </div>
-              <div class="role-card-name">Loja</div>
-              <div class="role-card-desc">Ponto de venda profissional, processamento de transações e gestão de clientes</div>
+            <!-- Username Field -->
+            <div class="form-group">
+              <input
+                type="text"
+                id="username"
+                class="form-input"
+                placeholder="Utilizador"
+                required
+                autocomplete="username"
+                autofocus
+              />
+              <label for="username" class="form-label">Utilizador</label>
             </div>
-            <div class="role-card-bottom">
-              <span class="role-card-access">PDV Completo</span>
-              <svg class="role-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-            </div>
-          </a>
 
-          <!-- Armazenista -->
-          <a href="stock.html" class="role-card" tabindex="0">
-            <div class="role-card-top">
-              <div class="role-card-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
-                  <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
-                  <line x1="12" y1="22.08" x2="12" y2="12"/>
-                </svg>
-              </div>
-              <div class="role-card-name">Armazenista</div>
-              <div class="role-card-desc">Gestão de inventário, controlo de stock crítico e operações de armazém</div>
+            <!-- Password Field -->
+            <div class="form-group">
+              <input
+                type="password"
+                id="password"
+                class="form-input"
+                placeholder="Password"
+                required
+                autocomplete="current-password"
+              />
+              <label for="password" class="form-label">Password</label>
             </div>
-            <div class="role-card-bottom">
-              <span class="role-card-access">Inventário</span>
-              <svg class="role-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn-login">ENTRAR</button>
+
+            <!-- Forgot Password Link -->
+            <div class="forgot-password-container">
+              <a href="#" class="forgot-password-link">Esqueceu a password?</a>
             </div>
-          </a>
+          </form>
         </div>
 
-        <!-- Help link -->
-        <div style="text-align: center;">
-          <a href="#" class="forgot-password-link">Esqueceu a password?</a>
+        <!-- Role Cards Section (Hidden Until Login) -->
+        <div id="roleSection" class="role-section">
+          <div class="role-section-title">
+            <h2>Selecione o Seu Perfil</h2>
+            <p>Escolha o módulo para continuar</p>
+          </div>
+
+          <div class="role-grid">
+            <!-- Gerente Card -->
+            <a href="gerente.html" class="role-card" tabindex="0">
+              <div class="role-card-content">
+                <div class="role-card-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="2" x2="12" y2="22"></line>
+                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                  </svg>
+                </div>
+                <div class="role-card-name">Gerente</div>
+                <div class="role-card-desc">Dashboard, vendas, relatórios e análises de desempenho executivo</div>
+              </div>
+              <div class="role-card-bottom">
+                <span class="role-card-access">Acesso Total</span>
+                <svg class="role-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                  <path d="M5 12h14M12 5l7 7-7 7"></path>
+                </svg>
+              </div>
+            </a>
+
+            <!-- Loja Card -->
+            <a href="loja.html" class="role-card" tabindex="0">
+              <div class="role-card-content">
+                <div class="role-card-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="9" cy="21" r="1"></circle>
+                    <circle cx="20" cy="21" r="1"></circle>
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                  </svg>
+                </div>
+                <div class="role-card-name">Loja</div>
+                <div class="role-card-desc">Ponto de venda profissional, transações e gestão de clientes</div>
+              </div>
+              <div class="role-card-bottom">
+                <span class="role-card-access">PDV Completo</span>
+                <svg class="role-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                  <path d="M5 12h14M12 5l7 7-7 7"></path>
+                </svg>
+              </div>
+            </a>
+
+            <!-- Armazenista Card -->
+            <a href="stock.html" class="role-card" tabindex="0">
+              <div class="role-card-content">
+                <div class="role-card-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                    <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                    <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                  </svg>
+                </div>
+                <div class="role-card-name">Armazenista</div>
+                <div class="role-card-desc">Inventário, caves, stock crítico e operações de armazém</div>
+              </div>
+              <div class="role-card-bottom">
+                <span class="role-card-access">Inventário</span>
+                <svg class="role-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                  <path d="M5 12h14M12 5l7 7-7 7"></path>
+                </svg>
+              </div>
+            </a>
+          </div>
         </div>
       </main>
 
@@ -468,8 +779,8 @@
           <span>Vinha D'Ouro</span> · Sistema de Gestão de Vinhos ·
           Pedro Gomes - Eduardo Lourenço · <span>Universidade Lusófona</span>
         </p>
-        <p style="font-size: 11px; margin-top: var(--sp-3);">
-          <span style="color: var(--accent-gold);">v2.0</span> — Enhanced UX · Accessibility · Responsive Design
+        <p style="font-size: 11px;">
+          <span style="color: var(--accent-gold);">v2.0</span> — Premium UX · Accessibility · Responsive Design
         </p>
       </div>
     </div>
