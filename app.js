@@ -784,6 +784,20 @@ async function saveStock() {
 }
 
 /* ══════════════════════════════════════════════
+   12. WINE BOTTLE IMAGE SELECTOR
+   ══════════════════════════════════════════════ */
+function getWineBottleImage(tipo) {
+  const images = {
+    'Tinto': 'https://images.vivino.com/thumbs/Apnck_K8DkwQOqmJlsYPTg_375x500.jpg',
+    'Branco': 'https://images.vivino.com/thumbs/Lhkq9Y_HQ3mmxMMbPJxm8w_375x500.jpg',
+    'Rosé': 'https://images.vivino.com/thumbs/VB0IhqGGRF6g4BPkRivenw_375x500.jpg',
+    'Espumante': 'https://images.vivino.com/thumbs/U-Gvf5c4TKIN-7FmAUCuuA_375x500.jpg',
+    'Porto': 'https://images.vivino.com/thumbs/Hh_a0gfRReGI7AEVDZnYBA_375x500.jpg'
+  };
+  return images[tipo] || images['Tinto'];
+}
+
+/* ══════════════════════════════════════════════
    13. WINE BOTTLE SVG ART
    ══════════════════════════════════════════════ */
 function wineBottleSVG(tipo) {
@@ -878,6 +892,7 @@ function renderCatalog(filter = 'todos') {
     const producer = (v.produtor || '').length > 20 ? (v.produtor || '').slice(0, 18) + '…' : (v.produtor || '');
     return `<div class="wine-card wine-card-${tc}${oos ? ' out-of-stock' : ''}" onclick="${oos ? 'void(0)' : `addToCart(${v.id})`}">
       <div class="wine-card-visual">
+        <img src="${getWineBottleImage(v.tipo)}" alt="${v.nome}" class="wine-bottle-image" loading="lazy">
         ${wineBottleSVG(v.tipo)}
         ${v.anoColheita ? `<div class="wine-vintage-badge">${v.anoColheita}</div>` : ''}
         <div class="wine-type-pill">${v.tipo || ''}</div>

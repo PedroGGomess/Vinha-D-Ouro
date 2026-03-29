@@ -9,7 +9,7 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Cormorant+Garamond:ital@0;1&display=swap" rel="stylesheet">
 
     <style>
         * {
@@ -28,97 +28,127 @@
             background: #09080c;
             color: #f5f5f5;
             display: flex;
-            align-items: center;
-            justify-content: center;
+            overflow: hidden;
             position: relative;
-            min-height: 100vh;
-            overflow-x: hidden;
         }
 
-        /* Animated background orbs - gold and wine */
-        .orb {
-            position: fixed;
-            border-radius: 50%;
-            filter: blur(100px);
-            opacity: 0.06;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        .orb-gold {
-            width: 500px;
-            height: 500px;
-            background: radial-gradient(circle, #C9A84C, transparent);
-            top: -15%;
-            left: -10%;
-            animation: float-gold 28s ease-in-out infinite;
-        }
-
-        .orb-wine {
-            width: 450px;
-            height: 450px;
-            background: radial-gradient(circle, #9B2335, transparent);
-            bottom: -10%;
-            right: -15%;
-            animation: float-wine 32s ease-in-out infinite;
-        }
-
-        @keyframes float-gold {
-            0%, 100% { transform: translate(0, 0); }
-            25% { transform: translate(20px, -30px); }
-            50% { transform: translate(-15px, -50px); }
-            75% { transform: translate(30px, 10px); }
-        }
-
-        @keyframes float-wine {
-            0%, 100% { transform: translate(0, 0); }
-            25% { transform: translate(-25px, 40px); }
-            50% { transform: translate(35px, -20px); }
-            75% { transform: translate(-10px, -40px); }
-        }
-
-        /* Gold top accent line */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, transparent, #C9A84C, transparent);
-            z-index: 100;
-            box-shadow: 0 0 20px rgba(201, 168, 76, 0.3);
-        }
-
-        .login-wrapper {
-            position: relative;
-            z-index: 10;
+        /* ===== SPLIT LAYOUT ===== */
+        .login-container {
+            display: flex;
             width: 100%;
-            max-width: 420px;
-            padding: 24px;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Left Panel: Brand & Atmosphere */
+        .left-panel {
+            flex: 1;
+            background: linear-gradient(135deg, #09080c 0%, #1a0812 50%, #0d0609 100%);
+            position: relative;
+            overflow: hidden;
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
+            padding: 60px 40px;
+            min-height: 100vh;
         }
 
-        /* Brand section */
-        .brand {
+        /* Floating particles animation */
+        @keyframes float-particle {
+            0%, 100% {
+                transform: translate(0, 0) scale(1);
+                opacity: 0.4;
+            }
+            50% {
+                transform: translate(var(--tx), var(--ty)) scale(0.8);
+                opacity: 0.2;
+            }
+        }
+
+        .particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: #C9A227;
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0.3;
+        }
+
+        .particle:nth-child(1) { --tx: 80px; --ty: -100px; animation: float-particle 12s ease-in-out infinite; left: 20%; top: 20%; }
+        .particle:nth-child(2) { --tx: -60px; --ty: 120px; animation: float-particle 14s ease-in-out infinite 1s; left: 30%; top: 50%; }
+        .particle:nth-child(3) { --tx: 100px; --ty: 80px; animation: float-particle 16s ease-in-out infinite 2s; left: 60%; top: 30%; }
+        .particle:nth-child(4) { --tx: -90px; --ty: -60px; animation: float-particle 18s ease-in-out infinite 0.5s; left: 70%; top: 70%; }
+        .particle:nth-child(5) { --tx: 70px; --ty: 110px; animation: float-particle 15s ease-in-out infinite 1.5s; left: 15%; top: 60%; }
+        .particle:nth-child(6) { --tx: -100px; --ty: 70px; animation: float-particle 17s ease-in-out infinite 2.5s; left: 80%; top: 40%; }
+
+        /* Brand content (left panel) */
+        .brand-section {
             text-align: center;
-            margin-bottom: 48px;
-            animation: fadeInDown 0.7s ease-out;
+            z-index: 10;
+            animation: fadeInDown 0.9s ease-out;
         }
 
-        .wine-glass {
-            width: 64px;
-            height: 64px;
-            margin: 0 auto 24px;
-            filter: drop-shadow(0 4px 12px rgba(201, 168, 76, 0.2));
+        .wine-glass-large {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 40px;
+            filter: drop-shadow(0 8px 24px rgba(201, 162, 39, 0.3));
+            animation: glass-float 4s ease-in-out infinite;
+        }
+
+        @keyframes glass-float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        .brand-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 72px;
+            font-weight: 700;
+            letter-spacing: -1.5px;
+            color: #f5f5f5;
+            margin-bottom: 12px;
+            line-height: 1;
+        }
+
+        .brand-tagline {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 24px;
+            font-style: italic;
+            font-weight: 400;
+            color: #C9A227;
+            letter-spacing: 0.5px;
+            margin-bottom: 32px;
+        }
+
+        /* Decorative gold lines */
+        .decoration-line {
+            width: 60px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #C9A227, transparent);
+            margin: 32px auto;
+            opacity: 0.6;
+        }
+
+        .brand-description {
+            font-size: 14px;
+            color: #b0a080;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-weight: 500;
+            opacity: 0.8;
         }
 
         @keyframes fadeInDown {
             from {
                 opacity: 0;
-                transform: translateY(-16px);
+                transform: translateY(-30px);
             }
             to {
                 opacity: 1;
@@ -126,49 +156,40 @@
             }
         }
 
-        .brand h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: 48px;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-            margin-bottom: 8px;
-            color: #f5f5f5;
+        /* Right Panel: Login Form */
+        .right-panel {
+            flex: 1;
+            background: #050203;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 60px;
+            position: relative;
+            overflow-y: auto;
         }
 
-        .brand p {
-            font-size: 13px;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            color: #999;
-            font-weight: 500;
-            margin-bottom: 12px;
+        /* Right panel decorative top accent */
+        .right-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #C9A227, transparent);
+            opacity: 0.5;
         }
 
-        .brand .university {
-            font-size: 10px;
-            letter-spacing: 1px;
-            color: #666;
-            text-transform: uppercase;
-            margin-top: 8px;
-        }
-
-        /* Glassmorphism login card */
-        .login-card {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(201, 168, 76, 0.12);
-            border-radius: 24px;
-            padding: 40px 32px;
+        .login-form-wrapper {
             width: 100%;
-            box-shadow: 0 0 1px rgba(201, 168, 76, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.03);
-            margin-bottom: 32px;
-            animation: fadeInUp 0.7s ease-out 0.1s both;
+            max-width: 380px;
+            animation: fadeInUp 0.9s ease-out 0.1s both;
         }
 
         @keyframes fadeInUp {
             from {
                 opacity: 0;
-                transform: translateY(16px);
+                transform: translateY(30px);
             }
             to {
                 opacity: 1;
@@ -176,45 +197,70 @@
             }
         }
 
-        /* Form styling */
+        .form-header {
+            margin-bottom: 36px;
+        }
+
+        .form-header h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+            color: #f5f5f5;
+            margin-bottom: 8px;
+        }
+
+        .form-header p {
+            font-size: 13px;
+            color: #888;
+            letter-spacing: 0.5px;
+        }
+
+        /* Form */
+        .login-form {
+            margin-bottom: 32px;
+        }
+
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 24px;
         }
 
         label {
             display: block;
             font-size: 11px;
             font-weight: 600;
-            letter-spacing: 1px;
+            letter-spacing: 0.8px;
             text-transform: uppercase;
-            color: #999;
-            margin-bottom: 8px;
+            color: #888;
+            margin-bottom: 10px;
         }
 
         input[type="text"],
         input[type="password"] {
             width: 100%;
-            padding: 12px 14px;
+            padding: 14px 16px;
             background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(201, 168, 76, 0.15);
-            border-radius: 12px;
+            border: 1.5px solid rgba(201, 162, 39, 0.12);
+            border-radius: 10px;
             font-family: 'Inter', sans-serif;
             font-size: 14px;
             color: #f5f5f5;
-            transition: all 0.25s ease;
+            transition: all 0.3s ease;
             outline: none;
+            letter-spacing: 0.3px;
         }
 
         input[type="text"]::placeholder,
         input[type="password"]::placeholder {
-            color: #666;
+            color: #555;
+            font-weight: 400;
         }
 
         input[type="text"]:focus,
         input[type="password"]:focus {
-            background: rgba(201, 168, 76, 0.06);
-            border-color: #C9A84C;
-            box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.08);
+            background: rgba(201, 162, 39, 0.04);
+            border-color: #C9A227;
+            box-shadow: 0 0 0 4px rgba(201, 162, 39, 0.06);
         }
 
         /* Error message */
@@ -222,11 +268,11 @@
             display: none;
             background: rgba(155, 35, 53, 0.08);
             border: 1px solid rgba(155, 35, 53, 0.25);
-            border-radius: 12px;
+            border-radius: 10px;
             padding: 12px 14px;
             margin-bottom: 20px;
             font-size: 12px;
-            color: #ff7a7a;
+            color: #ff9a9a;
             animation: slideInDown 0.3s ease-out;
         }
 
@@ -237,7 +283,7 @@
         @keyframes slideInDown {
             from {
                 opacity: 0;
-                transform: translateY(-8px);
+                transform: translateY(-10px);
             }
             to {
                 opacity: 1;
@@ -248,10 +294,10 @@
         /* Submit button */
         .btn-login {
             width: 100%;
-            padding: 12px 20px;
+            padding: 14px 20px;
             background: linear-gradient(135deg, #9B2335 0%, #6B1825 100%);
             border: none;
-            border-radius: 12px;
+            border-radius: 10px;
             font-family: 'Inter', sans-serif;
             font-size: 13px;
             font-weight: 600;
@@ -259,14 +305,14 @@
             text-transform: uppercase;
             color: #f5f5f5;
             cursor: pointer;
-            transition: all 0.25s ease;
-            box-shadow: 0 4px 12px rgba(155, 35, 53, 0.2);
-            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(155, 35, 53, 0.25);
+            margin-bottom: 28px;
         }
 
         .btn-login:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 6px 20px rgba(155, 35, 53, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 28px rgba(155, 35, 53, 0.35);
         }
 
         .btn-login:active {
@@ -280,9 +326,8 @@
 
         /* Demo credentials section */
         .demo-section {
-            border-top: 1px solid rgba(201, 168, 76, 0.08);
-            padding-top: 20px;
-            animation: fadeInUp 0.7s ease-out 0.2s both;
+            border-top: 1px solid rgba(201, 162, 39, 0.1);
+            padding-top: 28px;
         }
 
         .demo-label {
@@ -291,44 +336,71 @@
             letter-spacing: 1.2px;
             text-transform: uppercase;
             color: #666;
-            margin-bottom: 14px;
+            margin-bottom: 16px;
             text-align: center;
             font-weight: 600;
         }
 
-        .demo-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
+        .demo-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
         }
 
-        .btn-demo {
-            padding: 10px 12px;
-            background: rgba(201, 168, 76, 0.06);
-            border: 1px solid rgba(201, 168, 76, 0.15);
+        .demo-card {
+            background: rgba(201, 162, 39, 0.04);
+            border: 1.5px solid rgba(201, 162, 39, 0.12);
             border-radius: 10px;
-            font-family: 'Inter', sans-serif;
-            font-size: 11px;
-            font-weight: 600;
-            color: #C9A84C;
+            padding: 16px 12px;
+            text-align: center;
             cursor: pointer;
-            transition: all 0.25s ease;
-            letter-spacing: 0.4px;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+            position: relative;
+            overflow: hidden;
         }
 
-        .btn-demo:hover {
-            background: rgba(201, 168, 76, 0.12);
-            border-color: #C9A84C;
+        .demo-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(201, 162, 39, 0.08);
+            transition: left 0.3s ease;
+            z-index: -1;
         }
 
-        .btn-demo:active {
-            transform: translateY(-1px);
+        .demo-card:hover {
+            border-color: #C9A227;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 16px rgba(201, 162, 39, 0.12);
+        }
+
+        .demo-card:hover::before {
+            left: 0;
+        }
+
+        .demo-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .demo-role {
+            font-size: 12px;
+            font-weight: 600;
+            color: #C9A227;
+            letter-spacing: 0.3px;
+            margin-bottom: 4px;
+            line-height: 1.3;
         }
 
         .demo-cred {
-            font-size: 10px;
+            font-size: 9px;
             color: #666;
-            margin-top: 2px;
+            letter-spacing: 0.2px;
         }
 
         /* Footer */
@@ -337,160 +409,294 @@
             bottom: 0;
             left: 0;
             right: 0;
-            padding: 20px;
+            padding: 16px 20px;
             text-align: center;
             font-size: 9px;
             letter-spacing: 0.8px;
             color: #555;
             z-index: 5;
-            background: linear-gradient(to top, rgba(9, 8, 12, 0.9), transparent);
+            background: linear-gradient(to top, rgba(5, 2, 3, 0.95), transparent);
             pointer-events: none;
         }
 
-        .footer-project {
+        .footer-text {
             display: block;
-            margin-bottom: 4px;
             text-transform: uppercase;
+            font-weight: 500;
         }
 
-        .footer-authors {
-            display: block;
-            color: #444;
-            font-size: 8px;
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1024px) {
+            .left-panel {
+                padding: 50px 30px;
+            }
+
+            .right-panel {
+                padding: 40px 50px;
+            }
+
+            .brand-name {
+                font-size: 56px;
+            }
+
+            .brand-tagline {
+                font-size: 20px;
+            }
+
+            .wine-glass-large {
+                width: 100px;
+                height: 100px;
+                margin-bottom: 30px;
+            }
         }
 
-        /* Responsive */
-        @media (max-width: 600px) {
-            .login-wrapper {
-                padding: 16px;
+        @media (max-width: 768px) {
+            /* Stack vertically */
+            .login-container {
+                flex-direction: column;
+                height: auto;
+                min-height: 100vh;
+            }
+
+            .left-panel {
+                flex: 0 0 auto;
+                min-height: 280px;
+                padding: 40px 20px;
+                justify-content: center;
+            }
+
+            .right-panel {
+                flex: 1;
+                padding: 40px 20px 100px;
+                min-height: auto;
+            }
+
+            .brand-name {
+                font-size: 48px;
+            }
+
+            .brand-tagline {
+                font-size: 18px;
+                margin-bottom: 24px;
+            }
+
+            .wine-glass-large {
+                width: 90px;
+                height: 90px;
+                margin-bottom: 24px;
+            }
+
+            .demo-cards {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .login-form-wrapper {
                 max-width: 100%;
-                margin-bottom: 100px;
             }
 
-            .brand {
-                margin-bottom: 40px;
+            .form-header h2 {
+                font-size: 28px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                overflow-y: auto;
             }
 
-            .brand h1 {
-                font-size: 36px;
+            .login-container {
+                min-height: auto;
             }
 
-            .login-card {
-                padding: 32px 24px;
+            .left-panel {
+                min-height: 240px;
+                padding: 32px 16px;
+            }
+
+            .right-panel {
+                padding: 32px 16px 100px;
+            }
+
+            .brand-name {
+                font-size: 40px;
+            }
+
+            .brand-tagline {
+                font-size: 16px;
+                margin-bottom: 20px;
+            }
+
+            .wine-glass-large {
+                width: 80px;
+                height: 80px;
+                margin-bottom: 20px;
+            }
+
+            .decoration-line {
+                width: 50px;
+                margin: 24px auto;
+            }
+
+            .form-header h2 {
+                font-size: 24px;
+            }
+
+            .demo-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .demo-card {
+                padding: 14px 12px;
+            }
+
+            .demo-icon {
+                font-size: 20px;
+                margin-bottom: 6px;
+            }
+
+            .demo-role {
+                font-size: 11px;
             }
 
             .footer {
-                padding: 16px;
+                padding: 12px 16px;
                 font-size: 8px;
             }
         }
 
-        @media (max-width: 400px) {
-            .brand h1 {
-                font-size: 28px;
-            }
-
-            .wine-glass {
-                width: 48px;
-                height: 48px;
-            }
-
-            .login-card {
-                padding: 24px 16px;
-            }
+        /* Gold top border accent */
+        .login-container::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #C9A227, transparent);
+            z-index: 100;
+            box-shadow: 0 0 16px rgba(201, 162, 39, 0.4);
         }
     </style>
 </head>
 <body>
-    <!-- Animated background orbs -->
-    <div class="orb orb-gold"></div>
-    <div class="orb orb-wine"></div>
+    <div class="login-container">
+        <!-- LEFT PANEL: Brand & Atmosphere -->
+        <div class="left-panel">
+            <!-- Floating particles -->
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
 
-    <div class="login-wrapper">
-        <!-- Brand -->
-        <div class="brand">
-            <svg class="wine-glass" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                    <linearGradient id="glassGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" style="stop-color:#C9A84C;stop-opacity:1" />
-                        <stop offset="100%" style="stop-color:#9B2335;stop-opacity:0.8" />
-                    </linearGradient>
-                </defs>
-                <!-- Wine glass bowl -->
-                <path d="M 32 20 L 28 55 Q 28 72 50 78 Q 72 72 72 55 L 68 20 Z" fill="none" stroke="url(#glassGradient)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-                <!-- Stem -->
-                <line x1="50" y1="78" x2="50" y2="88" stroke="url(#glassGradient)" stroke-width="2" stroke-linecap="round"/>
-                <!-- Base -->
-                <ellipse cx="50" cy="90" rx="14" ry="3.5" fill="none" stroke="url(#glassGradient)" stroke-width="2"/>
-                <!-- Wine level -->
-                <path d="M 32 58 Q 32 68 50 74 Q 68 68 68 58" fill="url(#glassGradient)" opacity="0.25"/>
-            </svg>
-            <h1>Vinha D'Ouro</h1>
-            <p>Gestao de Vinhos Premium</p>
-            <div class="university">Projeto ADS - Universidade Lusofona</div>
+            <div class="brand-section">
+                <!-- Wine glass SVG -->
+                <svg class="wine-glass-large" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="glassGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#C9A227;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#9B2335;stop-opacity:0.8" />
+                        </linearGradient>
+                    </defs>
+                    <!-- Wine glass bowl -->
+                    <path d="M 32 20 L 28 55 Q 28 72 50 78 Q 72 72 72 55 L 68 20 Z" fill="none" stroke="url(#glassGradient)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <!-- Stem -->
+                    <line x1="50" y1="78" x2="50" y2="88" stroke="url(#glassGradient)" stroke-width="2" stroke-linecap="round"/>
+                    <!-- Base -->
+                    <ellipse cx="50" cy="90" rx="14" ry="3.5" fill="none" stroke="url(#glassGradient)" stroke-width="2"/>
+                    <!-- Wine level -->
+                    <path d="M 32 58 Q 32 68 50 74 Q 68 68 68 58" fill="url(#glassGradient)" opacity="0.3"/>
+                </svg>
+
+                <!-- Brand name -->
+                <h1 class="brand-name">Vinha D'Ouro</h1>
+
+                <!-- Tagline -->
+                <p class="brand-tagline">Gestão de Vinhos Premium</p>
+
+                <!-- Decorative line -->
+                <div class="decoration-line"></div>
+
+                <!-- Description -->
+                <p class="brand-description">Para connoisseurs exigentes</p>
+            </div>
         </div>
 
-        <!-- Login card -->
-        <div class="login-card">
-            <!-- Error display -->
-            <div id="loginError" class="login-error" style="display: none;">
-                <span id="loginErrorMessage"></span>
-            </div>
-
-            <!-- Login form -->
-            <form id="loginForm">
-                <div class="form-group">
-                    <label for="username">Utilizador</label>
-                    <input
-                        type="text"
-                        id="username"
-                        name="username"
-                        placeholder="Utilizador"
-                        autocomplete="username"
-                        required
-                    >
+        <!-- RIGHT PANEL: Login Form -->
+        <div class="right-panel">
+            <div class="login-form-wrapper">
+                <!-- Form header -->
+                <div class="form-header">
+                    <h2>Bem-vindo</h2>
+                    <p>Aceda ao seu sistema de gestão</p>
                 </div>
 
-                <div class="form-group">
-                    <label for="password">Palavra-passe</label>
-                    <input
-                        type="password"
-                        id="password"
-                        name="password"
-                        placeholder="Palavra-passe"
-                        autocomplete="current-password"
-                        required
-                    >
-                </div>
-
-                <button type="submit" class="btn-login">Entrar</button>
-
-                <!-- Demo credentials -->
-                <div class="demo-section">
-                    <span class="demo-label">Demo Credentials</span>
-                    <div class="demo-buttons">
-                        <button type="button" class="btn-demo" onclick="fillLogin('gerente', '1234')">
-                            Gerente / 1234
-                            <div class="demo-cred">Gerente do Sistema</div>
-                        </button>
-                        <button type="button" class="btn-demo" onclick="fillLogin('loja', '1234')">
-                            Loja / 1234
-                            <div class="demo-cred">Ponto de Venda</div>
-                        </button>
-                        <button type="button" class="btn-demo" onclick="fillLogin('stock', '1234')">
-                            Stock / 1234
-                            <div class="demo-cred">Inventario</div>
-                        </button>
+                <!-- Login form -->
+                <form id="loginForm" class="login-form">
+                    <!-- Error display -->
+                    <div id="loginError" class="login-error" style="display: none;">
+                        <span id="loginErrorMessage"></span>
                     </div>
-                </div>
-            </form>
+
+                    <!-- Username field -->
+                    <div class="form-group">
+                        <label for="username">Utilizador</label>
+                        <input
+                            type="text"
+                            id="username"
+                            name="username"
+                            placeholder="Introduza o seu utilizador"
+                            autocomplete="username"
+                            required
+                        >
+                    </div>
+
+                    <!-- Password field -->
+                    <div class="form-group">
+                        <label for="password">Palavra-passe</label>
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            placeholder="Introduza a sua palavra-passe"
+                            autocomplete="current-password"
+                            required
+                        >
+                    </div>
+
+                    <!-- Submit button -->
+                    <button type="submit" class="btn-login">Entrar</button>
+
+                    <!-- Demo credentials section -->
+                    <div class="demo-section">
+                        <span class="demo-label">Credenciais de Demo</span>
+                        <div class="demo-cards">
+                            <button type="button" class="demo-card" onclick="fillLogin('gerente', '1234')">
+                                <span class="demo-icon">👔</span>
+                                <div class="demo-role">Gerente</div>
+                                <div class="demo-cred">gerente / 1234</div>
+                            </button>
+                            <button type="button" class="demo-card" onclick="fillLogin('loja', '1234')">
+                                <span class="demo-icon">🛍️</span>
+                                <div class="demo-role">Loja</div>
+                                <div class="demo-cred">loja / 1234</div>
+                            </button>
+                            <button type="button" class="demo-card" onclick="fillLogin('stock', '1234')">
+                                <span class="demo-icon">📦</span>
+                                <div class="demo-role">Stock</div>
+                                <div class="demo-cred">stock / 1234</div>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 
     <!-- Footer -->
     <div class="footer">
-        <span class="footer-project">Vinha D'Ouro - Projeto ADS - Universidade Lusofona</span>
-        <span class="footer-authors">Pedro Gomes, Eduardo Lourenco e Kollan Intacua</span>
+        <span class="footer-text">Universidade Lusófona · Grupo 13 · ADS</span>
     </div>
 
     <!-- External stylesheets -->

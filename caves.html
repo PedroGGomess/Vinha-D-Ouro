@@ -9,6 +9,591 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+
+  <style>
+    /* 3D Wine Cellar Visualization */
+    .cave-grid-container {
+      perspective: 1200px;
+      width: 100%;
+      min-height: 600px;
+      padding: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(ellipse at 50% 50%, rgba(201, 162, 39, 0.08), rgba(139, 58, 68, 0.05));
+      border-radius: 12px;
+      border: 1px solid rgba(201, 162, 39, 0.15);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cave-grid-container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background:
+        repeating-linear-gradient(
+          90deg,
+          transparent,
+          transparent 1px,
+          rgba(201, 162, 39, 0.02) 1px,
+          rgba(201, 162, 39, 0.02) 2px
+        ),
+        repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 1px,
+          rgba(201, 162, 39, 0.02) 1px,
+          rgba(201, 162, 39, 0.02) 2px
+        );
+      pointer-events: none;
+      border-radius: 12px;
+    }
+
+    .cave-grid {
+      transform-style: preserve-3d;
+      transform: rotateX(12deg) rotateY(-8deg) rotateZ(2deg);
+      position: relative;
+      z-index: 10;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+      gap: 24px;
+      padding: 20px;
+      background: linear-gradient(135deg, rgba(40, 25, 30, 0.7) 0%, rgba(25, 15, 20, 0.8) 100%);
+      border-radius: 8px;
+      border: 2px solid rgba(201, 162, 39, 0.2);
+      box-shadow:
+        inset 0 2px 10px rgba(0, 0, 0, 0.5),
+        0 20px 60px rgba(0, 0, 0, 0.4),
+        0 0 40px rgba(139, 58, 68, 0.15);
+    }
+
+    .cave-row {
+      display: contents;
+    }
+
+    .cave-row-label {
+      grid-column: 1 / -1;
+      padding: 10px 0;
+      font-family: 'Playfair Display', serif;
+      font-size: 14px;
+      font-weight: 600;
+      color: rgba(201, 162, 39, 0.8);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      border-bottom: 1px solid rgba(201, 162, 39, 0.2);
+      margin-bottom: 8px;
+    }
+
+    .cave-slot-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .cave-slot {
+      width: 80px;
+      height: 80px;
+      position: relative;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transform-style: preserve-3d;
+      border-radius: 50%;
+
+      /* Wood texture background */
+      background:
+        linear-gradient(135deg, #6B4423 0%, #8B5A2B 25%, #6B4423 50%, #7A4F28 75%, #5C3D1F 100%);
+      box-shadow:
+        inset -2px -2px 5px rgba(0, 0, 0, 0.6),
+        inset 2px 2px 5px rgba(139, 100, 60, 0.4),
+        0 8px 16px rgba(0, 0, 0, 0.5),
+        0 0 20px rgba(0, 0, 0, 0.3);
+
+      /* Circular hole appearance */
+      border: 3px solid rgba(60, 40, 25, 0.8);
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .cave-slot::before {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.1), transparent);
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    /* Empty slot - dark circular hole */
+    .cave-slot:not(.occupied)::after {
+      content: '';
+      position: absolute;
+      width: 65px;
+      height: 65px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 40% 40%, rgba(20, 10, 5, 0.9), rgba(0, 0, 0, 0.98));
+      box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.9);
+      z-index: 1;
+    }
+
+    /* Wine bottle visualization */
+    .cave-slot.occupied {
+      background: linear-gradient(135deg, #5A3A25 0%, #7A5A3F 50%, #4A3A25 100%);
+    }
+
+    .cave-slot.occupied::after {
+      content: '';
+      position: absolute;
+      width: 60px;
+      height: 72px;
+      border-radius: 50% 50% 45% 45%;
+      z-index: 2;
+      box-shadow:
+        inset -2px 0 4px rgba(0, 0, 0, 0.4),
+        inset 2px 0 4px rgba(255, 255, 255, 0.1),
+        0 4px 8px rgba(0, 0, 0, 0.6);
+      background-color: #8B0000;
+      animation: bottleGlow 0.3s ease-out;
+    }
+
+    /* Color coding for wine types */
+    .cave-slot.occupied[data-wine-type="tinto"]::after {
+      background: linear-gradient(135deg, #8B0000 0%, #A52A2A 50%, #6B0000 100%);
+      box-shadow:
+        inset -2px 0 4px rgba(0, 0, 0, 0.4),
+        inset 2px 0 4px rgba(255, 200, 200, 0.1),
+        0 4px 12px rgba(139, 0, 0, 0.6);
+    }
+
+    .cave-slot.occupied[data-wine-type="branco"]::after {
+      background: linear-gradient(135deg, #D4AF37 0%, #FFE4B5 50%, #B8860B 100%);
+      box-shadow:
+        inset -2px 0 4px rgba(0, 0, 0, 0.2),
+        inset 2px 0 4px rgba(255, 255, 255, 0.3),
+        0 4px 12px rgba(212, 175, 55, 0.5);
+    }
+
+    .cave-slot.occupied[data-wine-type="rosé"]::after {
+      background: linear-gradient(135deg, #E75480 0%, #FF69B4 50%, #C71585 100%);
+      box-shadow:
+        inset -2px 0 4px rgba(0, 0, 0, 0.2),
+        inset 2px 0 4px rgba(255, 200, 220, 0.2),
+        0 4px 12px rgba(231, 84, 128, 0.6);
+    }
+
+    .cave-slot.occupied[data-wine-type="espumante"]::after {
+      background: linear-gradient(135deg, #C9A227 0%, #FFD700 50%, #B8860B 100%);
+      box-shadow:
+        inset -2px 0 4px rgba(0, 0, 0, 0.3),
+        inset 2px 0 4px rgba(255, 255, 200, 0.3),
+        0 4px 12px rgba(201, 162, 39, 0.7);
+      filter: drop-shadow(0 0 8px rgba(201, 162, 39, 0.4));
+    }
+
+    @keyframes bottleGlow {
+      from {
+        transform: scaleY(0.9);
+      }
+      to {
+        transform: scaleY(1);
+      }
+    }
+
+    /* Hover effect */
+    .cave-slot:hover {
+      transform:
+        translateY(-12px)
+        scaleX(1.15)
+        scaleY(1.15)
+        rotateX(5deg)
+        rotateY(-5deg);
+      box-shadow:
+        inset -2px -2px 5px rgba(0, 0, 0, 0.6),
+        inset 2px 2px 5px rgba(139, 100, 60, 0.4),
+        0 12px 24px rgba(0, 0, 0, 0.6),
+        0 0 30px rgba(201, 162, 39, 0.4);
+    }
+
+    .cave-slot:hover::before {
+      background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.2), transparent);
+    }
+
+    /* Selected slot */
+    .cave-slot.selected {
+      transform:
+        translateY(-16px)
+        scaleX(1.2)
+        scaleY(1.2)
+        rotateX(8deg)
+        rotateY(-8deg);
+      border-color: #C9A227;
+      box-shadow:
+        inset -2px -2px 5px rgba(0, 0, 0, 0.6),
+        inset 2px 2px 5px rgba(139, 100, 60, 0.4),
+        0 16px 32px rgba(0, 0, 0, 0.7),
+        0 0 40px rgba(201, 162, 39, 0.8),
+        inset 0 0 20px rgba(201, 162, 39, 0.3);
+    }
+
+    .cave-slot.selected::before {
+      background: radial-gradient(circle at 30% 30%, rgba(201, 162, 39, 0.4), rgba(201, 162, 39, 0.1));
+      box-shadow: inset 0 0 20px rgba(201, 162, 39, 0.3);
+    }
+
+    .cave-slot-label {
+      font-size: 12px;
+      color: rgba(201, 162, 39, 0.7);
+      font-weight: 600;
+      letter-spacing: 1px;
+      font-family: 'Inter', sans-serif;
+      text-transform: uppercase;
+    }
+
+    .cave-slot-year {
+      font-size: 10px;
+      color: rgba(201, 162, 39, 0.5);
+      font-family: 'Cormorant Garamond', serif;
+      margin-top: 2px;
+      min-height: 14px;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .cave-grid-container {
+        min-height: 400px;
+        padding: 20px;
+      }
+
+      .cave-grid {
+        gap: 16px;
+        padding: 12px;
+      }
+
+      .cave-slot {
+        width: 60px;
+        height: 60px;
+      }
+
+      .cave-slot::after {
+        width: 48px;
+        height: 54px;
+      }
+
+      .cave-slot:not(.occupied)::after {
+        width: 50px;
+        height: 50px;
+      }
+
+      .cave-slot-label {
+        font-size: 10px;
+      }
+    }
+
+    /* Caves layout tweaks for 3D showcase */
+    .caves-layout {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      gap: 32px;
+      align-items: start;
+    }
+
+    .cave-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .cave-selector {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .cave-selector-btn {
+      padding: 10px 12px;
+      border: 2px solid rgba(201, 162, 39, 0.2);
+      background: rgba(201, 162, 39, 0.05);
+      color: rgba(201, 162, 39, 0.7);
+      border-radius: 6px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 13px;
+    }
+
+    .cave-selector-btn:hover {
+      border-color: rgba(201, 162, 39, 0.4);
+      background: rgba(201, 162, 39, 0.1);
+      color: rgba(201, 162, 39, 0.9);
+    }
+
+    .cave-selector-btn.active {
+      border-color: #C9A227;
+      background: rgba(201, 162, 39, 0.15);
+      color: #C9A227;
+      box-shadow: 0 0 12px rgba(201, 162, 39, 0.3);
+    }
+
+    .cave-info-card {
+      background: rgba(201, 162, 39, 0.05);
+      border: 1px solid rgba(201, 162, 39, 0.15);
+      border-radius: 8px;
+      padding: 16px;
+      backdrop-filter: blur(10px);
+    }
+
+    .cave-stat-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .cave-stat-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .cave-stat-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .stat-lbl {
+      font-size: 11px;
+      color: rgba(201, 162, 39, 0.6);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 600;
+    }
+
+    .stat-val {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      color: rgba(201, 162, 39, 0.9);
+      font-weight: 600;
+    }
+
+    .cave-free-color {
+      color: #7CFF6D;
+    }
+
+    .cave-stat-progress {
+      width: 100%;
+      height: 6px;
+      background: rgba(139, 58, 68, 0.2);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .cave-stat-progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #7CFF6D, #C9A227, #8B3A44);
+      border-radius: 3px;
+      transition: width 0.3s ease;
+      width: 0%;
+    }
+
+    .slot-info-section {
+      background: rgba(201, 162, 39, 0.05);
+      border: 1px solid rgba(201, 162, 39, 0.15);
+      border-radius: 8px;
+      padding: 16px;
+      backdrop-filter: blur(10px);
+    }
+
+    .slot-info-section h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 14px;
+      color: rgba(201, 162, 39, 0.9);
+      margin: 0 0 12px 0;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .slot-info-content {
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.7);
+      line-height: 1.6;
+    }
+
+    .slot-info-empty {
+      color: rgba(201, 162, 39, 0.5);
+      font-style: italic;
+    }
+
+    .slot-info-item {
+      margin-bottom: 8px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(201, 162, 39, 0.1);
+    }
+
+    .slot-info-item:last-child {
+      margin-bottom: 0;
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+
+    .slot-info-label {
+      color: rgba(201, 162, 39, 0.6);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .slot-info-value {
+      color: rgba(255, 255, 255, 0.9);
+      font-weight: 500;
+      font-family: 'Playfair Display', serif;
+    }
+
+    .slot-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .slot-select-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-select {
+      padding: 8px 10px;
+      background: rgba(139, 58, 68, 0.1);
+      border: 1px solid rgba(201, 162, 39, 0.2);
+      border-radius: 6px;
+      color: rgba(255, 255, 255, 0.8);
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .form-select:hover {
+      border-color: rgba(201, 162, 39, 0.4);
+      background: rgba(139, 58, 68, 0.15);
+    }
+
+    .form-select:focus {
+      outline: none;
+      border-color: #C9A227;
+      background: rgba(139, 58, 68, 0.2);
+      box-shadow: 0 0 8px rgba(201, 162, 39, 0.3);
+    }
+
+    .btn {
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: none;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #C9A227, #E0C140);
+      color: #050203;
+      border: 1px solid #C9A227;
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #E0C140, #FFD700);
+      box-shadow: 0 4px 12px rgba(201, 162, 39, 0.4);
+      transform: translateY(-2px);
+    }
+
+    .btn-danger {
+      background: rgba(139, 58, 68, 0.2);
+      color: #FF6B6B;
+      border: 1px solid rgba(255, 107, 107, 0.3);
+    }
+
+    .btn-danger:hover {
+      background: rgba(139, 58, 68, 0.3);
+      border-color: #FF6B6B;
+      box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+    }
+
+    .btn-sm {
+      padding: 6px 10px;
+      font-size: 12px;
+      width: 100%;
+    }
+
+    .btn.hidden {
+      display: none;
+    }
+
+    /* Page header styling */
+    .page-header {
+      margin-bottom: 32px;
+    }
+
+    .page-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 32px;
+      color: rgba(255, 255, 255, 0.95);
+      margin: 0 0 8px 0;
+      font-weight: 600;
+    }
+
+    .page-subtitle {
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      color: rgba(201, 162, 39, 0.7);
+      margin: 0;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* Responsive for smaller screens */
+    @media (max-width: 1024px) {
+      .caves-layout {
+        grid-template-columns: 1fr;
+        gap: 24px;
+      }
+
+      .cave-grid-container {
+        min-height: 500px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .caves-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .cave-selector {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .page-title {
+        font-size: 24px;
+      }
+    }
+  </style>
 </head>
 <body>
   <a href="#main-content" class="skip-to-content">Saltar para conteúdo principal</a>
