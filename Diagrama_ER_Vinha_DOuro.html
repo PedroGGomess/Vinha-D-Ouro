@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<title>Diagrama ER — Loja de Vinhos Vinha D'Ouro</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #111; font-family: 'Segoe UI', Arial, sans-serif; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; padding: 0; }
+  .container { width: 100%; overflow: auto; }
+  svg text { font-family: 'Segoe UI', Arial, sans-serif; }
+</style>
+</head>
+<body>
+<div class="container">
+<svg xmlns="http://www.w3.org/2000/svg" width="2700" height="1850" viewBox="0 0 2700 1850">
+<defs>
+  <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#2a2a2a" stroke-width="0.8"/>
+  </pattern>
+</defs>
+
+<!-- Dark background with grid -->
+<rect width="2700" height="1850" fill="#1a1a1a"/>
+<rect width="2700" height="1850" fill="url(#grid)"/>
+
+<!-- Title area -->
+<text x="1350" y="45" text-anchor="middle" font-size="22" font-weight="bold" fill="#fff" letter-spacing="1">Diagrama Entidade-Relacionamento — Loja de Vinhos "Vinha D'Ouro"</text>
+<text x="1350" y="72" text-anchor="middle" font-size="13" fill="#888" letter-spacing="0.5">Notação de Chen  •  Base de Dados: loja_vinhos  •  Universidade Lusófona  •  Grupo 13  •  2025/2026</text>
+<text x="1350" y="95" text-anchor="middle" font-size="11" fill="#666" font-style="italic">Regras: Avaliações apenas por compradores  •  Vinhos com múltiplos tamanhos  •  Carrinho de compras</text>
+
+
+<!-- ================================================================ -->
+<!--  LAYOUT:                                                         -->
+<!--  Row 1 (y~250): Avaliacoes                                      -->
+<!--  Row 2 (y~530): Pessoas - Vendas - Itens_Venda - Vinhos         -->
+<!--  Row 3 (y~880): Funcionarios - Log  |  Carrinho  |  Tamanhos    -->
+<!-- ================================================================ -->
+
+
+<!-- ========================================= -->
+<!-- ATTRIBUTE LINES (thin, behind everything) -->
+<!-- ========================================= -->
+
+<!-- Pessoas attributes -->
+<line x1="340" y1="530" x2="118" y2="390" stroke="#ccc" stroke-width="1.2"/>
+<line x1="340" y1="530" x2="60" y2="455" stroke="#ccc" stroke-width="1.2"/>
+<line x1="340" y1="530" x2="42" y2="530" stroke="#ccc" stroke-width="1.2"/>
+<line x1="340" y1="530" x2="60" y2="605" stroke="#ccc" stroke-width="1.2"/>
+<line x1="340" y1="530" x2="120" y2="680" stroke="#ccc" stroke-width="1.2"/>
+<line x1="340" y1="530" x2="220" y2="710" stroke="#ccc" stroke-width="1.2"/>
+<line x1="340" y1="530" x2="135" y2="350" stroke="#ccc" stroke-width="1.2"/>
+
+<!-- Funcionarios attributes -->
+<line x1="340" y1="880" x2="110" y2="760" stroke="#ccc" stroke-width="1.2"/>
+<line x1="340" y1="880" x2="48" y2="835" stroke="#ccc" stroke-width="1.2"/>
+<line x1="340" y1="880" x2="48" y2="925" stroke="#ccc" stroke-width="1.2"/>
+<line x1="340" y1="880" x2="135" y2="1010" stroke="#ccc" stroke-width="1.2"/>
+
+<!-- Vendas attributes -->
+<line x1="870" y1="530" x2="690" y2="365" stroke="#ccc" stroke-width="1.2"/>
+<line x1="870" y1="530" x2="855" y2="335" stroke="#ccc" stroke-width="1.2"/>
+<line x1="870" y1="530" x2="1055" y2="360" stroke="#ccc" stroke-width="1.2"/>
+<line x1="870" y1="530" x2="1075" y2="490" stroke="#ccc" stroke-width="1.2"/>
+<line x1="870" y1="530" x2="1070" y2="620" stroke="#ccc" stroke-width="1.2"/>
+
+<!-- Itens_Venda attributes -->
+<line x1="1400" y1="530" x2="1240" y2="360" stroke="#ccc" stroke-width="1.2"/>
+<line x1="1400" y1="530" x2="1455" y2="330" stroke="#ccc" stroke-width="1.2"/>
+<line x1="1400" y1="530" x2="1545" y2="700" stroke="#ccc" stroke-width="1.2"/>
+<line x1="1400" y1="530" x2="1330" y2="710" stroke="#ccc" stroke-width="1.2"/>
+
+<!-- Vinhos attributes -->
+<line x1="1960" y1="530" x2="2220" y2="365" stroke="#ccc" stroke-width="1.2"/>
+<line x1="1960" y1="530" x2="2285" y2="445" stroke="#ccc" stroke-width="1.2"/>
+<line x1="1960" y1="530" x2="2300" y2="530" stroke="#ccc" stroke-width="1.2"/>
+<line x1="1960" y1="530" x2="2285" y2="620" stroke="#ccc" stroke-width="1.2"/>
+<line x1="1960" y1="530" x2="2200" y2="700" stroke="#ccc" stroke-width="1.2"/>
+<line x1="1960" y1="530" x2="1860" y2="335" stroke="#ccc" stroke-width="1.2"/>
+<line x1="1960" y1="530" x2="2040" y2="300" stroke="#ccc" stroke-width="1.2"/>
+<line x1="1960" y1="530" x2="1745" y2="410" stroke="#ccc" stroke-width="1.2"/>
+
+<!-- Avaliacoes attributes -->
+<line x1="1160" y1="235" x2="935" y2="165" stroke="#ccc" stroke-width="1.2"/>
+<line x1="1160" y1="235" x2="1100" y2="155" stroke="#ccc" stroke-width="1.2"/>
+<line x1="1160" y1="235" x2="1305" y2="155" stroke="#ccc" stroke-width="1.2"/>
+<line x1="1160" y1="235" x2="1445" y2="175" stroke="#ccc" stroke-width="1.2"/>
+
+<!-- Log_Operacoes attributes -->
+<line x1="820" y1="880" x2="685" y2="1040" stroke="#ccc" stroke-width="1.2"/>
+<line x1="820" y1="880" x2="865" y2="1065" stroke="#ccc" stroke-width="1.2"/>
+<line x1="820" y1="880" x2="1065" y2="1010" stroke="#ccc" stroke-width="1.2"/>
+<line x1="820" y1="880" x2="1070" y2="895" stroke="#ccc" stroke-width="1.2"/>
+
+<!-- Carrinho attributes -->
+<line x1="1400" y1="880" x2="1205" y2="790" stroke="#ccc" stroke-width="1.2"/>
+<line x1="1400" y1="880" x2="1205" y2="880" stroke="#ccc" stroke-width="1.2"/>
+<line x1="1400" y1="880" x2="1205" y2="975" stroke="#ccc" stroke-width="1.2"/>
+<line x1="1400" y1="880" x2="1400" y2="1050" stroke="#ccc" stroke-width="1.2"/>
+<line x1="1400" y1="880" x2="1585" y2="1015" stroke="#ccc" stroke-width="1.2"/>
+
+<!-- Tamanhos attributes -->
+<line x1="1960" y1="880" x2="1765" y2="790" stroke="#ccc" stroke-width="1.2"/>
+<line x1="1960" y1="880" x2="1765" y2="880" stroke="#ccc" stroke-width="1.2"/>
+<line x1="1960" y1="880" x2="1765" y2="975" stroke="#ccc" stroke-width="1.2"/>
+<line x1="1960" y1="880" x2="1960" y2="1050" stroke="#ccc" stroke-width="1.2"/>
+<line x1="1960" y1="880" x2="2165" y2="975" stroke="#ccc" stroke-width="1.2"/>
+<line x1="1960" y1="880" x2="2165" y2="880" stroke="#ccc" stroke-width="1.2"/>
+
+
+<!-- ========================================= -->
+<!-- RELATIONSHIP LINES (thicker)              -->
+<!-- ========================================= -->
+
+<!-- Pessoas -- REALIZA -- Vendas -->
+<line x1="340" y1="530" x2="605" y2="530" stroke="#ddd" stroke-width="2"/>
+<line x1="605" y1="530" x2="870" y2="530" stroke="#ddd" stroke-width="2"/>
+
+<!-- Vendas -- CONTEM -- Itens_Venda -->
+<line x1="870" y1="530" x2="1135" y2="530" stroke="#ddd" stroke-width="2"/>
+<line x1="1135" y1="530" x2="1400" y2="530" stroke="#ddd" stroke-width="2"/>
+
+<!-- Itens_Venda -- REFERE -- Vinhos -->
+<line x1="1400" y1="530" x2="1680" y2="530" stroke="#ddd" stroke-width="2"/>
+<line x1="1680" y1="530" x2="1960" y2="530" stroke="#ddd" stroke-width="2"/>
+
+<!-- Pessoas -- É_UMA -- Funcionarios -->
+<line x1="340" y1="530" x2="340" y2="705" stroke="#ddd" stroke-width="2"/>
+<line x1="340" y1="705" x2="340" y2="880" stroke="#ddd" stroke-width="2"/>
+
+<!-- Funcionarios -- REGISTA -- Log_Operacoes -->
+<line x1="340" y1="880" x2="580" y2="880" stroke="#ddd" stroke-width="2"/>
+<line x1="580" y1="880" x2="820" y2="880" stroke="#ddd" stroke-width="2"/>
+
+<!-- Funcionarios -- PROCESSA -- Vendas -->
+<line x1="340" y1="880" x2="630" y2="755" stroke="#ddd" stroke-width="2"/>
+<line x1="630" y1="755" x2="870" y2="530" stroke="#ddd" stroke-width="2" stroke-dasharray="8,4"/>
+
+<!-- Vendas -- ORIGINA -- Avaliacoes -->
+<line x1="870" y1="530" x2="870" y2="385" stroke="#ddd" stroke-width="2"/>
+<line x1="870" y1="385" x2="1160" y2="235" stroke="#ddd" stroke-width="2"/>
+
+<!-- Avaliacoes -- SOBRE -- Vinhos -->
+<line x1="1160" y1="235" x2="1650" y2="305" stroke="#ddd" stroke-width="2"/>
+<line x1="1650" y1="305" x2="1960" y2="530" stroke="#ddd" stroke-width="2"/>
+
+<!-- Pessoas -- POSSUI -- Carrinho -->
+<line x1="340" y1="530" x2="720" y2="755" stroke="#ddd" stroke-width="2"/>
+<line x1="720" y1="755" x2="1400" y2="880" stroke="#ddd" stroke-width="2"/>
+
+<!-- Vinhos -- TEM -- Tamanhos -->
+<line x1="1960" y1="530" x2="1960" y2="705" stroke="#ddd" stroke-width="2"/>
+<line x1="1960" y1="705" x2="1960" y2="880" stroke="#ddd" stroke-width="2"/>
+
+<!-- Carrinho -- CONVERTE -- Vendas -->
+<line x1="1400" y1="880" x2="1135" y2="755" stroke="#ddd" stroke-width="2" stroke-dasharray="6,3"/>
+<line x1="1135" y1="755" x2="870" y2="530" stroke="#ddd" stroke-width="2" stroke-dasharray="6,3"/>
+
+
+<!-- ========================================= -->
+<!-- CARDINALITY LABELS                        -->
+<!-- ========================================= -->
+
+<!-- Pessoas-REALIZA-Vendas -->
+<text x="454" y="520" text-anchor="middle" font-size="16" font-weight="bold" fill="#fff">1</text>
+<text x="764" y="520" text-anchor="middle" font-size="16" font-weight="bold" fill="#fff">N</text>
+
+<!-- Vendas-CONTEM-Itens -->
+<text x="969" y="520" text-anchor="middle" font-size="16" font-weight="bold" fill="#fff">1</text>
+<text x="1289" y="520" text-anchor="middle" font-size="16" font-weight="bold" fill="#fff">N</text>
+
+<!-- Itens-REFERE-Vinhos -->
+<text x="1514" y="520" text-anchor="middle" font-size="16" font-weight="bold" fill="#fff">N</text>
+<text x="1844" y="520" text-anchor="middle" font-size="16" font-weight="bold" fill="#fff">1</text>
+
+<!-- É_UMA -->
+<text x="355" y="645" text-anchor="middle" font-size="16" font-weight="bold" fill="#fff">1</text>
+<text x="355" y="810" text-anchor="middle" font-size="16" font-weight="bold" fill="#fff">1</text>
+
+<!-- PROCESSA -->
+<text x="455" y="835" text-anchor="middle" font-size="16" font-weight="bold" fill="#fff">1</text>
+<text x="770" y="640" text-anchor="middle" font-size="16" font-weight="bold" fill="#fff">N</text>
+
+<!-- REGISTA -->
+<text x="444" y="870" text-anchor="middle" font-size="16" font-weight="bold" fill="#fff">1</text>
+<text x="734" y="870" text-anchor="middle" font-size="16" font-weight="bold" fill="#fff">N</text>
+
+<!-- ORIGINA -->
+<text x="855" y="445" text-anchor="middle" font-size="16" font-weight="bold" fill="#fff">1</text>
+<text x="1000" y="295" text-anchor="middle" font-size="16" font-weight="bold" fill="#fff">N</text>
+
+<!-- SOBRE -->
+<text x="1320" y="250" text-anchor="middle" font-size="16" font-weight="bold" fill="#fff">N</text>
+<text x="1815" y="400" text-anchor="middle" font-size="16" font-weight="bold" fill="#fff">1</text>
+
+<!-- POSSUI -->
+<text x="460" y="640" text-anchor="middle" font-size="16" font-weight="bold" fill="#fff">1</text>
+<text x="1170" y="845" text-anchor="middle" font-size="16" font-weight="bold" fill="#fff">N</text>
+
+<!-- TEM -->
+<text x="1975" y="645" text-anchor="middle" font-size="16" font-weight="bold" fill="#fff">1</text>
+<text x="1975" y="810" text-anchor="middle" font-size="16" font-weight="bold" fill="#fff">N</text>
+
+<!-- CONVERTE -->
+<text x="1275" y="835" text-anchor="middle" font-size="16" font-weight="bold" fill="#fff">1</text>
+<text x="1000" y="640" text-anchor="middle" font-size="16" font-weight="bold" fill="#fff">1</text>
+
+
+<!-- ========================================= -->
+<!-- ENTITY BOXES (white border, no fill)      -->
+<!-- ========================================= -->
+
+<rect x="258" y="504" width="164" height="52" rx="2" fill="none" stroke="#fff" stroke-width="2"/>
+<text x="340" y="535" text-anchor="middle" dominant-baseline="middle" font-size="17" font-weight="bold" fill="#fff">Pessoas</text>
+
+<rect x="790" y="504" width="160" height="52" rx="2" fill="none" stroke="#fff" stroke-width="2"/>
+<text x="870" y="535" text-anchor="middle" dominant-baseline="middle" font-size="17" font-weight="bold" fill="#fff">Vendas</text>
+
+<rect x="1312" y="504" width="176" height="52" rx="2" fill="none" stroke="#fff" stroke-width="2"/>
+<text x="1400" y="535" text-anchor="middle" dominant-baseline="middle" font-size="17" font-weight="bold" fill="#fff">Itens_Venda</text>
+
+<rect x="1877" y="504" width="166" height="52" rx="2" fill="none" stroke="#fff" stroke-width="2"/>
+<text x="1960" y="535" text-anchor="middle" dominant-baseline="middle" font-size="17" font-weight="bold" fill="#fff">Vinhos</text>
+
+<rect x="248" y="854" width="184" height="52" rx="2" fill="none" stroke="#fff" stroke-width="2"/>
+<text x="340" y="885" text-anchor="middle" dominant-baseline="middle" font-size="17" font-weight="bold" fill="#fff">Funcionários</text>
+
+<rect x="1072" y="209" width="176" height="52" rx="2" fill="none" stroke="#fff" stroke-width="2"/>
+<text x="1160" y="240" text-anchor="middle" dominant-baseline="middle" font-size="17" font-weight="bold" fill="#fff">Avaliações</text>
+
+<rect x="722" y="854" width="196" height="52" rx="2" fill="none" stroke="#fff" stroke-width="2"/>
+<text x="820" y="885" text-anchor="middle" dominant-baseline="middle" font-size="17" font-weight="bold" fill="#fff">Log_Operações</text>
+
+<rect x="1308" y="854" width="184" height="52" rx="2" fill="none" stroke="#fff" stroke-width="2"/>
+<text x="1400" y="885" text-anchor="middle" dominant-baseline="middle" font-size="17" font-weight="bold" fill="#fff">Carrinho</text>
+
+<rect x="1868" y="854" width="184" height="52" rx="2" fill="none" stroke="#fff" stroke-width="2"/>
+<text x="1960" y="885" text-anchor="middle" dominant-baseline="middle" font-size="17" font-weight="bold" fill="#fff">Tamanhos</text>
+
+
+<!-- ========================================= -->
+<!-- RELATIONSHIP DIAMONDS (no fill, white)    -->
+<!-- ========================================= -->
+
+<polygon points="605,498 668,530 605,562 542,530" fill="none" stroke="#fff" stroke-width="1.8"/>
+<text x="605" y="534" text-anchor="middle" dominant-baseline="middle" font-size="12" font-weight="bold" fill="#fff">REALIZA</text>
+
+<polygon points="1135,498 1197,530 1135,562 1073,530" fill="none" stroke="#fff" stroke-width="1.8"/>
+<text x="1135" y="534" text-anchor="middle" dominant-baseline="middle" font-size="12" font-weight="bold" fill="#fff">CONTÉM</text>
+
+<polygon points="1680,498 1742,530 1680,562 1618,530" fill="none" stroke="#fff" stroke-width="1.8"/>
+<text x="1680" y="534" text-anchor="middle" dominant-baseline="middle" font-size="12" font-weight="bold" fill="#fff">REFERE</text>
+
+<polygon points="340,673 395,705 340,737 285,705" fill="none" stroke="#fff" stroke-width="1.8"/>
+<text x="340" y="709" text-anchor="middle" dominant-baseline="middle" font-size="12" font-weight="bold" fill="#fff">É_UMA</text>
+
+<polygon points="630,723 698,755 630,787 562,755" fill="none" stroke="#fff" stroke-width="1.8"/>
+<text x="630" y="759" text-anchor="middle" dominant-baseline="middle" font-size="11" font-weight="bold" fill="#fff">PROCESSA</text>
+
+<polygon points="580,848 642,880 580,912 518,880" fill="none" stroke="#fff" stroke-width="1.8"/>
+<text x="580" y="884" text-anchor="middle" dominant-baseline="middle" font-size="12" font-weight="bold" fill="#fff">REGISTA</text>
+
+<polygon points="870,353 930,385 870,417 810,385" fill="none" stroke="#fff" stroke-width="1.8"/>
+<text x="870" y="389" text-anchor="middle" dominant-baseline="middle" font-size="11" font-weight="bold" fill="#fff">ORIGINA</text>
+
+<polygon points="1650,273 1712,305 1650,337 1588,305" fill="none" stroke="#fff" stroke-width="1.8"/>
+<text x="1650" y="309" text-anchor="middle" dominant-baseline="middle" font-size="12" font-weight="bold" fill="#fff">SOBRE</text>
+
+<polygon points="720,723 782,755 720,787 658,755" fill="none" stroke="#fff" stroke-width="1.8"/>
+<text x="720" y="759" text-anchor="middle" dominant-baseline="middle" font-size="12" font-weight="bold" fill="#fff">POSSUI</text>
+
+<polygon points="1960,673 2015,705 1960,737 1905,705" fill="none" stroke="#fff" stroke-width="1.8"/>
+<text x="1960" y="709" text-anchor="middle" dominant-baseline="middle" font-size="12" font-weight="bold" fill="#fff">TEM</text>
+
+<polygon points="1135,723 1197,755 1135,787 1073,755" fill="none" stroke="#fff" stroke-width="1.8"/>
+<text x="1135" y="759" text-anchor="middle" dominant-baseline="middle" font-size="10" font-weight="bold" fill="#fff">CONVERTE</text>
+
+
+<!-- ========================================= -->
+<!-- ATTRIBUTE ELLIPSES (no fill, white)       -->
+<!-- ========================================= -->
+
+<!-- ====== PESSOAS ====== -->
+<ellipse cx="118" cy="390" rx="72" ry="17" fill="none" stroke="#fff" stroke-width="1.2"/>
+<text x="118" y="394" text-anchor="middle" dominant-baseline="middle" font-size="11" text-decoration="underline" fill="#fff">id_pessoas</text>
+
+<ellipse cx="60" cy="455" rx="45" ry="17" fill="none" stroke="#fff" stroke-width="1.2"/>
+<text x="60" y="459" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="#fff">nome</text>
+
+<ellipse cx="42" cy="530" rx="50" ry="17" fill="none" stroke="#fff" stroke-width="1.2"/>
+<text x="42" y="534" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="#fff">email</text>
+
+<ellipse cx="60" cy="605" rx="58" ry="17" fill="none" stroke="#fff" stroke-width="1.2"/>
+<text x="60" y="609" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="#fff">telefone</text>
+
+<ellipse cx="120" cy="680" rx="35" ry="17" fill="none" stroke="#fff" stroke-width="1.2"/>
+<text x="120" y="684" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="#fff">nif</text>
+
+<ellipse cx="220" cy="710" rx="38" ry="17" fill="none" stroke="#fff" stroke-width="1.2"/>
+<text x="220" y="714" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="#fff">tipo</text>
+
+<ellipse cx="135" cy="350" rx="72" ry="17" fill="none" stroke="#fff" stroke-width="1.2"/>
+<text x="135" y="354" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="#fff">data_registo</text>
+
+
+<!-- ====== FUNCIONARIOS ====== -->
+<ellipse cx="110" cy="760" rx="82" ry="17" fill="none" stroke="#fff" stroke-width="1.2"/>
+<text x="110" y="764" text-anchor="middle" dominant-baseline="middle" font-size="11" text-decoration="underline" fill="#fff">id_funcionarios</text>
+
+<ellipse cx="48" cy="835" rx="48" ry="17" fill="none" stroke="#fff" stroke-width="1.2"/>
+<text x="48" y="839" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="#fff">cargo</text>
+
+<ellipse cx="48" cy="925" rx="52" ry="17" fill="none" stroke="#fff" stroke-width="1.2"/>
+<text x="48" y="929" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="#fff">salario</text>
+
+<ellipse cx="135" cy="1010" rx="38" ry="17" fill="none" stroke="#fff" stroke-width="1.2"/>
+<text x="135" y="1014" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="#fff">ativo</text>
+
+
+<!-- ====== VENDAS ====== -->
+<ellipse cx="690" cy="365" rx="66" ry="17" fill="none" stroke="#fff" stroke-width="1.2"/>
+<text x="690" y="369" text-anchor="middle" dominant-baseline="middle" font-size="11" text-decoration="underline" fill="#fff">id_vendas</text>
+
+<ellipse cx="855" cy="335" rx="72" ry="17" fill="none" stroke="#fff" stroke-width="1.2"/>
+<text x="855" y="339" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="#fff">data_venda</text>
+
+<ellipse cx="1055" cy="360" rx="98" ry="17" fill="none" stroke="#fff" stroke-width="1.2"/>
+<text x="1055" y="364" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="#fff">metodo_pagamento</text>
+
+<ellipse cx="1075" cy="490" rx="50" ry="17" fill="none" stroke="#fff" stroke-width="1.2"/>
+<text x="1075" y="494" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="#fff">estado</text>
+
+<ellipse cx="1070" cy="620" rx="44" ry="17" fill="none" stroke="#fff" stroke-width="1.2"/>
+<text x="1070" y="624" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="#fff">total</text>
+
+
+<!-- ====== ITENS_VENDA ====== -->
+<ellipse cx="1240" cy="360" rx="56" ry="17" fill="none" stroke="#fff" stroke-width="1.2"/>
+<text x="1240" y="364" text-anchor="middle" dominant-baseline="middle" font-size="11" text-decoration="underline" fill="#fff">id_itens</text>
+
+<ellipse cx="1455" cy="330" rx="70" ry="17" fill="none" stroke="#fff" stroke-width="1.2"/>
+<text x="1455" y="334" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="#fff">quantidade</text>
+
+<ellipse cx="1545" cy="700" rx="66" ry="17" fill="none" stroke="#fff" stroke-width="1.2"/>
+<text x="1545" y="704" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="#fff">preco_unit</text>
+
+<ellipse cx="1330" cy="710" rx="58" ry="17" fill="none" stroke="#fff" stroke-width="1.2"/>
+<text x="1330" y="714" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="#fff">subtotal</text>
+
+
+<!-- ====== VINHOS ====== -->
+<ellipse cx="2220" cy="365" rx="68" ry="17" fill="none" stroke="#fff" stroke-width="1.2"/>
+<text x="2220" y="369" text-anchor="middle" dominant-baseline="middle" font-size="11" text-decoration="underline" fill="#fff">id_vinhos</text>
+
+<ellipse cx="2285" cy="445" rx="50" ry="17" fill="none" stroke="#fff" stroke-width="1.2"/>
+<text x="2285" y="449" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="#fff">nome</text>
+
+<ellipse cx="2300" cy="530" rx="42" ry="17" fill="none" stroke="#fff" stroke-width="1.2"/>
+<text x="2300" y="534" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="#fff">tipo</text>
+
+<ellipse cx="2285" cy="620" rx="52" ry="17" fill="none" stroke="#fff" stroke-width="1.2"/>
+<text x="2285" y="624" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="#fff">regiao</text>
+
+<ellipse cx="2200" cy="700" rx="42" ry="17" fill="none" stroke="#fff" stroke-width="1.2"/>
+<text x="2200" y="704" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="#fff">pais</text>
+
+<ellipse cx="1860" cy="335" rx="66" ry="17" fill="none" stroke="#fff" stroke-width="1.2"/>
+<text x="1860" y="339" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="#fff">localizacao</text>
+
+<ellipse cx="2040" cy="300" rx="38" ry="17" fill="none" stroke="#fff" stroke-width="1.2"/>
+<text x="2040" y="304" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="#fff">ativo</text>
+
+<ellipse cx="1745" cy="410" rx="76" ry="17" fill="none" stroke="#fff" stroke-width="1.2"/>
+<text x="1745" y="414" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="#fff">stock_minimo</text>
+
+
+<!-- ====== AVALIACOES ====== -->
+<ellipse cx="935" cy="165" rx="68" ry="17" fill="none" stroke="#fff" stroke-width="1.2"/>
+<text x="935" y="169" text-anchor="middle" dominant-baseline="middle" font-size="11" text-decoration="underline" fill="#fff">id_avaliacao</text>
+
+<ellipse cx="1100" cy="155" rx="40" ry="17" fill="none" stroke="#fff" stroke-width="1.2"/>
+<text x="1100" y="159" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="#fff">nota</text>
+
+<ellipse cx="1305" cy="155" rx="76" ry="17" fill="none" stroke="#fff" stroke-width="1.2"/>
+<text x="1305" y="159" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="#fff">comentario</text>
+
+<ellipse cx="1445" cy="175" rx="88" ry="17" fill="none" stroke="#fff" stroke-width="1.2"/>
+<text x="1445" y="179" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="#fff">data_avaliacao</text>
+
+
+<!-- ====== LOG_OPERACOES ====== -->
+<ellipse cx="685" cy="1040" rx="48" ry="17" fill="none" stroke="#fff" stroke-width="1.2"/>
+<text x="685" y="1044" text-anchor="middle" dominant-baseline="middle" font-size="11" text-decoration="underline" fill="#fff">id_log</text>
+
+<ellipse cx="865" cy="1065" rx="86" ry="17" fill="none" stroke="#fff" stroke-width="1.2"/>
+<text x="865" y="1069" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="#fff">tipo_operacao</text>
+
+<ellipse cx="1065" cy="1010" rx="62" ry="17" fill="none" stroke="#fff" stroke-width="1.2"/>
+<text x="1065" y="1014" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="#fff">descricao</text>
+
+<ellipse cx="1070" cy="895" rx="72" ry="17" fill="none" stroke="#fff" stroke-width="1.2"/>
+<text x="1070" y="899" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="#fff">data_hora</text>
+
+
+<!-- ====== CARRINHO ====== -->
+<ellipse cx="1205" cy="790" rx="70" ry="17" fill="none" stroke="#fff" stroke-width="1.2"/>
+<text x="1205" y="794" text-anchor="middle" dominant-baseline="middle" font-size="11" text-decoration="underline" fill="#fff">id_carrinho</text>
+
+<ellipse cx="1205" cy="880" rx="76" ry="17" fill="none" stroke="#fff" stroke-width="1.2"/>
+<text x="1205" y="884" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="#fff">data_criacao</text>
+
+<ellipse cx="1205" cy="975" rx="50" ry="17" fill="none" stroke="#fff" stroke-width="1.2"/>
+<text x="1205" y="979" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="#fff">estado</text>
+
+<ellipse cx="1400" cy="1050" rx="68" ry="17" fill="none" stroke="#fff" stroke-width="1.2"/>
+<text x="1400" y="1054" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="#fff">quantidade</text>
+
+<ellipse cx="1585" cy="1015" rx="74" ry="17" fill="none" stroke="#fff" stroke-width="1.2"/>
+<text x="1585" y="1019" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="#fff">total_estimado</text>
+
+
+<!-- ====== TAMANHOS ====== -->
+<ellipse cx="1765" cy="790" rx="72" ry="17" fill="none" stroke="#fff" stroke-width="1.2"/>
+<text x="1765" y="794" text-anchor="middle" dominant-baseline="middle" font-size="11" text-decoration="underline" fill="#fff">id_tamanho</text>
+
+<ellipse cx="1765" cy="880" rx="62" ry="17" fill="none" stroke="#fff" stroke-width="1.2"/>
+<text x="1765" y="884" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="#fff">volume_ml</text>
+
+<ellipse cx="1765" cy="975" rx="60" ry="17" fill="none" stroke="#fff" stroke-width="1.2"/>
+<text x="1765" y="979" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="#fff">designacao</text>
+
+<ellipse cx="1960" cy="1050" rx="46" ry="17" fill="none" stroke="#fff" stroke-width="1.2"/>
+<text x="1960" y="1054" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="#fff">preco</text>
+
+<ellipse cx="2165" cy="975" rx="46" ry="17" fill="none" stroke="#fff" stroke-width="1.2"/>
+<text x="2165" y="979" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="#fff">stock</text>
+
+<ellipse cx="2165" cy="880" rx="38" ry="17" fill="none" stroke="#fff" stroke-width="1.2"/>
+<text x="2165" y="884" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="#fff">ativo</text>
+
+
+<!-- ========================================= -->
+<!-- BUSINESS RULE ANNOTATION                  -->
+<!-- ========================================= -->
+<text x="755" y="425" text-anchor="middle" font-size="10" fill="#999" font-style="italic">Só quem comprou</text>
+<text x="755" y="438" text-anchor="middle" font-size="10" fill="#999" font-style="italic">pode avaliar!</text>
+
+
+<!-- ========================================= -->
+<!-- LEGEND                                    -->
+<!-- ========================================= -->
+<rect x="40" y="1140" width="2620" height="280" rx="4" fill="none" stroke="#555" stroke-width="1"/>
+
+<text x="70" y="1175" font-size="16" font-weight="bold" fill="#fff">Legenda</text>
+<line x1="70" y1="1185" x2="195" y2="1185" stroke="#fff" stroke-width="1"/>
+
+<!-- Entity -->
+<rect x="70" y="1200" width="90" height="32" rx="2" fill="none" stroke="#fff" stroke-width="1.5"/>
+<text x="115" y="1220" text-anchor="middle" dominant-baseline="middle" font-size="12" font-weight="bold" fill="#fff">Entidade</text>
+<text x="180" y="1220" dominant-baseline="middle" font-size="12" fill="#ccc">= Tabela na base de dados</text>
+
+<!-- Attribute -->
+<ellipse cx="115" cy="1262" rx="48" ry="14" fill="none" stroke="#fff" stroke-width="1.2"/>
+<text x="115" y="1266" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="#fff">atributo</text>
+<text x="180" y="1266" dominant-baseline="middle" font-size="12" fill="#ccc">= Coluna da tabela</text>
+
+<!-- PK -->
+<ellipse cx="115" cy="1302" rx="48" ry="14" fill="none" stroke="#fff" stroke-width="1.2"/>
+<text x="115" y="1306" text-anchor="middle" dominant-baseline="middle" font-size="11" text-decoration="underline" fill="#fff">chave_pk</text>
+<text x="180" y="1306" dominant-baseline="middle" font-size="12" fill="#ccc">= Chave Primária (sublinhado)</text>
+
+<!-- Relationship -->
+<polygon points="115,1330 148,1348 115,1366 82,1348" fill="none" stroke="#fff" stroke-width="1.5"/>
+<text x="115" y="1352" text-anchor="middle" dominant-baseline="middle" font-size="10" font-weight="bold" fill="#fff">REL</text>
+<text x="170" y="1352" dominant-baseline="middle" font-size="12" fill="#ccc">= Relacionamento</text>
+
+<!-- Cardinality -->
+<text x="85" y="1395" font-size="16" font-weight="bold" fill="#fff">1</text>
+<text x="105" y="1395" dominant-baseline="middle" font-size="12" fill="#ccc">= Um     </text>
+<text x="205" y="1395" font-size="16" font-weight="bold" fill="#fff">N</text>
+<text x="225" y="1395" dominant-baseline="middle" font-size="12" fill="#ccc">= Muitos</text>
+
+
+<!-- Relationships summary -->
+<text x="550" y="1175" font-size="14" font-weight="bold" fill="#fff">Resumo dos Relacionamentos:</text>
+<line x1="550" y1="1185" x2="820" y2="1185" stroke="#fff" stroke-width="1"/>
+
+<text x="550" y="1210" font-size="12" fill="#ccc">1. Pessoas <tspan font-weight="bold" fill="#fff">REALIZA</tspan> Vendas (1:N)</text>
+<text x="550" y="1232" font-size="12" fill="#ccc">2. Vendas <tspan font-weight="bold" fill="#fff">CONTÉM</tspan> Itens_Venda (1:N)</text>
+<text x="550" y="1254" font-size="12" fill="#ccc">3. Itens_Venda <tspan font-weight="bold" fill="#fff">REFERE</tspan> Vinhos (N:1)</text>
+<text x="550" y="1276" font-size="12" fill="#ccc">4. Pessoas <tspan font-weight="bold" fill="#fff">É_UMA</tspan> Funcionários (1:1 — especialização)</text>
+<text x="550" y="1298" font-size="12" fill="#ccc">5. Funcionários <tspan font-weight="bold" fill="#fff">PROCESSA</tspan> Vendas (1:N)</text>
+<text x="550" y="1320" font-size="12" fill="#ccc">6. Funcionários <tspan font-weight="bold" fill="#fff">REGISTA</tspan> Log_Operações (1:N)</text>
+
+<text x="1150" y="1210" font-size="12" fill="#ccc">7. Vendas <tspan font-weight="bold" fill="#fff">ORIGINA</tspan> Avaliações (1:N) — só quem comprou avalia</text>
+<text x="1150" y="1232" font-size="12" fill="#ccc">8. Avaliações é <tspan font-weight="bold" fill="#fff">SOBRE</tspan> Vinhos (N:1)</text>
+<text x="1150" y="1254" font-size="12" fill="#ccc">9. Pessoas <tspan font-weight="bold" fill="#fff">POSSUI</tspan> Carrinho (1:N)</text>
+<text x="1150" y="1276" font-size="12" fill="#ccc">10. Carrinho <tspan font-weight="bold" fill="#fff">CONVERTE</tspan> em Venda (1:1)</text>
+<text x="1150" y="1298" font-size="12" fill="#ccc">11. Vinhos <tspan font-weight="bold" fill="#fff">TEM</tspan> Tamanhos (1:N) — ex: 375ml, 750ml, 1500ml</text>
+
+<!-- Entities summary -->
+<text x="1850" y="1175" font-size="14" font-weight="bold" fill="#fff">Entidades (9):</text>
+<line x1="1850" y1="1185" x2="2020" y2="1185" stroke="#fff" stroke-width="1"/>
+<text x="1850" y="1210" font-size="12" fill="#ccc">Pessoas, Funcionários, Vendas,</text>
+<text x="1850" y="1232" font-size="12" fill="#ccc">Itens_Venda, Vinhos, Avaliações,</text>
+<text x="1850" y="1254" font-size="12" fill="#ccc">Log_Operações, Carrinho, Tamanhos</text>
+
+<text x="1850" y="1290" font-size="14" font-weight="bold" fill="#fff">Regras de Negócio:</text>
+<line x1="1850" y1="1300" x2="2080" y2="1300" stroke="#fff" stroke-width="1"/>
+<text x="1850" y="1322" font-size="11" fill="#999">• Avaliações ligadas a Vendas (não a Pessoas)</text>
+<text x="1850" y="1342" font-size="11" fill="#999">• Mesmo vinho em vários tamanhos/formatos</text>
+<text x="1850" y="1362" font-size="11" fill="#999">• Carrinho converte-se numa Venda</text>
+
+
+<!-- Footer -->
+<text x="1350" y="1420" text-anchor="middle" font-size="11" fill="#555">Pedro Gomes  •  pgomes@the-100s.com  •  Universidade Lusófona  •  Grupo 13  •  2025/2026</text>
+
+</svg>
+</div>
+</body>
+</html>

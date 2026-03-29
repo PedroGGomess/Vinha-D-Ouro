@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Relatórios — Vinha D'Ouro">
+  <title>Relatórios — Vinha D'Ouro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <a href="#main-content" class="skip-to-content">Ir para conteúdo principal</a>
+
+  <div class="app">
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <div class="sidebar-brand-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 22h8M12 11v11M7 11c0 2.8 2.2 5 5 5s5-2.2 5-5V3H7v8z"/><path d="M7 8h10"/></svg></div>
+        <div class="sidebar-brand-text"><h2>Vinha D'Ouro</h2><p>Gerente</p></div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <p class="sidebar-section-label">Principal</p>
+        <li class="sidebar-nav-item"><a href="gerente.html" class="sidebar-nav-link"><svg class="sidebar-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard</a></li>
+        <li class="sidebar-nav-item"><a href="gerente-vendas.html" class="sidebar-nav-link"><svg class="sidebar-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>Vendas</a></li>
+        <li class="sidebar-nav-item"><a href="gerente-relatorios.html" class="sidebar-nav-link active" aria-current="page"><svg class="sidebar-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Relatórios</a></li>
+        <li class="sidebar-nav-item"><a href="gerente-equipa.html" class="sidebar-nav-link"><svg class="sidebar-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>Equipa</a></li>
+        <div class="sidebar-divider"></div>
+        <p class="sidebar-section-label">Operações</p>
+        <li class="sidebar-nav-item"><a href="loja.html" class="sidebar-nav-link"><svg class="sidebar-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/></svg>Ponto de Venda</a></li>
+        <li class="sidebar-nav-item"><a href="stock.html" class="sidebar-nav-link"><svg class="sidebar-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>Inventário</a></li>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-footer-version">v2.0</div>
+        <div class="sidebar-user"><div class="sidebar-user-avatar">G</div><div class="sidebar-user-info"><h4>Gerente</h4><p>Acesso Total</p></div></div>
+        <p style="margin-top: var(--sp-3); font-size: 10px;">Vinha D'Ouro · 2025/2026</p>
+      </div>
+    </aside>
+
+    <div class="main-content">
+      <header class="topbar">
+        <div class="topbar-title"><h1>Relatórios &amp; Análises</h1><p>Indicadores de desempenho</p></div>
+        <div class="topbar-actions">
+          <div class="api-badge offline" id="api-badge" role="status" aria-live="polite"><span class="api-dot"></span><span id="api-label">Verificando...</span></div>
+          <button class="icon-btn" onclick="logout()" title="Sair" aria-label="Terminar sessão"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg></button>
+        </div>
+      </header>
+
+      <div class="page" id="main-content">
+        <nav class="breadcrumbs"><span class="breadcrumb-item"><a href="#">Home</a></span><span class="breadcrumb-separator">/</span><span class="breadcrumb-item active">Relatórios</span></nav>
+
+        <div class="kpi-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-bottom: var(--sp-6);">
+          <div class="kpi-card"><div class="kpi-card-accent"></div><div class="kpi-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div><div class="kpi-label">Receita Total</div><div class="kpi-value" id="r-receita">—</div><div class="kpi-meta">Todas as vendas</div></div>
+          <div class="kpi-card"><div class="kpi-card-accent"></div><div class="kpi-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div><div class="kpi-label">Lucro Líquido</div><div class="kpi-value" id="r-lucro">—</div><div class="kpi-meta">Margem estimada 34%</div></div>
+          <div class="kpi-card"><div class="kpi-card-accent"></div><div class="kpi-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/></svg></div><div class="kpi-label">Ticket Médio</div><div class="kpi-value" id="r-ticket">—</div><div class="kpi-meta">Por transação</div></div>
+          <div class="kpi-card"><div class="kpi-card-accent"></div><div class="kpi-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg></div><div class="kpi-label">Total Vendas</div><div class="kpi-value" id="r-vendas">—</div><div class="kpi-meta">Transações registadas</div></div>
+        </div>
+
+        <div class="charts-grid" style="margin-bottom: var(--sp-6);">
+          <div class="card">
+            <div class="card-header"><div><div class="card-title"><svg class="card-title-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Vendas por Dia</div><div class="card-subtitle">Últimos 7 dias</div></div></div>
+            <div class="card-body"><div class="chart-wrap"><svg id="chart-vendas"></svg></div></div>
+          </div>
+          <div class="card">
+            <div class="card-header"><div><div class="card-title"><svg class="card-title-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Tendência Receita</div><div class="card-subtitle">Crescimento mensal</div></div></div>
+            <div class="card-body"><div class="chart-wrap"><svg id="chart-receita"></svg></div></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><div><div class="card-title"><svg class="card-title-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>Top Vinhos por Receita</div></div></div>
+          <div class="table-wrap"><table class="data-table"><thead><tr><th>Vinho</th><th>Tipo</th><th>Região</th><th>Preço Unit.</th><th>Stock</th><th>Valor Total</th></tr></thead><tbody id="top-wines-table"><tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text-muted);">A carregar...</td></tr></tbody></table></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toasts"></div>
+  <script src="app.js"></script>
+</body>
+</html>

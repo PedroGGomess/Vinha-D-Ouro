@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Vinha D'Ouro — Sistema de Gestão Premium para Lojas de Vinho">
+  <title>Vinha D'Ouro — Sistema de Gestão Premium</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .login-page {
+      background: var(--bg-void);
+      position: relative;
+      overflow: hidden;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .orb-animated {
+      position: fixed;
+      pointer-events: none;
+      z-index: 0;
+      animation: float 6s ease-in-out infinite;
+    }
+
+    .orb-1 {
+      top: 10%;
+      left: 5%;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(ellipse, rgba(139,58,68,0.08) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+
+    .orb-2 {
+      bottom: 5%;
+      right: 10%;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(ellipse, rgba(201,162,39,0.06) 0%, transparent 70%);
+      border-radius: 50%;
+      animation-delay: 1s;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0); }
+      50% { transform: translate(30px, -30px); }
+    }
+
+    .login-grid-bg {
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .top-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent-gold), transparent);
+      z-index: 1;
+    }
+
+    .login-wrap {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 900px;
+      padding: var(--sp-4);
+    }
+
+    .login-header-block {
+      text-align: center;
+      margin-bottom: var(--sp-12);
+      animation: slideDown var(--t-slow);
+    }
+
+    .year-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      background: rgba(201,162,39,0.08);
+      border: 1px solid var(--border-gold);
+      border-radius: var(--r-full);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--text-gold);
+      margin-bottom: var(--sp-5);
+    }
+
+    .year-badge::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      background: var(--accent-gold);
+      border-radius: 50%;
+    }
+
+    .login-brand {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--sp-5);
+      margin-bottom: var(--sp-6);
+    }
+
+    .login-brand-icon {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, var(--wine-700), var(--wine-500));
+      border: 1.5px solid var(--border-gold);
+      border-radius: var(--r-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .login-brand-icon svg {
+      width: 32px;
+      height: 32px;
+      color: var(--accent-gold);
+    }
+
+    .login-brand-text h1 {
+      font-family: var(--font-display);
+      font-size: 36px;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.5px;
+      line-height: 1.2;
+      margin: 0;
+    }
+
+    .login-brand-text p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      letter-spacing: 0.5px;
+      margin-top: var(--sp-2);
+    }
+
+    .login-divider {
+      width: 40px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent-gold), transparent);
+      margin: var(--sp-6) auto;
+    }
+
+    .login-tagline {
+      font-size: 14px;
+      color: var(--text-secondary);
+      letter-spacing: 0.3px;
+      margin: 0;
+    }
+
+    .role-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: var(--sp-6);
+      margin-bottom: var(--sp-8);
+    }
+
+    .role-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      padding: var(--sp-6);
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--r-lg);
+      backdrop-filter: blur(var(--glass-blur));
+      -webkit-backdrop-filter: blur(var(--glass-blur));
+      cursor: pointer;
+      transition: all var(--t-slow);
+      animation: slideUp var(--t-slow);
+      animation-fill-mode: both;
+      outline: 2px solid transparent;
+      outline-offset: 2px;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .role-card:nth-child(1) { animation-delay: 0.2s; }
+    .role-card:nth-child(2) { animation-delay: 0.4s; }
+    .role-card:nth-child(3) { animation-delay: 0.6s; }
+
+    .role-card:hover {
+      border-color: var(--accent-gold);
+      background: var(--bg-card-hover);
+      transform: translateY(-8px);
+      box-shadow: 0 12px 36px rgba(201,162,39,0.2);
+    }
+
+    .role-card:focus {
+      outline-color: var(--accent-gold);
+    }
+
+    .role-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(201,162,39,0.1) 0%, transparent 100%);
+      opacity: 0;
+      transition: opacity var(--t-slow);
+      border-radius: var(--r-lg);
+      pointer-events: none;
+    }
+
+    .role-card:hover::before {
+      opacity: 1;
+    }
+
+    .role-card-top {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-4);
+      margin-bottom: var(--sp-6);
+      position: relative;
+      z-index: 1;
+    }
+
+    .role-card-icon {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, var(--wine-700), var(--wine-600));
+      border-radius: var(--r-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform var(--t-normal);
+    }
+
+    .role-card:hover .role-card-icon {
+      transform: scale(1.1) rotate(5deg);
+    }
+
+    .role-card-icon svg {
+      width: 24px;
+      height: 24px;
+      color: var(--accent-gold);
+    }
+
+    .role-card-name {
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: 0.2px;
+    }
+
+    .role-card-desc {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .role-card-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      z-index: 1;
+      padding-top: var(--sp-4);
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .role-card-access {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-gold);
+    }
+
+    .role-card-arrow {
+      width: 18px;
+      height: 18px;
+      color: var(--accent-gold);
+      transition: transform var(--t-normal);
+    }
+
+    .role-card:hover .role-card-arrow {
+      transform: translateX(4px);
+    }
+
+    .login-footer {
+      text-align: center;
+      padding-top: var(--sp-8);
+      border-top: 1px solid var(--border-subtle);
+      animation: fadeIn var(--t-xslow);
+    }
+
+    .login-footer p {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.8;
+      letter-spacing: 0.3px;
+    }
+
+    .login-footer span {
+      color: var(--text-gold);
+      font-weight: 600;
+    }
+
+    .forgot-password-link {
+      display: inline-block;
+      margin-top: var(--sp-6);
+      font-size: 13px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      padding: 8px 16px;
+      border: 1px solid var(--border-light);
+      border-radius: var(--r-md);
+      transition: all var(--t-normal);
+      outline: 2px solid transparent;
+      outline-offset: 2px;
+    }
+
+    .forgot-password-link:hover {
+      color: var(--accent-gold);
+      border-color: var(--accent-gold);
+      background: rgba(201,162,39,0.05);
+    }
+
+    .forgot-password-link:focus {
+      outline-color: var(--accent-gold);
+    }
+
+    @media (max-width: 768px) {
+      .login-brand {
+        flex-direction: column;
+        gap: var(--sp-3);
+      }
+
+      .login-brand-text h1 {
+        font-size: 28px;
+      }
+
+      .role-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .login-wrap {
+        padding: var(--sp-6) var(--sp-4);
+      }
+    }
+  </style>
+</head>
+<body>
+  <a href="#main-content" class="skip-to-content">Ir para conteúdo principal</a>
+
+  <div class="login-page">
+    <div class="top-bar" role="presentation"></div>
+    <div class="login-grid-bg" role="presentation"></div>
+    <div class="orb-animated orb-1" role="presentation"></div>
+    <div class="orb-animated orb-2" role="presentation"></div>
+
+    <div class="login-wrap">
+      <!-- Header -->
+      <div class="login-header-block">
+        <div class="year-badge">Sistema Premium · v2.0</div>
+
+        <div class="login-brand">
+          <div class="login-brand-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M8 22h8M12 11v11M7 11c0 2.8 2.2 5 5 5s5-2.2 5-5V3H7v8z"/>
+              <path d="M7 8h10"/>
+            </svg>
+          </div>
+          <div class="login-brand-text">
+            <h1>Vinha D'Ouro</h1>
+            <p>Gestão de Vinhos Premium</p>
+          </div>
+        </div>
+
+        <div class="login-divider" role="presentation"></div>
+        <p class="login-tagline">Selecione o seu perfil de acesso para continuar</p>
+      </div>
+
+      <!-- Main content -->
+      <main id="main-content">
+        <!-- Role Cards -->
+        <div class="role-grid">
+          <!-- Gerente -->
+          <a href="gerente.html" class="role-card" tabindex="0">
+            <div class="role-card-top">
+              <div class="role-card-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+                  <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+                </svg>
+              </div>
+              <div class="role-card-name">Gerente</div>
+              <div class="role-card-desc">Acesso completo ao dashboard executivo, relatórios, equipa e análises de desempenho</div>
+            </div>
+            <div class="role-card-bottom">
+              <span class="role-card-access">Acesso Total</span>
+              <svg class="role-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
+          </a>
+
+          <!-- Loja -->
+          <a href="loja.html" class="role-card" tabindex="0">
+            <div class="role-card-top">
+              <div class="role-card-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+                  <line x1="3" y1="6" x2="21" y2="6"/>
+                  <path d="M16 10a4 4 0 01-8 0"/>
+                </svg>
+              </div>
+              <div class="role-card-name">Loja</div>
+              <div class="role-card-desc">Ponto de venda profissional, processamento de transações e gestão de clientes</div>
+            </div>
+            <div class="role-card-bottom">
+              <span class="role-card-access">PDV Completo</span>
+              <svg class="role-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
+          </a>
+
+          <!-- Armazenista -->
+          <a href="stock.html" class="role-card" tabindex="0">
+            <div class="role-card-top">
+              <div class="role-card-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
+                  <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                  <line x1="12" y1="22.08" x2="12" y2="12"/>
+                </svg>
+              </div>
+              <div class="role-card-name">Armazenista</div>
+              <div class="role-card-desc">Gestão de inventário, controlo de stock crítico e operações de armazém</div>
+            </div>
+            <div class="role-card-bottom">
+              <span class="role-card-access">Inventário</span>
+              <svg class="role-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
+          </a>
+        </div>
+
+        <!-- Help link -->
+        <div style="text-align: center;">
+          <a href="#" class="forgot-password-link">Esqueceu a password?</a>
+        </div>
+      </main>
+
+      <!-- Footer -->
+      <div class="login-footer">
+        <p>
+          <span>Vinha D'Ouro</span> · Sistema de Gestão de Vinhos ·
+          Grupo 13 · ADS 2025/2026 · <span>Universidade Lusófona</span>
+        </p>
+        <p style="font-size: 11px; margin-top: var(--sp-3);">
+          <span style="color: var(--accent-gold);">v2.0</span> — Enhanced UX · Accessibility · Responsive Design
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

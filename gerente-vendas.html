@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Vendas — Vinha D'Ouro">
+  <title>Vendas — Vinha D'Ouro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .sales-toolbar {
+      display: flex;
+      gap: var(--sp-4);
+      flex-wrap: wrap;
+      margin-bottom: var(--sp-4);
+      align-items: center;
+    }
+    .comparison-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: var(--sp-4);
+      margin-bottom: var(--sp-6);
+    }
+    .comparison-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--r-lg);
+      padding: var(--sp-5);
+      animation: slideUp var(--t-slow);
+    }
+    .comparison-period {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: var(--sp-2);
+    }
+    .comparison-value {
+      font-family: var(--font-display);
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text-gold);
+      margin-bottom: var(--sp-2);
+    }
+    .comparison-change {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .comparison-change.up { color: var(--success); }
+    .comparison-change.down { color: var(--danger); }
+  </style>
+</head>
+<body>
+  <a href="#main-content" class="skip-to-content">Ir para conteúdo principal</a>
+
+  <div class="app">
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <div class="sidebar-brand-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 22h8M12 11v11M7 11c0 2.8 2.2 5 5 5s5-2.2 5-5V3H7v8z"/><path d="M7 8h10"/></svg></div>
+        <div class="sidebar-brand-text"><h2>Vinha D'Ouro</h2><p>Gerente</p></div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <p class="sidebar-section-label">Principal</p>
+        <li class="sidebar-nav-item"><a href="gerente.html" class="sidebar-nav-link"><svg class="sidebar-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard</a></li>
+        <li class="sidebar-nav-item"><a href="gerente-vendas.html" class="sidebar-nav-link active" aria-current="page"><svg class="sidebar-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>Vendas</a></li>
+        <li class="sidebar-nav-item"><a href="gerente-relatorios.html" class="sidebar-nav-link"><svg class="sidebar-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Relatórios</a></li>
+        <li class="sidebar-nav-item"><a href="gerente-equipa.html" class="sidebar-nav-link"><svg class="sidebar-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>Equipa</a></li>
+        <div class="sidebar-divider"></div>
+        <p class="sidebar-section-label">Operações</p>
+        <li class="sidebar-nav-item"><a href="loja.html" class="sidebar-nav-link"><svg class="sidebar-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/></svg>Ponto de Venda</a></li>
+        <li class="sidebar-nav-item"><a href="stock.html" class="sidebar-nav-link"><svg class="sidebar-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>Inventário</a></li>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-footer-version">v2.0</div>
+        <div class="sidebar-user"><div class="sidebar-user-avatar">G</div><div class="sidebar-user-info"><h4>Gerente</h4><p>Acesso Total</p></div></div>
+        <p style="margin-top: var(--sp-3); font-size: 10px;">Vinha D'Ouro · 2025/2026</p>
+      </div>
+    </aside>
+
+    <div class="main-content">
+      <header class="topbar">
+        <div class="topbar-title"><h1>Histórico de Vendas</h1><p>Registo completo de transações</p></div>
+        <div class="topbar-actions">
+          <div class="api-badge offline" id="api-badge" role="status" aria-live="polite"><span class="api-dot"></span><span id="api-label">Verificando...</span></div>
+          <button class="icon-btn" onclick="logout()" title="Sair" aria-label="Terminar sessão"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg></button>
+        </div>
+      </header>
+
+      <div class="page" id="main-content">
+        <nav class="breadcrumbs"><span class="breadcrumb-item"><a href="#">Home</a></span><span class="breadcrumb-separator">/</span><span class="breadcrumb-item active">Vendas</span></nav>
+
+        <div class="comparison-cards">
+          <div class="comparison-card">
+            <div class="comparison-period">Esta Semana</div>
+            <div class="comparison-value" id="sales-this-week">0,00 €</div>
+            <div class="comparison-change up"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.46 15.54 8 10 2 16"/><polyline points="23 6 23 12 17 12"/></svg><span id="sales-this-week-change">+0%</span></div>
+          </div>
+          <div class="comparison-card">
+            <div class="comparison-period">Semana Anterior</div>
+            <div class="comparison-value" id="sales-last-week">0,00 €</div>
+            <div class="comparison-change"><span id="sales-last-week-change">Sem dados</span></div>
+          </div>
+          <div class="comparison-card">
+            <div class="comparison-period">Total Vendas</div>
+            <div class="comparison-value" id="total-transactions">0</div>
+            <div class="comparison-change"><span>transações registadas</span></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title"><svg class="card-title-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>Vendas Registadas</div>
+              <div class="card-subtitle" id="vendas-count">A carregar...</div>
+            </div>
+            <div style="display: flex; gap: var(--sp-2);">
+              <div class="search-wrap" style="min-width: 200px;">
+                <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="text" class="form-input" id="vendas-search" placeholder="Pesquisar..." style="padding-left: 38px;" aria-label="Pesquisar vendas">
+              </div>
+              <select class="form-select" id="estado-filter" style="width: 130px;" aria-label="Filtrar por estado de venda">
+                <option value="">Todos os estados</option>
+                <option>CONCLUIDA</option><option>PENDENTE</option><option>CANCELADA</option>
+              </select>
+              <button class="btn btn-secondary btn-sm" onclick="exportToCSV()" aria-label="Exportar para CSV">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Exportar
+              </button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead><tr><th>Código</th><th>Cliente</th><th>Produto</th><th>Método</th><th>Total</th><th>Estado</th><th>Data</th></tr></thead>
+              <tbody id="vendas-table"><tr><td colspan="7" style="text-align:center;padding:50px;color:var(--text-muted);">A carregar vendas...</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toasts"></div>
+  <script src="app.js"></script>
+  <script>
+    function exportToCSV() {
+      alert('Exportação para CSV — Funcionalidade disponível em breve');
+    }
+  </script>
+</body>
+</html>

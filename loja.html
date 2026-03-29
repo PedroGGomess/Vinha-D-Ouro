@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Ponto de Venda — Vinha D'Ouro">
+  <title>Ponto de Venda — Vinha D'Ouro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .pos-layout {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: var(--sp-6);
+      height: calc(100vh - 128px);
+    }
+
+    .pos-catalog {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-4);
+    }
+
+    .pos-filters {
+      display: flex;
+      gap: var(--sp-2);
+      flex-wrap: wrap;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: var(--sp-2);
+    }
+
+    .wine-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: var(--sp-4);
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .wine-card {
+      position: relative;
+      padding: var(--sp-4);
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--r-lg);
+      cursor: pointer;
+      transition: all var(--t-normal);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      outline: 2px solid transparent;
+      outline-offset: 2px;
+    }
+
+    .wine-card:hover {
+      border-color: var(--accent-gold);
+      background: var(--bg-card-hover);
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(201,162,39,0.15);
+    }
+
+    .wine-card:focus {
+      outline-color: var(--accent-gold);
+    }
+
+    .wine-image {
+      width: 100px;
+      height: 100px;
+      border-radius: var(--r-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: var(--sp-3);
+      font-weight: 700;
+      font-size: 32px;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: var(--sp-3);
+    }
+
+    .wine-image.tinto { background: linear-gradient(135deg, #4A1219, #8B2F3A); }
+    .wine-image.branco { background: linear-gradient(135deg, #1C3A10, #2ECC6B); }
+    .wine-image.rose { background: linear-gradient(135deg, #561825, #D4788A); }
+    .wine-image.espumante { background: linear-gradient(135deg, #0C2016, #C9A227); }
+    .wine-image.porto { background: linear-gradient(135deg, #260C06, #E8A020); }
+
+    .wine-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: var(--sp-2);
+      line-height: 1.4;
+    }
+
+    .wine-price {
+      font-family: var(--font-display);
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--accent-gold);
+      margin-bottom: var(--sp-2);
+    }
+
+    .wine-type {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .pos-cart {
+      display: flex;
+      flex-direction: column;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--r-lg);
+      overflow: hidden;
+      animation: slideInRight var(--t-slow);
+    }
+
+    .pos-cart-header {
+      padding: var(--sp-4);
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--sp-2);
+    }
+
+    .pos-cart-title {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-2);
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .cart-count-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--danger);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .pos-cart-items {
+      flex: 1;
+      overflow-y: auto;
+      padding: var(--sp-4);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .cart-item {
+      padding: var(--sp-3) 0;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--sp-2);
+      animation: slideUp var(--t-normal);
+    }
+
+    .cart-item:last-child {
+      border-bottom: none;
+    }
+
+    .cart-item-name {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-primary);
+      flex: 1;
+    }
+
+    .cart-item-qty {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--bg-raised);
+      border-radius: var(--r-sm);
+      padding: 2px 6px;
+    }
+
+    .cart-item-qty button {
+      width: 20px;
+      height: 20px;
+      border-radius: 3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      color: var(--text-secondary);
+      font-size: 11px;
+      cursor: pointer;
+      transition: all var(--t-fast);
+    }
+
+    .cart-item-qty button:hover {
+      color: var(--accent-gold);
+      background: var(--bg-card);
+    }
+
+    .cart-item-qty span {
+      font-size: 11px;
+      font-weight: 600;
+      width: 20px;
+      text-align: center;
+      color: var(--text-primary);
+    }
+
+    .cart-item-price {
+      font-weight: 600;
+      color: var(--accent-gold);
+      font-size: 12px;
+      min-width: 50px;
+      text-align: right;
+    }
+
+    .cart-item-remove {
+      width: 24px;
+      height: 24px;
+      border-radius: 4px;
+      border: none;
+      background: transparent;
+      color: var(--danger);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all var(--t-fast);
+    }
+
+    .cart-item-remove:hover {
+      background: rgba(232,69,58,0.1);
+    }
+
+    .pos-cart-totals {
+      padding: var(--sp-4);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .cart-total-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--sp-2) 0;
+      font-size: 13px;
+    }
+
+    .cart-total-row.grand {
+      font-family: var(--font-display);
+      font-size: 15px;
+      font-weight: 700;
+      padding: var(--sp-3) 0;
+      border-top: 1px solid var(--border-subtle);
+      margin-top: var(--sp-2);
+      color: var(--accent-gold);
+    }
+
+    .cart-total-row .label {
+      color: var(--text-muted);
+    }
+
+    .cart-total-row .value {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    .pos-cart-checkout {
+      padding: var(--sp-4);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-3);
+    }
+
+    .payment-methods {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-2);
+    }
+
+    .pay-method {
+      padding: var(--sp-3);
+      background: var(--bg-raised);
+      border: 1px solid var(--border-light);
+      border-radius: var(--r-md);
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      transition: all var(--t-normal);
+      display: flex;
+      align-items: center;
+      gap: var(--sp-2);
+      outline: 2px solid transparent;
+      outline-offset: 2px;
+    }
+
+    .pay-method:hover {
+      border-color: var(--accent-gold);
+      color: var(--text-primary);
+      background: rgba(201,162,39,0.05);
+    }
+
+    .pay-method.active {
+      background: linear-gradient(135deg, var(--wine-600), var(--accent-wine));
+      border-color: rgba(139,58,68,0.5);
+      color: var(--text-primary);
+    }
+
+    .pay-method:focus {
+      outline-color: var(--accent-gold);
+    }
+
+    .pay-method svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .checkout-totals-box {
+      background: var(--bg-raised);
+      border-radius: var(--r-md);
+      padding: var(--sp-3);
+      margin-bottom: var(--sp-2);
+    }
+
+    .checkout-total-line {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      padding: var(--sp-2) 0;
+    }
+
+    .checkout-total-line.grand {
+      border-top: 1px solid var(--border-subtle);
+      padding-top: var(--sp-3);
+      margin-top: var(--sp-3);
+      font-family: var(--font-display);
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .troco-display {
+      background: var(--success-bg);
+      border: 1px solid var(--success-border);
+      color: var(--success);
+      padding: var(--sp-3);
+      border-radius: var(--r-md);
+      font-size: 13px;
+      font-weight: 600;
+      margin-top: var(--sp-3);
+      text-align: center;
+    }
+
+    .receipt-box {
+      background: var(--bg-raised);
+      border: 1px solid var(--border-light);
+      border-radius: var(--r-md);
+      padding: var(--sp-4);
+      font-size: 12px;
+      line-height: 1.8;
+      color: var(--text-muted);
+    }
+
+    .receipt-item {
+      display: flex;
+      justify-content: space-between;
+      padding: var(--sp-2) 0;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .receipt-item:last-child {
+      border-bottom: none;
+    }
+
+    .receipt-total {
+      display: flex;
+      justify-content: space-between;
+      padding: var(--sp-2) 0;
+      border-top: 1px solid var(--border-subtle);
+      margin-top: var(--sp-2);
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    @media (max-width: 1024px) {
+      .pos-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .pos-cart {
+        max-height: 400px;
+      }
+
+      .wine-grid {
+        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      }
+    }
+
+    @media (max-width: 768px) {
+      .pos-layout {
+        height: auto;
+        gap: var(--sp-4);
+      }
+
+      .wine-grid {
+        grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+        gap: var(--sp-3);
+      }
+
+      .wine-image {
+        width: 80px;
+        height: 80px;
+      }
+
+      .pos-filters {
+        overflow-x: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a href="#main-content" class="skip-to-content">Ir para conteúdo principal</a>
+
+  <div class="app">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <div class="sidebar-brand-logo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 22h8M12 11v11M7 11c0 2.8 2.2 5 5 5s5-2.2 5-5V3H7v8z"/><path d="M7 8h10"/></svg>
+        </div>
+        <div class="sidebar-brand-text"><h2>Vinha D'Ouro</h2><p>Loja</p></div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <p class="sidebar-section-label">Vendas</p>
+        <li class="sidebar-nav-item">
+          <a href="loja.html" class="sidebar-nav-link active" aria-current="page">
+            <svg class="sidebar-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+            Ponto de Venda
+          </a>
+        </li>
+        <div class="sidebar-divider"></div>
+        <p class="sidebar-section-label">Navegação</p>
+        <li class="sidebar-nav-item">
+          <a href="stock.html" class="sidebar-nav-link">
+            <svg class="sidebar-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
+            Inventário
+          </a>
+        </li>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-footer-version">v2.0</div>
+        <div class="sidebar-user">
+          <div class="sidebar-user-avatar" id="user-avatar">L</div>
+          <div class="sidebar-user-info">
+            <h4 id="user-name">Funcionário</h4>
+            <p>PDV Completo</p>
+          </div>
+        </div>
+        <p style="margin-top: var(--sp-3); font-size: 10px;">
+          Vinha D'Ouro · 2025/2026
+        </p>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <header class="topbar">
+        <div class="topbar-title">
+          <h1>Ponto de Venda</h1>
+          <p id="time-display">Carregando hora...</p>
+        </div>
+        <div class="topbar-actions">
+          <div class="api-badge offline" id="api-badge" role="status" aria-live="polite">
+            <span class="api-dot"></span>
+            <span id="api-label">Verificando...</span>
+          </div>
+          <button class="icon-btn" onclick="logout()" title="Sair" aria-label="Terminar sessão">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+          </button>
+        </div>
+      </header>
+
+      <div class="page" id="main-content">
+        <nav class="breadcrumbs">
+          <span class="breadcrumb-item"><a href="#">Home</a></span>
+          <span class="breadcrumb-separator">/</span>
+          <span class="breadcrumb-item active">Ponto de Venda</span>
+        </nav>
+
+        <div class="pos-layout">
+          <!-- Catalog -->
+          <div class="pos-catalog">
+            <div style="display: flex; flex-direction: column; gap: var(--sp-3);">
+              <div class="search-wrap">
+                <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="text" class="form-input search-input" id="wine-search" placeholder="Pesquisar vinho, região, produtor..." aria-label="Pesquisar vinhos">
+              </div>
+              <div class="pos-filters" role="group" aria-label="Filtros de tipo de vinho">
+                <button class="filter-btn active" data-filter="todos">✦ Todos</button>
+                <button class="filter-btn" data-filter="Tinto">🍷 Tinto</button>
+                <button class="filter-btn" data-filter="Branco">🥂 Branco</button>
+                <button class="filter-btn" data-filter="Rosé">🌸 Rosé</button>
+                <button class="filter-btn" data-filter="Espumante">✨ Espumante</button>
+                <button class="filter-btn" data-filter="Porto">🏺 Porto</button>
+              </div>
+            </div>
+            <div class="wine-grid" id="wine-grid" role="grid" aria-label="Catálogo de vinhos">
+              <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; color: var(--text-muted); font-size: 13px;">
+                <div class="skeleton skeleton-text" style="width: 200px; margin: 0 auto;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Shopping Cart -->
+          <div class="pos-cart">
+            <div class="pos-cart-header">
+              <div class="pos-cart-title">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+                Carrinho
+                <span class="cart-count-badge" id="cart-count">0</span>
+              </div>
+              <button class="btn btn-ghost btn-sm" onclick="clearCart()" aria-label="Limpar carrinho">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+                Limpar
+              </button>
+            </div>
+
+            <div class="pos-cart-items" id="cart-items">
+              <div id="cart-empty" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: var(--text-muted); gap: var(--sp-3); padding: var(--sp-8); text-align: center;">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" opacity="0.3"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+                <p style="font-size: 13px;">Selecione vinhos do catálogo</p>
+              </div>
+            </div>
+
+            <div class="pos-cart-totals">
+              <div class="cart-total-row"><span class="label">Subtotal</span><span class="value" id="cart-subtotal">0,00 €</span></div>
+              <div class="cart-total-row"><span class="label">IVA (23%)</span><span class="value" id="cart-iva">0,00 €</span></div>
+              <div class="cart-total-row grand"><span>Total</span><span id="cart-total">0,00 €</span></div>
+            </div>
+
+            <div class="pos-cart-checkout">
+              <div class="payment-methods" id="payment-methods" role="group" aria-label="Métodos de pagamento">
+                <button class="pay-method active" data-method="Cartão" tabindex="0">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                  Cartão
+                </button>
+                <button class="pay-method" data-method="Numerário">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+                  Dinheiro
+                </button>
+                <button class="pay-method" data-method="MB Way">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+                  MB Way
+                </button>
+              </div>
+              <button class="btn btn-primary w-full btn-lg" id="checkout-btn" onclick="checkout()" disabled aria-label="Finalizar venda">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                Finalizar Venda
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Size Selector Modal -->
+  <div class="modal-overlay" id="size-modal" onclick="if(event.target===this)closeSizeModal()">
+    <div class="modal" style="max-width: 400px;">
+      <div class="modal-header">
+        <div class="modal-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="17" height="17"><path d="M8 22h8M12 11v11M7 11c0 2.8 2.2 5 5 5s5-2.2 5-5V3H7v8z"/><path d="M7 8h10"/></svg>
+          Selecionar Formato
+        </div>
+        <button class="modal-close" onclick="closeSizeModal()" aria-label="Fechar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="modal-body" style="padding: var(--sp-5);">
+        <div id="size-wine-name" style="font-family: var(--font-display); font-size: 17px; font-weight: 700; color: var(--text-primary); line-height: 1.3; margin-bottom: var(--sp-4); padding-bottom: var(--sp-3); border-bottom: 1px solid var(--border-subtle);"></div>
+        <p style="font-size: 12px; color: var(--text-muted); margin-bottom: var(--sp-3);">Escolha o formato da garrafa:</p>
+        <div class="size-options-grid" id="size-options" style="display: grid; gap: var(--sp-2);"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Checkout Modal -->
+  <div class="modal-overlay" id="checkout-modal" onclick="if(event.target===this)closeCheckoutModal()">
+    <div class="modal" style="max-width: 520px;">
+      <div class="modal-header">
+        <div class="modal-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="17" height="17"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+          Finalizar Venda
+        </div>
+        <button class="modal-close" onclick="closeCheckoutModal()" aria-label="Fechar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="modal-body" style="padding: var(--sp-5); display: flex; flex-direction: column; gap: var(--sp-4); max-height: 70vh; overflow-y: auto;">
+        <div>
+          <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: var(--sp-2);">Artigos</div>
+          <div class="checkout-items-list" id="co-items"></div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-3);">
+          <div class="form-group" style="margin: 0;">
+            <label class="form-label">Desconto (%)</label>
+            <input type="number" class="form-input" id="co-discount" min="0" max="100" value="0" placeholder="0" oninput="updateCoTotals()" aria-label="Desconto em percentagem">
+          </div>
+          <div class="form-group" style="margin: 0;">
+            <label class="form-label">NIF Cliente</label>
+            <input type="text" class="form-input" id="co-nif" placeholder="Consumidor Final" maxlength="9" aria-label="Número de identificação fiscal do cliente">
+          </div>
+        </div>
+
+        <div class="checkout-totals-box">
+          <div class="checkout-total-line"><span style="color: var(--text-muted);">Subtotal</span><span id="co-subtotal">—</span></div>
+          <div class="checkout-total-line" id="co-discount-line" style="display: none;"><span style="color: var(--success);">Desconto aplicado</span><span style="color: var(--success);" id="co-discount-val">—</span></div>
+          <div class="checkout-total-line"><span style="color: var(--text-muted);">IVA (23%)</span><span id="co-iva">—</span></div>
+          <div class="checkout-total-line grand">
+            <span style="font-family: var(--font-display); font-size: 15px; font-weight: 700;">Total</span>
+            <span style="font-family: var(--font-display); font-size: 22px; font-weight: 700; color: var(--text-gold);" id="co-total">—</span>
+          </div>
+        </div>
+
+        <div>
+          <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: var(--sp-2);">Método de Pagamento</div>
+          <div class="co-pay-method" id="co-pay-display">—</div>
+          <div id="co-cash-panel" style="display: none; margin-top: var(--sp-3);">
+            <label class="form-label">Valor Entregue pelo Cliente</label>
+            <input type="number" class="form-input" id="co-cash-received" placeholder="0,00" step="0.01" min="0" oninput="calcTroco()" aria-label="Valor em dinheiro recebido">
+            <div class="troco-display" id="co-troco">Troco: 0,00 €</div>
+          </div>
+          <div id="co-mbway-panel" style="display: none; margin-top: var(--sp-3);">
+            <label class="form-label">Nº de Telemóvel</label>
+            <input type="text" class="form-input" id="co-mbway-phone" placeholder="9XX XXX XXX" maxlength="12" aria-label="Número de telemóvel para MB Way">
+          </div>
+          <div id="co-card-panel" style="display: none; margin-top: var(--sp-3);">
+            <label class="form-label">Referência do Terminal (opcional)</label>
+            <input type="text" class="form-input" id="co-card-ref" placeholder="Ex: TPA-00123456" aria-label="Referência do terminal de pagamento">
+          </div>
+        </div>
+
+        <div class="form-group" style="margin: 0;">
+          <label class="form-label">Notas</label>
+          <input type="text" class="form-input" id="co-notes" placeholder="Referência, observações..." aria-label="Notas adicionais">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="closeCheckoutModal()">Cancelar</button>
+        <button class="btn btn-primary btn-lg" id="process-btn" onclick="processPayment()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="20 6 9 17 4 12"/></svg>
+          Confirmar Pagamento
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Receipt/Success Modal -->
+  <div class="modal-overlay" id="receipt-modal" onclick="if(event.target===this)closeReceiptAndReset()">
+    <div class="modal" style="max-width: 420px;">
+      <div class="modal-body" style="padding: var(--sp-6); display: flex; flex-direction: column; align-items: center; gap: var(--sp-4); text-align: center;">
+        <div style="width: 60px; height: 60px; border-radius: 50%; background: var(--success-bg); border: 2px solid var(--success-border); display: flex; align-items: center; justify-content: center;">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div>
+          <div style="font-family: var(--font-display); font-size: 22px; font-weight: 700; color: var(--text-primary); margin-bottom: 6px;">Venda Concluída!</div>
+          <div style="font-size: 13px; color: var(--text-muted);" id="receipt-subtitle">Transação registada com sucesso</div>
+        </div>
+        <div class="receipt-box w-full" id="receipt-content"></div>
+        <div style="display: flex; gap: var(--sp-3); width: 100%;">
+          <button class="btn btn-secondary" style="flex: 1;" onclick="window.print()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="15" height="15"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+            Imprimir
+          </button>
+          <button class="btn btn-primary" style="flex: 1;" onclick="closeReceiptAndReset()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Nova Venda
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toasts"></div>
+  <script src="app.js"></script>
+  <script>
+    function updateClock() {
+      const n = new Date();
+      document.getElementById('time-display').textContent =
+        n.toLocaleTimeString('pt-PT') + ' · ' + n.toLocaleDateString('pt-PT', {weekday: 'short', day: 'numeric', month: 'short'});
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
+  </script>
+</body>
+</html>
