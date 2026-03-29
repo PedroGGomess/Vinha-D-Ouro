@@ -7,337 +7,483 @@
   <title>Gestão de Caves — Vinha D'Ouro</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <style>
-    .cave-layout {
+    /* ════════════════════════════════════════════════════════════════════════════
+       CAVES PAGE LAYOUT
+       ════════════════════════════════════════════════════════════════════════════ */
+
+    .caves-layout {
       display: grid;
-      grid-template-columns: 300px 1fr;
+      grid-template-columns: 320px 1fr;
+      gap: var(--sp-6);
+      margin-bottom: var(--sp-8);
+    }
+
+    .cave-sidebar {
+      display: flex;
+      flex-direction: column;
       gap: var(--sp-4);
     }
 
+    .cave-selector {
+      display: flex;
+      gap: var(--sp-2);
+      margin-bottom: var(--sp-4);
+    }
+
     .cave-selector-btn {
-      padding: var(--sp-3) var(--sp-4);
-      border: 1px solid var(--border-subtle);
+      flex: 1;
+      padding: var(--sp-2) var(--sp-3);
+      background: var(--bg-surface);
+      border: 2px solid var(--border);
       border-radius: var(--r-md);
-      background: var(--bg-raised);
       color: var(--text-secondary);
+      font-weight: 600;
+      font-size: 0.8125rem;
       cursor: pointer;
-      font-weight: 500;
-      transition: all var(--t-normal);
+      transition: all var(--t-base) var(--ease);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
     }
 
     .cave-selector-btn:hover {
-      background: var(--bg-card);
-      border-color: var(--accent-gold);
-      color: var(--accent-gold);
+      border-color: var(--border-hover);
+      background: var(--bg-hover);
+      color: var(--text-primary);
     }
 
     .cave-selector-btn.active {
-      background: var(--accent-gold);
-      color: var(--bg-void);
-      border-color: var(--accent-gold);
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      border-color: var(--gold);
+      color: var(--bg-base);
+      box-shadow: var(--shadow-gold);
     }
 
-    .cave-legend-item {
+    .cave-info-card {
+      background: linear-gradient(135deg, var(--bg-elevated), var(--bg-surface));
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      padding: var(--sp-4);
+      backdrop-filter: blur(10px);
+    }
+
+    .cave-stat-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--sp-4);
+      margin-bottom: var(--sp-4);
+    }
+
+    .cave-stat-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .cave-stat-item {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-1);
+    }
+
+    .cave-stat-item .stat-lbl {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 600;
+    }
+
+    .cave-stat-item .stat-val {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--gold);
+      font-family: var(--font-display);
+    }
+
+    .cave-stat-item .stat-pct {
+      font-size: 0.8125rem;
+      color: var(--text-secondary);
+      margin-top: var(--sp-1);
+    }
+
+    .cave-stat-progress {
+      width: 100%;
+      height: 6px;
+      background: var(--bg-surface);
+      border-radius: var(--r-full);
+      overflow: hidden;
+      margin-top: var(--sp-2);
+    }
+
+    .cave-stat-progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--gold), var(--gold-light));
+      border-radius: var(--r-full);
+      transition: width var(--t-slow) var(--ease);
+    }
+
+    .slot-info-section {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      padding: var(--sp-4);
+      margin-bottom: var(--sp-4);
+    }
+
+    .slot-info-section h3 {
+      font-size: 0.8125rem;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 600;
+      margin-bottom: var(--sp-3);
+    }
+
+    .slot-info-content {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-3);
+      min-height: 120px;
+    }
+
+    .slot-info-empty {
       display: flex;
       align-items: center;
-      gap: var(--sp-2);
-      font-size: 12px;
-      color: var(--text-secondary);
+      justify-content: center;
+      height: 100px;
+      color: var(--text-muted);
+      font-style: italic;
     }
 
-    .cave-legend-dot {
-      width: 20px;
-      height: 20px;
-      border-radius: 4px;
-      flex-shrink: 0;
+    .slot-wine-info {
+      background: var(--bg-elevated);
+      padding: var(--sp-3);
+      border-radius: var(--r-md);
+      border: 1px solid var(--border);
+    }
+
+    .slot-wine-name {
+      font-weight: 600;
+      color: var(--text-primary);
+      font-size: 0.875rem;
+      margin-bottom: var(--sp-1);
+    }
+
+    .slot-wine-details {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      display: flex;
+      gap: var(--sp-2);
+      flex-wrap: wrap;
+    }
+
+    .slot-wine-details span {
+      display: flex;
+      gap: var(--sp-1);
+    }
+
+    .slot-actions {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-2);
+    }
+
+    .slot-select-group {
+      display: flex;
+      gap: var(--sp-2);
+    }
+
+    #slot-wine-select {
+      flex: 1;
+    }
+
+    .cave-grid-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+      gap: var(--sp-2);
+      background: var(--bg-surface);
+      padding: var(--sp-4);
+      border-radius: var(--r-lg);
+      border: 1px solid var(--border);
+      min-height: 600px;
     }
 
     .cave-slot {
       aspect-ratio: 1;
-      border-radius: var(--r-md);
-      border: 2px solid var(--border-subtle);
-      cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all var(--t-normal);
-      font-size: 10px;
+      background: var(--bg-elevated);
+      border: 2px solid var(--border-subtle);
+      border-radius: var(--r-md);
+      cursor: pointer;
+      transition: all var(--t-base) var(--ease);
+      position: relative;
+      overflow: hidden;
       font-weight: 600;
+      font-size: 0.75rem;
       text-align: center;
-      padding: var(--sp-1);
-      outline: 2px solid transparent;
-      outline-offset: 2px;
+      padding: var(--sp-2);
+    }
+
+    .cave-slot::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(201, 168, 76, 0.1), rgba(155, 35, 53, 0.1));
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity var(--t-base) var(--ease);
     }
 
     .cave-slot:hover {
-      border-color: var(--accent-gold);
-      transform: scale(1.05);
+      border-color: var(--border-hover);
+      background: var(--bg-hover);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-xs);
     }
 
-    .cave-slot:focus {
-      outline-color: var(--accent-gold);
+    .cave-slot:hover::before {
+      opacity: 1;
     }
 
-    .cave-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, 70px);
-      gap: var(--sp-3);
-      padding: var(--sp-4);
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--r-lg);
-      overflow: auto;
+    .cave-slot.empty {
+      background: var(--bg-surface);
+      border-color: var(--border-subtle);
+      color: var(--text-muted);
     }
+
+    .cave-slot.empty:hover {
+      border-color: var(--gold);
+      background: rgba(201, 168, 76, 0.05);
+    }
+
+    .cave-slot.occupied {
+      background: linear-gradient(135deg, var(--bg-elevated), var(--bg-surface));
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    .cave-slot.occupied:hover {
+      box-shadow: var(--shadow-gold);
+    }
+
+    .cave-slot.selected {
+      border-color: var(--gold);
+      background: rgba(201, 168, 76, 0.15);
+      box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.25);
+    }
+
+    .cave-slot-label {
+      z-index: 2;
+      position: relative;
+      line-height: 1.2;
+    }
+
+    /* ════════════════════════════════════════════════════════════════════════════
+       RESPONSIVE
+       ════════════════════════════════════════════════════════════════════════════ */
 
     @media (max-width: 1024px) {
-      .cave-layout {
+      .caves-layout {
         grid-template-columns: 1fr;
+        gap: var(--sp-4);
+      }
+
+      .cave-sidebar {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--sp-4);
+      }
+
+      .cave-info-card {
+        grid-column: 1 / -1;
+      }
+
+      .cave-grid-container {
+        grid-column: 1 / -1;
       }
     }
 
-    @media (max-width: 768px) {
-      .cave-layout {
+    @media (max-width: 640px) {
+      .caves-layout {
         grid-template-columns: 1fr;
       }
 
-      .cave-grid {
-        grid-template-columns: repeat(auto-fill, 60px);
+      .cave-selector {
+        flex-wrap: wrap;
+      }
+
+      .cave-selector-btn {
+        flex: 1 1 calc(33.333% - var(--sp-2));
+      }
+
+      .cave-stat-row {
+        grid-template-columns: 1fr;
+      }
+
+      .cave-grid-container {
+        grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+      }
+
+      .cave-sidebar {
+        grid-template-columns: 1fr;
       }
     }
   </style>
 </head>
 <body>
-  <a href="#main-content" class="skip-to-content">Ir para conteúdo principal</a>
+  <a href="#main-content" class="skip-to-content">Saltar para conteúdo principal</a>
 
-  <div class="app">
-    <aside class="sidebar">
+  <div class="app-layout">
+    <!-- ╔════════════════════════════════════════════════════════════════════════╗ -->
+    <!-- ║ SIDEBAR                                                                ║ -->
+    <!-- ╚════════════════════════════════════════════════════════════════════════╝ -->
+    <nav class="sidebar">
       <div class="sidebar-brand">
-        <div class="sidebar-brand-logo">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M8 22h8M12 11v11M7 11c0 2.8 2.2 5 5 5s5-2.2 5-5V3H7v8z"/>
-            <path d="M7 8h10"/>
-          </svg>
-        </div>
-        <div class="sidebar-brand-text">
-          <h2>Vinha D'Ouro</h2>
-          <p>ARMAZÉM</p>
-        </div>
+        <h2>Vinha D'Ouro</h2>
+        <p class="brand-subtitle">ARMAZÉM</p>
       </div>
 
-      <nav class="sidebar-nav">
-        <p class="sidebar-section-label">INVENTÁRIO</p>
-        <li class="sidebar-nav-item">
-          <a href="stock.html" class="sidebar-nav-link">
-            <svg class="sidebar-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
-            </svg>
-            Stock
-          </a>
-        </li>
-        <li class="sidebar-nav-item">
-          <a href="caves.html" class="sidebar-nav-link active" aria-current="page">
-            <svg class="sidebar-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
-              <polyline points="9 22 9 12 15 12 15 22"/>
-            </svg>
-            Caves
-          </a>
-        </li>
-
-        <div class="sidebar-divider"></div>
-        <p class="sidebar-section-label">NAVEGAÇÃO</p>
-        <li class="sidebar-nav-item">
-          <a href="loja.html" class="sidebar-nav-link">
-            <svg class="sidebar-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
-            </svg>
-            Ponto de Venda
-          </a>
-        </li>
-        <li class="sidebar-nav-item">
-          <a href="provas.html" class="sidebar-nav-link">
-            <svg class="sidebar-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <path d="M18 8h1a4 4 0 010 8h-1"/>
-              <path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/>
-            </svg>
-            Provas
-          </a>
-        </li>
-      </nav>
+      <div class="sidebar-nav">
+        <p class="nav-section-label">Inventário</p>
+        <a href="stock.html" class="nav-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+          </svg>
+          Stock
+        </a>
+        <a href="caves.html" class="nav-link active">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 21H7a2 2 0 0 1-2-2V9.414a1 1 0 0 1 .293-.707l5.414-5.414a1 1 0 0 1 1.414 0l5.414 5.414a1 1 0 0 1 .293.707V19a2 2 0 0 1-2 2h-2"></path>
+            <rect x="9" y="9" width="6" height="12"></rect>
+          </svg>
+          Caves
+        </a>
+      </div>
 
       <div class="sidebar-footer">
-        <div class="sidebar-user">
-          <div class="sidebar-user-avatar" id="user-avatar">A</div>
-          <div class="sidebar-user-info">
-            <h4 id="user-name">Armazenista</h4>
-            <p>Caves & Stock</p>
+        <div class="user-block">
+          <div class="user-avatar" id="user-avatar">U</div>
+          <div class="user-info">
+            <p class="user-name" id="user-name">Utilizador</p>
+            <p class="user-role">Armazenista</p>
           </div>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="logout()" title="Terminar sessão">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+          Sair
+        </button>
+      </div>
+
+      <div class="api-badge" title="Estado de ligação da API">
+        <span class="api-status"></span>
+        <span id="api-label">API Conectado</span>
+      </div>
+    </nav>
+
+    <!-- ╔════════════════════════════════════════════════════════════════════════╗ -->
+    <!-- ║ MAIN CONTENT                                                           ║ -->
+    <!-- ╚════════════════════════════════════════════════════════════════════════╝ -->
+    <main class="main-content" id="main-content">
+      <div id="toasts" class="toasts-container"></div>
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Gestão de Caves</h1>
+          <p id="cave-name" class="page-subtitle">Cave A</p>
         </div>
       </div>
-    </aside>
 
-    <div class="main-content">
-      <header class="topbar">
-        <div class="topbar-title">
-          <h1>Gestão de Caves</h1>
-          <p>Organização e monitorização de caves de vinho</p>
+      <!-- Two-Column Layout -->
+      <div class="caves-layout">
+        <!-- LEFT: Cave Sidebar -->
+        <div class="cave-sidebar">
+          <!-- Cave Selector -->
+          <div class="cave-selector">
+            <button class="cave-selector-btn active" onclick="loadCave('A')">Cave A</button>
+            <button class="cave-selector-btn" onclick="loadCave('B')">Cave B</button>
+            <button class="cave-selector-btn" onclick="loadCave('C')">Cave C</button>
+          </div>
+
+          <!-- Cave Info Card -->
+          <div class="cave-info-card">
+            <div class="cave-stat-row">
+              <div class="cave-stat-item">
+                <span class="stat-lbl">Capacidade</span>
+                <span class="stat-val" id="cave-capacity">100</span>
+              </div>
+              <div class="cave-stat-item">
+                <span class="stat-lbl">Ocupação</span>
+                <span class="stat-val" id="cave-occupied">0</span>
+              </div>
+            </div>
+
+            <div class="cave-stat-row">
+              <div class="cave-stat-item">
+                <span class="stat-lbl">Disponível</span>
+                <span class="stat-val" style="color: var(--success);" id="cave-free">100</span>
+              </div>
+              <div class="cave-stat-item">
+                <span class="stat-lbl">Taxa Ocupação</span>
+                <span class="stat-val" id="cave-pct">0%</span>
+              </div>
+            </div>
+
+            <div class="cave-stat-progress">
+              <div class="cave-stat-progress-bar" id="cave-progress-bar" style="width: 0%"></div>
+            </div>
+          </div>
+
+          <!-- Slot Info Section -->
+          <div class="slot-info-section">
+            <h3>Informação da Posição</h3>
+            <div id="slot-info-content" class="slot-info-content">
+              <div class="slot-info-empty">Selecione uma posição</div>
+            </div>
+          </div>
+
+          <!-- Slot Actions -->
+          <div class="slot-info-section">
+            <h3>Ações</h3>
+            <div class="slot-actions" id="slot-actions">
+              <div class="slot-select-group">
+                <select id="slot-wine-select" class="form-select">
+                  <option value="">Selecione um vinho...</option>
+                </select>
+              </div>
+              <button class="btn btn-primary btn-sm" onclick="assignWineToSlot()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                  <polyline points="19 12 5 12"></polyline>
+                </svg>
+                Atribuir Vinho
+              </button>
+              <button class="btn btn-danger btn-sm hidden" id="clear-slot-btn" onclick="clearSlot()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="3 6 5 6 21 6"></polyline>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                </svg>
+                Remover Vinho
+              </button>
+            </div>
+          </div>
         </div>
-        <div class="topbar-actions">
-          <div class="api-badge offline" id="api-badge" role="status" aria-live="polite">
-            <span class="api-dot"></span>
-            <span id="api-label">Verificando...</span>
-          </div>
-          <button class="icon-btn" title="Sair" aria-label="Terminar sessão" onclick="logout()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/>
-            </svg>
-          </button>
-        </div>
-      </header>
 
-      <div class="page" id="main-content">
-        <nav class="breadcrumbs">
-          <span class="breadcrumb-item"><a href="index.html">Home</a></span>
-          <span class="breadcrumb-separator">/</span>
-          <span class="breadcrumb-item active">Caves</span>
-        </nav>
-
-        <!-- Cave Layout -->
-        <div class="cave-layout">
-          <!-- Left Panel: Cave Controls -->
-          <div style="display: flex; flex-direction: column; gap: var(--sp-4); overflow-y: auto;">
-            <!-- Cave Selector -->
-            <div class="card">
-              <div class="card-header">
-                <div class="card-title">Selecionar Cave</div>
-              </div>
-              <div class="card-body" style="display: flex; flex-direction: column; gap: var(--sp-2);">
-                <button class="cave-selector-btn active" onclick="loadCave('A')">Cave A</button>
-                <button class="cave-selector-btn" onclick="loadCave('B')">Cave B</button>
-                <button class="cave-selector-btn" onclick="loadCave('C')">Cave C</button>
-              </div>
-            </div>
-
-            <!-- Cave Info -->
-            <div class="card">
-              <div class="card-body">
-                <div style="font-size: 14px; font-weight: 600; color: var(--text-primary);" id="cave-name">Cave A — Principal</div>
-                <div style="font-size: 12px; color: var(--text-muted); margin-top: var(--sp-2);">Informações da cave</div>
-              </div>
-            </div>
-
-            <!-- KPI Mini Cards -->
-            <div style="display: flex; flex-direction: column; gap: var(--sp-3);">
-              <div class="card">
-                <div class="card-body" style="text-align: center;">
-                  <div style="font-size: 11px; color: var(--text-muted);">Capacidade</div>
-                  <div style="font-size: 24px; font-weight: 700; color: var(--accent-gold);" id="cave-capacity">120</div>
-                </div>
-              </div>
-              <div class="card">
-                <div class="card-body" style="text-align: center;">
-                  <div style="font-size: 11px; color: var(--text-muted);">Ocupados</div>
-                  <div style="font-size: 24px; font-weight: 700; color: var(--accent-lavender);" id="cave-occupied">0</div>
-                </div>
-              </div>
-              <div class="card">
-                <div class="card-body" style="text-align: center;">
-                  <div style="font-size: 11px; color: var(--text-muted);">Livres</div>
-                  <div style="font-size: 24px; font-weight: 700; color: var(--accent-wine);" id="cave-free">120</div>
-                </div>
-              </div>
-              <div class="card">
-                <div class="card-body" style="text-align: center;">
-                  <div style="font-size: 11px; color: var(--text-muted);">Ocupação</div>
-                  <div style="font-size: 24px; font-weight: 700; color: var(--text-secondary);" id="cave-pct">0%</div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Slot Info -->
-            <div class="card">
-              <div class="card-header">
-                <div class="card-title">Posição Selecionada</div>
-              </div>
-              <div class="card-body">
-                <div id="slot-info-content" style="font-size: 13px; color: var(--text-muted); font-style: italic;">
-                  Selecione um slot na cave
-                </div>
-                <div id="slot-actions" style="display: none; margin-top: var(--sp-4); flex-direction: column; gap: var(--sp-2);">
-                  <label style="font-size: 12px; font-weight: 600; color: var(--text-muted);">Atribuir vinho:</label>
-                  <select class="form-select" id="slot-wine-select" aria-label="Selecionar vinho para posição"></select>
-                  <button class="btn btn-gold btn-sm" onclick="assignWineToSlot()">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13">
-                      <polyline points="20 6 9 17 4 12"/>
-                    </svg>
-                    Atribuir
-                  </button>
-                  <button class="btn btn-danger btn-sm" id="clear-slot-btn" onclick="clearSlot()" style="display: none;">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13">
-                      <polyline points="3 6 5 6 21 6"/>
-                      <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6"/>
-                    </svg>
-                    Esvaziar Posição
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <!-- Legend -->
-            <div class="card">
-              <div class="card-header">
-                <div class="card-title">Legenda</div>
-              </div>
-              <div class="card-body">
-                <div style="display: flex; flex-direction: column; gap: 8px;">
-                  <div class="cave-legend-item">
-                    <div class="cave-legend-dot" style="background: #1E1012;"></div>
-                    Vazio
-                  </div>
-                  <div class="cave-legend-item">
-                    <div class="cave-legend-dot" style="background: #8B3A44;"></div>
-                    Tinto
-                  </div>
-                  <div class="cave-legend-item">
-                    <div class="cave-legend-dot" style="background: #F4E4C1;"></div>
-                    Branco
-                  </div>
-                  <div class="cave-legend-item">
-                    <div class="cave-legend-dot" style="background: #C2185B;"></div>
-                    Rosé
-                  </div>
-                  <div class="cave-legend-item">
-                    <div class="cave-legend-dot" style="background: #C9A227;"></div>
-                    Espumante
-                  </div>
-                  <div class="cave-legend-item">
-                    <div class="cave-legend-dot" style="background: #E8A020;"></div>
-                    Porto
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Right Panel: Cave Grid -->
-          <div class="card">
-            <div class="card-header">
-              <div class="card-title">Mapa da Cave</div>
-            </div>
-            <div class="card-body" style="overflow: auto; padding: var(--sp-4);">
-              <div id="cave-grid-container" class="cave-grid">
-                <div style="text-align: center; padding: 60px; color: var(--text-muted); grid-column: 1 / -1;">A carregar mapa da cave...</div>
-              </div>
-            </div>
-          </div>
+        <!-- RIGHT: Cave Grid -->
+        <div class="cave-grid-container" id="cave-grid-container">
+          <!-- Filled by JavaScript -->
         </div>
       </div>
-    </div>
+    </main>
   </div>
 
-  <div class="toast-container" id="toasts"></div>
   <script src="app.js"></script>
 </body>
 </html>
