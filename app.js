@@ -663,11 +663,11 @@ function addToCart(id){
   document.getElementById('size-wine-name').textContent=v.nome;
   const opts=document.getElementById('size-options');
   opts.innerHTML=BOTTLE_SIZES.map(s=>`
-    <button class="size-option-btn" onclick="addToCartWithSize(${id},'${s.vol}','${s.nome}',${s.mult});closeSizeModal()">
-      <div class="size-option-vol">${s.vol}</div>
-      <div class="size-option-name">${s.nome}</div>
-      <div class="size-option-desc">${s.desc}</div>
-      <div class="size-option-price">${fmt.eur(v.preco*s.mult)}</div>
+    <button class="size-option" onclick="addToCartWithSize(${id},'${s.vol}','${s.nome}',${s.mult});closeSizeModal()">
+      <div class="size-label">${s.vol}</div>
+      <div class="size-name">${s.nome}</div>
+      <div class="size-ml">${s.desc}</div>
+      <div class="size-price">${fmt.eur(v.preco*s.mult)}</div>
     </button>`).join('');
   document.getElementById('size-modal')?.classList.remove('hidden');
 }
