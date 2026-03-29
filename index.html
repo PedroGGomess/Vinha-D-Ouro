@@ -4,271 +4,239 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Vinha D'Ouro — Sistema de Gestão Premium para Lojas de Vinho">
-  <title>Vinha D'Ouro — Sistema de Gestão Premium</title>
+  <title>Vinha D'Ouro — Login</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <style>
-    /* ===== LOGIN PAGE LAYOUT ===== */
-    .login-page {
-      background: var(--bg-void);
-      position: relative;
+    /* ===== LOGIN PAGE FULL-SCREEN LAYOUT ===== */
+    body.login-page-body {
+      margin: 0;
+      padding: 0;
       overflow: hidden;
-      min-height: 100vh;
+    }
+
+    .login-page {
+      position: fixed;
+      inset: 0;
+      background: #0c0a14;
       display: flex;
       align-items: center;
       justify-content: center;
+      overflow: auto;
     }
 
-    /* ===== ANIMATED ORBS (Decorative Background) ===== */
-    .orb-animated {
+    /* ===== ANIMATED BACKGROUND ORBS ===== */
+    .login-bg-orb {
       position: fixed;
+      border-radius: 50%;
       pointer-events: none;
       z-index: 0;
-      animation: floatOrb 8s ease-in-out infinite;
+      filter: blur(60px);
     }
 
-    .orb-1 {
-      top: 10%;
-      left: 5%;
-      width: 300px;
-      height: 300px;
-      background: radial-gradient(ellipse at center, rgba(139, 58, 68, 0.12) 0%, transparent 70%);
-      border-radius: 50%;
-      filter: blur(40px);
+    .login-bg-orb-1 {
+      width: 500px;
+      height: 500px;
+      top: -10%;
+      left: -5%;
+      background: radial-gradient(ellipse at center, rgba(180, 140, 255, 0.15) 0%, transparent 70%);
+      animation: floatOrb1 15s ease-in-out infinite;
     }
 
-    .orb-2 {
-      bottom: 5%;
-      right: 10%;
+    .login-bg-orb-2 {
       width: 400px;
       height: 400px;
-      background: radial-gradient(ellipse at center, rgba(201, 162, 39, 0.08) 0%, transparent 70%);
-      border-radius: 50%;
-      filter: blur(50px);
-      animation-delay: 1s;
+      bottom: -8%;
+      right: -3%;
+      background: radial-gradient(ellipse at center, rgba(201, 162, 39, 0.1) 0%, transparent 70%);
+      animation: floatOrb2 18s ease-in-out infinite;
     }
 
-    @keyframes floatOrb {
+    .login-bg-orb-3 {
+      width: 350px;
+      height: 350px;
+      top: 50%;
+      right: 5%;
+      background: radial-gradient(ellipse at center, rgba(194, 24, 91, 0.08) 0%, transparent 70%);
+      animation: floatOrb3 20s ease-in-out infinite;
+    }
+
+    @keyframes floatOrb1 {
       0%, 100% { transform: translate(0, 0); }
-      25% { transform: translate(20px, -25px); }
-      50% { transform: translate(-15px, 20px); }
-      75% { transform: translate(25px, 15px); }
+      33% { transform: translate(30px, -40px); }
+      66% { transform: translate(-20px, 30px); }
     }
 
-    /* ===== SUBTLE GRID BACKGROUND ===== */
-    .login-grid-bg {
-      position: fixed;
-      inset: 0;
-      background-image:
-        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-      background-size: 80px 80px;
-      pointer-events: none;
-      z-index: 0;
+    @keyframes floatOrb2 {
+      0%, 100% { transform: translate(0, 0); }
+      33% { transform: translate(-25px, 35px); }
+      66% { transform: translate(35px, -25px); }
     }
 
-    /* ===== TOP GOLD GRADIENT LINE ===== */
-    .top-bar {
+    @keyframes floatOrb3 {
+      0%, 100% { transform: translate(0, 0); }
+      33% { transform: translate(-15px, 20px); }
+      66% { transform: translate(20px, -15px); }
+    }
+
+    /* ===== TOP GOLD ACCENT LINE ===== */
+    .login-top-accent {
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, var(--accent-gold), transparent);
-      z-index: 2;
-      box-shadow: 0 0 20px rgba(201, 162, 39, 0.3);
+      height: 3px;
+      background: linear-gradient(90deg, transparent, #c9a227, transparent);
+      z-index: 10;
+      box-shadow: 0 0 30px rgba(201, 162, 39, 0.4);
     }
 
-    /* ===== LOGIN WRAPPER ===== */
-    .login-wrap {
+    /* ===== LOGIN CONTAINER ===== */
+    .login-container {
       position: relative;
       z-index: 1;
       width: 100%;
-      max-width: 520px;
-      padding: var(--sp-4);
+      max-width: 500px;
+      padding: 40px;
     }
 
-    /* ===== HEADER SECTION ===== */
-    .login-header-block {
+    /* ===== HEADER / BRANDING ===== */
+    .login-header {
       text-align: center;
-      margin-bottom: var(--sp-10);
-      animation: slideDown 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+      margin-bottom: 50px;
+      animation: slideInDown 0.9s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
-    .year-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 18px;
-      background: rgba(201, 162, 39, 0.1);
-      border: 1.5px solid rgba(201, 162, 39, 0.3);
-      border-radius: var(--r-full);
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      color: var(--text-gold);
-      margin-bottom: var(--sp-6);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-    }
-
-    .year-badge::before {
-      content: '';
-      width: 6px;
-      height: 6px;
-      background: var(--accent-gold);
-      border-radius: 50%;
-      animation: pulse 2s ease-in-out infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.5; }
-    }
-
-    .login-brand {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: var(--sp-5);
-      margin-bottom: var(--sp-8);
-    }
-
-    .login-brand-icon {
-      width: 72px;
-      height: 72px;
-      background: linear-gradient(135deg, var(--wine-700), var(--wine-600));
-      border: 2px solid var(--accent-gold);
-      border-radius: var(--r-lg);
+    .login-icon-wrapper {
+      width: 90px;
+      height: 90px;
+      margin: 0 auto 30px;
+      background: linear-gradient(135deg, #c2185b, #8b3a44);
+      border-radius: 18px;
       display: flex;
       align-items: center;
       justify-content: center;
-      flex-shrink: 0;
-      box-shadow: 0 8px 32px rgba(139, 58, 68, 0.3);
+      box-shadow: 0 12px 40px rgba(194, 24, 91, 0.3);
+      border: 2px solid #c9a227;
     }
 
-    .login-brand-icon svg {
-      width: 38px;
-      height: 38px;
-      color: var(--accent-gold);
-      stroke-width: 1.2;
-    }
-
-    .login-brand-text {
-      text-align: center;
-    }
-
-    .login-brand-text h1 {
-      font-family: var(--font-display);
-      font-size: 42px;
-      font-weight: 700;
-      color: var(--text-primary);
-      letter-spacing: -0.8px;
-      line-height: 1.1;
-      margin: 0;
-    }
-
-    .login-brand-text p {
-      font-size: 14px;
-      color: var(--text-secondary);
-      letter-spacing: 0.5px;
-      margin-top: var(--sp-3);
-      font-weight: 500;
-    }
-
-    .login-divider {
+    .login-icon-wrapper svg {
       width: 50px;
+      height: 50px;
+      color: #c9a227;
+      stroke-width: 1;
+    }
+
+    .login-title {
+      font-family: "Playfair Display", serif;
+      font-size: 48px;
+      font-weight: 700;
+      color: #ffffff;
+      margin: 0 0 10px 0;
+      letter-spacing: -1px;
+    }
+
+    .login-subtitle {
+      font-family: "Inter", sans-serif;
+      font-size: 16px;
+      color: #b48cff;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      margin: 0 0 20px 0;
+    }
+
+    .login-divider-line {
+      width: 60px;
       height: 2px;
-      background: linear-gradient(90deg, transparent, var(--accent-gold), transparent);
-      margin: var(--sp-8) auto;
+      background: linear-gradient(90deg, transparent, #c9a227, transparent);
+      margin: 0 auto 15px;
     }
 
     .login-tagline {
-      font-size: 14px;
-      color: var(--text-secondary);
+      font-size: 13px;
+      color: #999;
       letter-spacing: 0.3px;
       margin: 0;
-      font-weight: 400;
     }
 
-    /* ===== LOGIN FORM CONTAINER ===== */
-    .login-form-container {
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--r-xl);
-      padding: var(--sp-8);
-      backdrop-filter: blur(var(--glass-blur));
-      -webkit-backdrop-filter: blur(var(--glass-blur));
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-      animation: slideUp 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s both;
-      margin-bottom: var(--sp-8);
+    /* ===== CARD WRAPPER ===== */
+    .login-card {
+      background: rgba(25, 20, 45, 0.6);
+      border: 1px solid rgba(201, 162, 39, 0.2);
+      border-radius: 16px;
+      padding: 40px;
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      animation: slideInUp 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s both;
+      margin-bottom: 40px;
     }
 
+    /* ===== FORM STYLING ===== */
     .login-form {
       display: flex;
       flex-direction: column;
-      gap: var(--sp-6);
+      gap: 24px;
     }
 
-    /* ===== FORM FIELDS WITH FLOATING LABELS ===== */
     .form-group {
       position: relative;
     }
 
     .form-input {
       width: 100%;
-      padding: 14px 16px;
-      background: var(--bg-input);
-      border: 1.5px solid var(--border-subtle);
-      border-radius: var(--r-md);
-      font-family: var(--font-body);
+      padding: 16px 18px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1.5px solid rgba(201, 162, 39, 0.15);
+      border-radius: 10px;
+      font-family: "Inter", sans-serif;
       font-size: 15px;
-      color: var(--text-primary);
-      transition: all var(--t-normal);
+      color: #ffffff;
+      transition: all 0.3s ease;
       outline: none;
     }
 
     .form-input::placeholder {
-      color: var(--text-muted);
+      color: #777;
     }
 
     .form-input:focus {
-      border-color: var(--accent-gold);
-      background: rgba(201, 162, 39, 0.05);
-      box-shadow: 0 0 0 3px rgba(201, 162, 39, 0.1);
+      border-color: #c9a227;
+      background: rgba(201, 162, 39, 0.08);
+      box-shadow: 0 0 0 3px rgba(201, 162, 39, 0.12);
     }
 
     .form-label {
       position: absolute;
-      top: -10px;
-      left: 14px;
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--text-gold);
-      background: var(--bg-card);
-      padding: 0 6px;
-      letter-spacing: 0.5px;
+      top: -12px;
+      left: 16px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
       text-transform: uppercase;
+      color: #b48cff;
+      background: rgba(25, 20, 45, 0.8);
+      padding: 0 8px;
+      transition: color 0.3s ease;
     }
 
     .form-input:focus ~ .form-label,
     .form-input:not(:placeholder-shown) ~ .form-label {
-      color: var(--accent-gold);
+      color: #c9a227;
     }
 
     /* ===== ERROR MESSAGE ===== */
     .login-error {
-      padding: var(--sp-4);
-      background: rgba(139, 58, 68, 0.15);
-      border: 1px solid rgba(139, 58, 68, 0.4);
-      border-radius: var(--r-md);
+      padding: 14px 16px;
+      background: rgba(255, 107, 107, 0.1);
+      border: 1px solid rgba(255, 107, 107, 0.3);
+      border-radius: 8px;
       color: #ff6b6b;
       font-size: 13px;
       display: none;
-      animation: slideDown 0.3s ease-out;
+      animation: slideInDown 0.3s ease;
     }
 
     .login-error.show {
@@ -276,256 +244,120 @@
     }
 
     /* ===== SUBMIT BUTTON ===== */
-    .btn-login {
-      padding: 14px 24px;
-      background: linear-gradient(135deg, var(--wine-700), var(--wine-600));
-      color: var(--text-light);
+    .btn-submit {
+      padding: 16px 24px;
+      background: linear-gradient(135deg, #c2185b, #8b3a44);
+      color: #ffffff;
       border: none;
-      border-radius: var(--r-md);
+      border-radius: 10px;
+      font-family: "Inter", sans-serif;
       font-size: 15px;
-      font-weight: 600;
-      letter-spacing: 0.5px;
+      font-weight: 700;
+      letter-spacing: 1px;
       text-transform: uppercase;
       cursor: pointer;
-      transition: all var(--t-normal);
+      transition: all 0.3s ease;
       outline: 2px solid transparent;
       outline-offset: 2px;
-      margin-top: var(--sp-3);
+      min-height: 48px;
     }
 
-    .btn-login:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(139, 58, 68, 0.4);
+    .btn-submit:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 32px rgba(194, 24, 91, 0.4);
     }
 
-    .btn-login:focus {
-      outline-color: var(--accent-gold);
+    .btn-submit:focus {
+      outline-color: #c9a227;
     }
 
-    .btn-login:active {
-      transform: translateY(0);
+    .btn-submit:active {
+      transform: translateY(-1px);
     }
 
-    /* ===== FORGOT PASSWORD LINK ===== */
-    .forgot-password-container {
+    /* ===== DEMO CREDENTIALS SECTION ===== */
+    .demo-section {
+      border-top: 1px solid rgba(201, 162, 39, 0.1);
+      padding-top: 24px;
+      margin-top: 24px;
+    }
+
+    .demo-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #999;
       text-align: center;
-      margin-top: var(--sp-4);
-    }
-
-    .forgot-password-link {
-      display: inline-block;
-      font-size: 12px;
-      color: var(--text-secondary);
-      text-decoration: none;
-      padding: 8px 14px;
-      transition: all var(--t-normal);
-      outline: 2px solid transparent;
-      outline-offset: 2px;
-      letter-spacing: 0.3px;
-    }
-
-    .forgot-password-link:hover {
-      color: var(--accent-gold);
-    }
-
-    .forgot-password-link:focus {
-      outline-color: var(--accent-gold);
-    }
-
-    /* ===== ROLE CARDS SECTION ===== */
-    .role-section {
-      display: none;
-      animation: slideUp 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-
-    .role-section.show {
+      margin-bottom: 18px;
       display: block;
     }
 
-    .role-section-title {
-      text-align: center;
-      margin-bottom: var(--sp-8);
-    }
-
-    .role-section-title h2 {
-      font-family: var(--font-display);
-      font-size: 28px;
-      font-weight: 700;
-      color: var(--text-primary);
-      margin: 0;
-      letter-spacing: -0.5px;
-    }
-
-    .role-section-title p {
-      font-size: 14px;
-      color: var(--text-secondary);
-      margin-top: var(--sp-3);
-    }
-
-    .role-grid {
+    .demo-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: var(--sp-6);
-      margin-bottom: var(--sp-8);
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
     }
 
-    .role-card {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      padding: var(--sp-7);
-      background: var(--bg-card);
-      border: 1.5px solid var(--border-subtle);
-      border-radius: var(--r-lg);
-      backdrop-filter: blur(var(--glass-blur));
-      -webkit-backdrop-filter: blur(var(--glass-blur));
+    .demo-card {
+      padding: 16px 12px;
+      background: rgba(201, 162, 39, 0.06);
+      border: 1.5px solid rgba(201, 162, 39, 0.15);
+      border-radius: 10px;
+      text-align: center;
       cursor: pointer;
-      transition: all var(--t-slow);
-      animation: slideUp var(--t-slow);
-      animation-fill-mode: both;
+      transition: all 0.25s ease;
       outline: 2px solid transparent;
       outline-offset: 2px;
-      text-decoration: none;
-      color: inherit;
-      overflow: hidden;
     }
 
-    .role-card::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, rgba(201, 162, 39, 0.15) 0%, transparent 100%);
-      opacity: 0;
-      transition: opacity var(--t-slow);
-      pointer-events: none;
+    .demo-card:hover {
+      background: rgba(201, 162, 39, 0.12);
+      border-color: rgba(201, 162, 39, 0.4);
+      transform: translateY(-2px);
     }
 
-    .role-card:nth-child(1) { animation-delay: 0.1s; }
-    .role-card:nth-child(2) { animation-delay: 0.2s; }
-    .role-card:nth-child(3) { animation-delay: 0.3s; }
-
-    .role-card:hover {
-      border-color: var(--accent-gold);
-      background: var(--bg-card-hover);
-      transform: translateY(-6px);
-      box-shadow: 0 16px 40px rgba(201, 162, 39, 0.25);
+    .demo-card:focus {
+      outline-color: #c9a227;
     }
 
-    .role-card:hover::before {
-      opacity: 1;
-    }
-
-    .role-card:focus {
-      outline-color: var(--accent-gold);
-    }
-
-    .role-card-content {
-      position: relative;
-      z-index: 1;
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: var(--sp-5);
-      margin-bottom: var(--sp-6);
-    }
-
-    .role-card-icon {
-      width: 56px;
-      height: 56px;
-      background: linear-gradient(135deg, var(--wine-700), var(--wine-600));
-      border-radius: var(--r-md);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: transform var(--t-normal);
-      box-shadow: 0 4px 12px rgba(139, 58, 68, 0.2);
-    }
-
-    .role-card:hover .role-card-icon {
-      transform: scale(1.12) rotate(6deg);
-    }
-
-    .role-card-icon svg {
-      width: 28px;
-      height: 28px;
-      color: var(--accent-gold);
-      stroke-width: 1.3;
-    }
-
-    .role-card-name {
-      font-family: var(--font-display);
-      font-size: 20px;
-      font-weight: 700;
-      color: var(--text-primary);
-      letter-spacing: 0.2px;
-    }
-
-    .role-card-desc {
+    .demo-card-user {
       font-size: 13px;
-      color: var(--text-secondary);
-      line-height: 1.6;
-    }
-
-    .role-card-bottom {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      position: relative;
-      z-index: 1;
-      padding-top: var(--sp-5);
-      border-top: 1px solid var(--border-subtle);
-    }
-
-    .role-card-access {
-      font-size: 10px;
       font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 1.2px;
-      color: var(--text-gold);
+      color: #c9a227;
+      margin-bottom: 4px;
     }
 
-    .role-card-arrow {
-      width: 20px;
-      height: 20px;
-      color: var(--accent-gold);
-      transition: transform var(--t-normal);
-      stroke-width: 2;
-    }
-
-    .role-card:hover .role-card-arrow {
-      transform: translateX(5px);
+    .demo-card-pass {
+      font-size: 11px;
+      color: #777;
     }
 
     /* ===== FOOTER ===== */
     .login-footer {
       text-align: center;
-      padding-top: var(--sp-8);
-      border-top: 1px solid var(--border-subtle);
-      animation: fadeIn 1.2s ease-out;
+      padding-top: 30px;
+      border-top: 1px solid rgba(201, 162, 39, 0.1);
+      animation: fadeIn 1.2s ease 0.3s both;
     }
 
     .login-footer p {
-      font-size: 12px;
-      color: var(--text-muted);
+      font-size: 11px;
+      color: #666;
       line-height: 1.8;
-      letter-spacing: 0.3px;
-      margin: 0;
-    }
-
-    .login-footer p + p {
-      margin-top: var(--sp-3);
+      margin: 0 0 10px 0;
     }
 
     .login-footer span {
-      color: var(--text-gold);
+      color: #c9a227;
       font-weight: 600;
     }
 
     /* ===== ANIMATIONS ===== */
-    @keyframes slideDown {
+    @keyframes slideInDown {
       from {
         opacity: 0;
-        transform: translateY(-30px);
+        transform: translateY(-40px);
       }
       to {
         opacity: 1;
@@ -533,10 +365,10 @@
       }
     }
 
-    @keyframes slideUp {
+    @keyframes slideInUp {
       from {
         opacity: 0;
-        transform: translateY(30px);
+        transform: translateY(40px);
       }
       to {
         opacity: 1;
@@ -555,115 +387,111 @@
 
     /* ===== RESPONSIVE DESIGN ===== */
     @media (max-width: 768px) {
-      .login-wrap {
+      .login-container {
         max-width: 100%;
-        padding: var(--sp-6) var(--sp-4);
+        padding: 30px 24px;
       }
 
-      .login-header-block {
-        margin-bottom: var(--sp-8);
+      .login-header {
+        margin-bottom: 40px;
       }
 
-      .login-brand-text h1 {
-        font-size: 32px;
+      .login-title {
+        font-size: 40px;
       }
 
-      .login-form-container {
-        padding: var(--sp-6);
+      .login-card {
+        padding: 30px;
       }
 
-      .role-grid {
+      .demo-grid {
         grid-template-columns: 1fr;
-      }
-
-      .login-brand-icon {
-        width: 64px;
-        height: 64px;
-      }
-
-      .login-brand-icon svg {
-        width: 32px;
-        height: 32px;
-      }
-
-      .year-badge {
-        font-size: 10px;
-        padding: 8px 14px;
+        gap: 10px;
       }
     }
 
     @media (max-width: 480px) {
-      .login-wrap {
-        padding: var(--sp-4);
+      .login-container {
+        padding: 24px 16px;
       }
 
-      .login-header-block {
-        margin-bottom: var(--sp-6);
+      .login-header {
+        margin-bottom: 32px;
       }
 
-      .login-brand-text h1 {
-        font-size: 28px;
+      .login-title {
+        font-size: 32px;
       }
 
-      .login-brand-text p {
-        font-size: 13px;
-      }
-
-      .login-form-container {
-        padding: var(--sp-5);
-      }
-
-      .form-input {
-        padding: 12px 14px;
+      .login-subtitle {
         font-size: 14px;
       }
 
-      .role-card {
-        padding: var(--sp-5);
+      .login-card {
+        padding: 24px;
+        margin-bottom: 30px;
+      }
+
+      .login-form {
+        gap: 20px;
+      }
+
+      .form-input {
+        padding: 14px 16px;
+        font-size: 14px;
+      }
+
+      .btn-submit {
+        padding: 14px 20px;
+        font-size: 14px;
+      }
+
+      .demo-label {
+        font-size: 9px;
+      }
+
+      .login-footer p {
+        font-size: 10px;
       }
     }
   </style>
 </head>
-<body>
+<body class="login-page-body">
   <a href="#main-content" class="skip-to-content">Ir para conteúdo principal</a>
 
   <div class="login-page">
-    <!-- Decorative Elements -->
-    <div class="top-bar" role="presentation" aria-hidden="true"></div>
-    <div class="login-grid-bg" role="presentation" aria-hidden="true"></div>
-    <div class="orb-animated orb-1" role="presentation" aria-hidden="true"></div>
-    <div class="orb-animated orb-2" role="presentation" aria-hidden="true"></div>
+    <!-- Top accent line -->
+    <div class="login-top-accent" role="presentation" aria-hidden="true"></div>
 
-    <div class="login-wrap">
-      <!-- Header Section -->
-      <div class="login-header-block">
-        <div class="year-badge">Sistema Premium · v2.0</div>
+    <!-- Animated background orbs -->
+    <div class="login-bg-orb login-bg-orb-1" role="presentation" aria-hidden="true"></div>
+    <div class="login-bg-orb login-bg-orb-2" role="presentation" aria-hidden="true"></div>
+    <div class="login-bg-orb login-bg-orb-3" role="presentation" aria-hidden="true"></div>
 
-        <div class="login-brand">
-          <div class="login-brand-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M8 22h8M12 11v11M7 11c0 2.8 2.2 5 5 5s5-2.2 5-5V3H7v8z"/>
-              <path d="M7 8h10"/>
-            </svg>
-          </div>
-          <div class="login-brand-text">
-            <h1>Vinha D'Ouro</h1>
-            <p>Gestão de Vinhos Premium</p>
-          </div>
+    <!-- Main login content -->
+    <div class="login-container">
+      <!-- Header with branding -->
+      <div class="login-header">
+        <div class="login-icon-wrapper" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8 22h8M12 11v11M7 11c0 2.8 2.2 5 5 5s5-2.2 5-5V3H7v8z"/>
+            <path d="M7 8h10"/>
+          </svg>
         </div>
-
-        <div class="login-divider" role="presentation" aria-hidden="true"></div>
-        <p class="login-tagline">Autenticação de Acesso</p>
+        <h1 class="login-title">Vinha D'Ouro</h1>
+        <p class="login-subtitle">Gestão de Vinhos Premium</p>
+        <div class="login-divider-line" role="presentation" aria-hidden="true"></div>
+        <p class="login-tagline">Sistema de Autenticação</p>
       </div>
 
       <main id="main-content">
-        <!-- Login Form Container -->
-        <div class="login-form-container">
+        <!-- Login card -->
+        <div class="login-card">
           <form class="login-form" id="loginForm">
-            <!-- Error Message Area -->
+            <!-- Error message display -->
             <div id="loginError" class="login-error"></div>
 
-            <!-- Username Field -->
+            <!-- Username field -->
             <div class="form-group">
               <input
                 type="text"
@@ -677,7 +505,7 @@
               <label for="username" class="form-label">Utilizador</label>
             </div>
 
-            <!-- Password Field -->
+            <!-- Password field -->
             <div class="form-group">
               <input
                 type="password"
@@ -690,111 +518,41 @@
               <label for="password" class="form-label">Password</label>
             </div>
 
-            <!-- Submit Button -->
-            <button type="submit" class="btn-login">ENTRAR</button>
+            <!-- Submit button -->
+            <button type="submit" class="btn-submit">Entrar</button>
 
-            <!-- Demo Credentials -->
-            <div style="margin-top: var(--sp-4); padding-top: var(--sp-4); border-top: 1px solid var(--border-subtle);">
-              <p style="font-size: 11px; color: var(--text-muted); text-align: center; margin-bottom: var(--sp-3);">Credenciais de demonstração:</p>
-              <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--sp-2);">
-                <div onclick="fillLogin('gerente','1234')" style="cursor:pointer;background:rgba(201,162,39,0.06);border:1px solid rgba(201,162,39,0.2);border-radius:var(--r-md);padding:var(--sp-3);text-align:center;transition:all 0.2s;" onmouseover="this.style.background='rgba(201,162,39,0.14)';this.style.borderColor='rgba(201,162,39,0.5)'" onmouseout="this.style.background='rgba(201,162,39,0.06)';this.style.borderColor='rgba(201,162,39,0.2)'">
-                  <div style="font-size:12px;font-weight:700;color:var(--text-gold);">gerente</div>
-                  <div style="font-size:10px;color:var(--text-muted);">1234</div>
-                </div>
-                <div onclick="fillLogin('loja','1234')" style="cursor:pointer;background:rgba(74,158,255,0.06);border:1px solid rgba(74,158,255,0.2);border-radius:var(--r-md);padding:var(--sp-3);text-align:center;transition:all 0.2s;" onmouseover="this.style.background='rgba(74,158,255,0.14)';this.style.borderColor='rgba(74,158,255,0.5)'" onmouseout="this.style.background='rgba(74,158,255,0.06)';this.style.borderColor='rgba(74,158,255,0.2)'">
-                  <div style="font-size:12px;font-weight:700;color:#4a9eff;">loja</div>
-                  <div style="font-size:10px;color:var(--text-muted);">1234</div>
-                </div>
-                <div onclick="fillLogin('stock','1234')" style="cursor:pointer;background:rgba(46,204,107,0.06);border:1px solid rgba(46,204,107,0.2);border-radius:var(--r-md);padding:var(--sp-3);text-align:center;transition:all 0.2s;" onmouseover="this.style.background='rgba(46,204,107,0.14)';this.style.borderColor='rgba(46,204,107,0.5)'" onmouseout="this.style.background='rgba(46,204,107,0.06)';this.style.borderColor='rgba(46,204,107,0.2)'">
-                  <div style="font-size:12px;font-weight:700;color:#2ecc6b;">stock</div>
-                  <div style="font-size:10px;color:var(--text-muted);">1234</div>
-                </div>
+            <!-- Demo credentials section -->
+            <div class="demo-section">
+              <span class="demo-label">Credenciais de Demonstração</span>
+              <div class="demo-grid">
+                <button type="button" class="demo-card" onclick="fillLogin('gerente','1234')" aria-label="Gerente: 1234">
+                  <div class="demo-card-user">gerente</div>
+                  <div class="demo-card-pass">1234</div>
+                </button>
+                <button type="button" class="demo-card" onclick="fillLogin('loja','1234')" aria-label="Loja: 1234">
+                  <div class="demo-card-user">loja</div>
+                  <div class="demo-card-pass">1234</div>
+                </button>
+                <button type="button" class="demo-card" onclick="fillLogin('stock','1234')" aria-label="Stock: 1234">
+                  <div class="demo-card-user">stock</div>
+                  <div class="demo-card-pass">1234</div>
+                </button>
               </div>
             </div>
           </form>
-        </div>
-
-        <!-- Role Cards Section (Hidden Until Login) -->
-        <div id="roleSection" class="role-section">
-          <div class="role-section-title">
-            <h2>Selecione o Seu Perfil</h2>
-            <p>Escolha o módulo para continuar</p>
-          </div>
-
-          <div class="role-grid">
-            <!-- Gerente Card -->
-            <a href="gerente.html" class="role-card" tabindex="0">
-              <div class="role-card-content">
-                <div class="role-card-icon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="12" y1="2" x2="12" y2="22"></line>
-                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-                  </svg>
-                </div>
-                <div class="role-card-name">Gerente</div>
-                <div class="role-card-desc">Dashboard, vendas, relatórios e análises de desempenho executivo</div>
-              </div>
-              <div class="role-card-bottom">
-                <span class="role-card-access">Acesso Total</span>
-                <svg class="role-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-                  <path d="M5 12h14M12 5l7 7-7 7"></path>
-                </svg>
-              </div>
-            </a>
-
-            <!-- Loja Card -->
-            <a href="loja.html" class="role-card" tabindex="0">
-              <div class="role-card-content">
-                <div class="role-card-icon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="9" cy="21" r="1"></circle>
-                    <circle cx="20" cy="21" r="1"></circle>
-                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-                  </svg>
-                </div>
-                <div class="role-card-name">Loja</div>
-                <div class="role-card-desc">Ponto de venda profissional, transações e gestão de clientes</div>
-              </div>
-              <div class="role-card-bottom">
-                <span class="role-card-access">PDV Completo</span>
-                <svg class="role-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-                  <path d="M5 12h14M12 5l7 7-7 7"></path>
-                </svg>
-              </div>
-            </a>
-
-            <!-- Armazenista Card -->
-            <a href="stock.html" class="role-card" tabindex="0">
-              <div class="role-card-content">
-                <div class="role-card-icon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-                    <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
-                    <line x1="12" y1="22.08" x2="12" y2="12"></line>
-                  </svg>
-                </div>
-                <div class="role-card-name">Armazenista</div>
-                <div class="role-card-desc">Inventário, caves, stock crítico e operações de armazém</div>
-              </div>
-              <div class="role-card-bottom">
-                <span class="role-card-access">Inventário</span>
-                <svg class="role-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-                  <path d="M5 12h14M12 5l7 7-7 7"></path>
-                </svg>
-              </div>
-            </a>
-          </div>
         </div>
       </main>
 
       <!-- Footer -->
       <div class="login-footer">
         <p>
-          <span>Vinha D'Ouro</span> · Sistema de Gestão de Vinhos ·
-          Pedro Gomes - Eduardo Lourenço · <span>Universidade Lusófona</span>
+          <span>Vinha D'Ouro</span> — Sistema de Gestão de Vinhos
         </p>
-        <p style="font-size: 11px;">
-          <span style="color: var(--accent-gold);">v2.0</span> — Premium UX · Accessibility · Responsive Design
+        <p>
+          Projeto ADS — <span>Universidade Lusófona</span>
+        </p>
+        <p>
+          Desenvolvido por Pedro Gomes, Eduardo Lourenço e Kollan Intacua
         </p>
       </div>
     </div>

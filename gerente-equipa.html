@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="pt-PT">
 <head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Equipa — Vinha D'Ouro">
   <title>Equipa — Vinha D'Ouro</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -9,88 +10,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <style>
-    .team-grid {
+    #team-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
       gap: var(--sp-4);
-    }
-    .team-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--r-lg);
-      padding: var(--sp-5);
-      text-align: center;
-      animation: slideUp var(--t-slow);
-      transition: all var(--t-normal);
-      outline: 2px solid transparent;
-      outline-offset: 2px;
-    }
-    .team-card:hover {
-      border-color: var(--accent-gold);
-      background: var(--bg-card-hover);
-      transform: translateY(-4px);
-    }
-    .team-card:focus {
-      outline-color: var(--accent-gold);
-    }
-    .team-avatar {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--wine-700), var(--wine-600));
-      border: 3px solid var(--border-gold);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 32px;
-      font-weight: 700;
-      color: var(--text-primary);
-      margin: 0 auto var(--sp-4);
-    }
-    .team-name {
-      font-family: var(--font-display);
-      font-size: 16px;
-      font-weight: 700;
-      color: var(--text-primary);
-      margin-bottom: var(--sp-1);
-    }
-    .team-role {
-      font-size: 12px;
-      color: var(--text-gold);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      font-weight: 600;
-      margin-bottom: var(--sp-3);
-      padding-bottom: var(--sp-3);
-      border-bottom: 1px solid var(--border-subtle);
-    }
-    .team-stats {
-      display: flex;
-      gap: var(--sp-3);
-      margin: var(--sp-3) 0;
-      font-size: 12px;
-    }
-    .team-stat {
-      flex: 1;
-    }
-    .team-stat-value {
-      font-weight: 700;
-      font-family: var(--font-display);
-      font-size: 16px;
-      color: var(--accent-gold);
-    }
-    .team-stat-label {
-      color: var(--text-muted);
-      font-size: 10px;
-      text-transform: uppercase;
-    }
-    .team-actions {
-      display: flex;
-      gap: var(--sp-2);
-      margin-top: var(--sp-4);
-    }
-    .team-actions button {
-      flex: 1;
     }
   </style>
 </head>
@@ -98,90 +21,204 @@
   <a href="#main-content" class="skip-to-content">Ir para conteúdo principal</a>
 
   <div class="app">
+    <!-- SIDEBAR -->
     <aside class="sidebar">
       <div class="sidebar-brand">
-        <div class="sidebar-brand-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 22h8M12 11v11M7 11c0 2.8 2.2 5 5 5s5-2.2 5-5V3H7v8z"/><path d="M7 8h10"/></svg></div>
-        <div class="sidebar-brand-text"><h2>Vinha D'Ouro</h2><p>Gerente</p></div>
+        <div class="sidebar-brand-logo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M8 22h8M12 11v11M7 11c0 2.8 2.2 5 5 5s5-2.2 5-5V3H7v8z"/>
+            <path d="M7 8h10"/>
+          </svg>
+        </div>
+        <div class="sidebar-brand-text">
+          <h2>Vinha D'Ouro</h2>
+          <p>Gerente</p>
+        </div>
       </div>
 
       <nav class="sidebar-nav">
         <p class="sidebar-section-label">Principal</p>
-        <li class="sidebar-nav-item"><a href="gerente.html" class="sidebar-nav-link"><svg class="sidebar-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard</a></li>
-        <li class="sidebar-nav-item"><a href="gerente-vendas.html" class="sidebar-nav-link"><svg class="sidebar-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>Vendas</a></li>
-        <li class="sidebar-nav-item"><a href="gerente-relatorios.html" class="sidebar-nav-link"><svg class="sidebar-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Relatórios</a></li>
-        <li class="sidebar-nav-item"><a href="gerente-equipa.html" class="sidebar-nav-link active" aria-current="page"><svg class="sidebar-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>Equipa</a></li>
+        <li class="sidebar-nav-item">
+          <a href="gerente.html" class="sidebar-nav-link">
+            <svg class="sidebar-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="3" y="3" width="7" height="7" rx="1"/>
+              <rect x="14" y="3" width="7" height="7" rx="1"/>
+              <rect x="3" y="14" width="7" height="7" rx="1"/>
+              <rect x="14" y="14" width="7" height="7" rx="1"/>
+            </svg>
+            Dashboard
+          </a>
+        </li>
+        <li class="sidebar-nav-item">
+          <a href="gerente-vendas.html" class="sidebar-nav-link">
+            <svg class="sidebar-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <line x1="12" y1="1" x2="12" y2="23"/>
+              <path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
+            </svg>
+            Vendas
+          </a>
+        </li>
+        <li class="sidebar-nav-item">
+          <a href="gerente-relatorios.html" class="sidebar-nav-link">
+            <svg class="sidebar-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <line x1="18" y1="20" x2="18" y2="10"/>
+              <line x1="12" y1="20" x2="12" y2="4"/>
+              <line x1="6" y1="20" x2="6" y2="14"/>
+            </svg>
+            Relatórios
+          </a>
+        </li>
+        <li class="sidebar-nav-item">
+          <a href="gerente-equipa.html" class="sidebar-nav-link active" aria-current="page">
+            <svg class="sidebar-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
+            </svg>
+            Equipa
+          </a>
+        </li>
+
         <div class="sidebar-divider"></div>
+
         <p class="sidebar-section-label">Operações</p>
-        <li class="sidebar-nav-item"><a href="loja.html" class="sidebar-nav-link"><svg class="sidebar-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/></svg>Ponto de Venda</a></li>
-        <li class="sidebar-nav-item"><a href="stock.html" class="sidebar-nav-link"><svg class="sidebar-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>Inventário</a></li>
+        <li class="sidebar-nav-item">
+          <a href="loja.html" class="sidebar-nav-link">
+            <svg class="sidebar-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+            </svg>
+            Ponto de Venda
+          </a>
+        </li>
+        <li class="sidebar-nav-item">
+          <a href="stock.html" class="sidebar-nav-link">
+            <svg class="sidebar-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
+            </svg>
+            Inventário
+          </a>
+        </li>
+        <li class="sidebar-nav-item">
+          <a href="caves.html" class="sidebar-nav-link">
+            <svg class="sidebar-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+            </svg>
+            Caves
+          </a>
+        </li>
       </nav>
 
       <div class="sidebar-footer">
         <div class="sidebar-footer-version">v2.0</div>
-        <div class="sidebar-user"><div class="sidebar-user-avatar">G</div><div class="sidebar-user-info"><h4>Gerente</h4><p>Acesso Total</p></div></div>
-        <p style="margin-top: var(--sp-3); font-size: 10px;">Pedro Gomes - Eduardo Lourenço</p>
+        <div class="sidebar-user">
+          <div class="sidebar-user-avatar" id="user-avatar">G</div>
+          <div class="sidebar-user-info">
+            <h4 id="user-name">Gerente</h4>
+            <p>Acesso Total</p>
+          </div>
+        </div>
+        <p style="margin-top: var(--sp-3); font-size: 10px;">Eduardo Saavedra — Kollan Gafuro — Pedro Gomes</p>
       </div>
     </aside>
 
+    <!-- MAIN CONTENT -->
     <div class="main-content">
+      <!-- TOPBAR -->
       <header class="topbar">
-        <div class="topbar-title"><h1>Gestão de Equipa</h1><p>Funcionários e acessos</p></div>
+        <div class="topbar-title">
+          <h1>Gestão de Equipa</h1>
+          <p>Funcionários e acessos</p>
+        </div>
         <div class="topbar-actions">
-          <div class="api-badge offline" id="api-badge" role="status" aria-live="polite"><span class="api-dot"></span><span id="api-label">Verificando...</span></div>
-          <button class="btn btn-primary btn-sm" onclick="openAddFuncModal()" aria-label="Adicionar novo funcionário">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          <div class="api-badge offline" id="api-badge" role="status" aria-live="polite">
+            <span class="api-dot"></span>
+            <span id="api-label">Verificando...</span>
+          </div>
+          <button class="btn btn-gold btn-sm" onclick="openAddFuncModal()" aria-label="Adicionar novo funcionário">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+              <line x1="12" y1="5" x2="12" y2="19"/>
+              <line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
             Novo Funcionário
           </button>
-          <button class="icon-btn" onclick="logout()" title="Sair" aria-label="Terminar sessão"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg></button>
+          <button class="icon-btn" onclick="logout()" title="Sair" aria-label="Terminar sessão">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/>
+            </svg>
+          </button>
         </div>
       </header>
 
+      <!-- MAIN CONTENT AREA -->
       <div class="page" id="main-content">
-        <nav class="breadcrumbs"><span class="breadcrumb-item"><a href="#">Home</a></span><span class="breadcrumb-separator">/</span><span class="breadcrumb-item active">Equipa</span></nav>
+        <nav class="breadcrumbs">
+          <span class="breadcrumb-item"><a href="#">Home</a></span>
+          <span class="breadcrumb-separator">/</span>
+          <span class="breadcrumb-item active">Equipa</span>
+        </nav>
 
-        <div class="team-grid" id="team-grid">
-          <div style="grid-column: 1/-1; text-align: center; padding: 60px; color: var(--text-muted);">A carregar equipa...</div>
+        <!-- TEAM GRID -->
+        <div id="team-grid">
+          <div style="grid-column: 1/-1; text-align: center; padding: 60px; color: var(--text-muted);">
+            A carregar equipa...
+          </div>
         </div>
       </div>
     </div>
   </div>
 
+  <!-- FUNC MODAL -->
   <div class="modal-overlay hidden" id="func-modal" onclick="if(event.target===this)closeFuncModal()">
     <div class="modal" style="max-width: 480px;">
       <div class="modal-header">
         <div class="modal-title" id="func-modal-title">Novo Funcionário</div>
-        <button class="modal-close" onclick="closeFuncModal()" aria-label="Fechar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+        <button class="modal-close" onclick="closeFuncModal()" aria-label="Fechar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
       </div>
-      <div class="modal-body">
+      <div class="modal-body" style="padding: var(--sp-5); display: flex; flex-direction: column; gap: var(--sp-4);">
         <input type="hidden" id="func-id">
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-4);">
-          <div class="form-group" style="grid-column: 1/-1;">
-            <label class="form-label">Nome Completo <span style="color: var(--danger);">*</span></label>
-            <input type="text" class="form-input" id="func-nome" placeholder="ex: João Silva" aria-required="true">
-          </div>
-          <div class="form-group" style="grid-column: 1/-1;">
-            <label class="form-label">Email <span style="color: var(--danger);">*</span></label>
-            <input type="email" class="form-input" id="func-email" placeholder="ex: joao@vinhadouro.pt" aria-required="true">
-          </div>
-          <div class="form-group">
+
+        <!-- Nome Completo -->
+        <div class="form-group" style="margin: 0;">
+          <label class="form-label">Nome Completo <span style="color: var(--danger);">*</span></label>
+          <input type="text" class="form-input" id="func-nome" placeholder="ex: João Silva" aria-required="true">
+        </div>
+
+        <!-- Email -->
+        <div class="form-group" style="margin: 0;">
+          <label class="form-label">Email <span style="color: var(--danger);">*</span></label>
+          <input type="email" class="form-input" id="func-email" placeholder="ex: joao@vinhadouro.pt" aria-required="true">
+        </div>
+
+        <!-- Cargo + Salário -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-3);">
+          <div class="form-group" style="margin: 0;">
             <label class="form-label">Cargo</label>
             <input type="text" class="form-input" id="func-cargo" placeholder="ex: Vendedor">
           </div>
-          <div class="form-group">
+          <div class="form-group" style="margin: 0;">
             <label class="form-label">Salário (€)</label>
             <input type="number" class="form-input" id="func-salario" placeholder="0.00" step="0.01">
           </div>
-          <div class="form-group">
+        </div>
+
+        <!-- Nível de Acesso + Estado -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-3);">
+          <div class="form-group" style="margin: 0;">
             <label class="form-label">Nível de Acesso</label>
-            <select class="form-select" id="func-nivel">
+            <select class="form-input" id="func-nivel">
               <option value="FUNCIONARIO">Funcionário</option>
               <option value="GERENTE">Gerente</option>
               <option value="ADMIN">Admin</option>
             </select>
           </div>
-          <div class="form-group">
+          <div class="form-group" style="margin: 0;">
             <label class="form-label">Estado</label>
-            <select class="form-select" id="func-ativo">
+            <select class="form-input" id="func-ativo">
               <option value="1">Ativo</option>
               <option value="0">Inativo</option>
             </select>
@@ -190,12 +227,19 @@
       </div>
       <div class="modal-footer">
         <button class="btn btn-ghost" onclick="closeFuncModal()">Cancelar</button>
-        <button class="btn btn-primary" onclick="saveFuncionario()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Guardar</button>
+        <button class="btn btn-gold" onclick="saveFuncionario()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          Guardar
+        </button>
       </div>
     </div>
   </div>
 
-  <div class="toast-container" id="toasts"></div>
+  <!-- TOAST CONTAINER -->
+  <div id="toasts"></div>
+
   <script src="app.js"></script>
 </body>
 </html>

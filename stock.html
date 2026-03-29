@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Inventário — Vinha D'Ouro">
-  <title>Inventário — Vinha D'Ouro</title>
+  <meta name="description" content="Gestão de Inventário — Vinha D'Ouro">
+  <title>Gestão de Inventário — Vinha D'Ouro</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -25,18 +25,18 @@
         </div>
         <div class="sidebar-brand-text">
           <h2>Vinha D'Ouro</h2>
-          <p>Stock</p>
+          <p>ARMAZÉM</p>
         </div>
       </div>
 
       <nav class="sidebar-nav">
-        <p class="sidebar-section-label">Inventário</p>
+        <p class="sidebar-section-label">INVENTÁRIO</p>
         <li class="sidebar-nav-item">
           <a href="stock.html" class="sidebar-nav-link active" aria-current="page">
             <svg class="sidebar-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
               <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
             </svg>
-            Inventário
+            Stock
           </a>
         </li>
         <li class="sidebar-nav-item">
@@ -49,16 +49,13 @@
           </a>
         </li>
         <div class="sidebar-divider"></div>
-        <p class="sidebar-section-label">Navegação</p>
+        <p class="sidebar-section-label">NAVEGAÇÃO</p>
         <li class="sidebar-nav-item">
-          <a href="gerente.html" class="sidebar-nav-link">
+          <a href="loja.html" class="sidebar-nav-link">
             <svg class="sidebar-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <rect x="3" y="3" width="7" height="7" rx="1"/>
-              <rect x="14" y="3" width="7" height="7" rx="1"/>
-              <rect x="3" y="14" width="7" height="7" rx="1"/>
-              <rect x="14" y="14" width="7" height="7" rx="1"/>
+              <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
             </svg>
-            Dashboard
+            Ponto de Venda
           </a>
         </li>
         <li class="sidebar-nav-item">
@@ -70,18 +67,9 @@
             Provas
           </a>
         </li>
-        <li class="sidebar-nav-item">
-          <a href="loja.html" class="sidebar-nav-link">
-            <svg class="sidebar-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
-            </svg>
-            Ponto de Venda
-          </a>
-        </li>
       </nav>
 
       <div class="sidebar-footer">
-        <div class="sidebar-footer-version">v2.0</div>
         <div class="sidebar-user">
           <div class="sidebar-user-avatar" id="user-avatar">A</div>
           <div class="sidebar-user-info">
@@ -89,7 +77,6 @@
             <p>Caves & Stock</p>
           </div>
         </div>
-        <p style="margin-top: var(--sp-3); font-size: 10px;">Pedro Gomes - Eduardo Lourenço</p>
       </div>
     </aside>
 
@@ -97,14 +84,20 @@
     <div class="main-content">
       <header class="topbar">
         <div class="topbar-title">
-          <h1>Inventário</h1>
-          <p>Gestão de stock e catálogo de vinhos</p>
+          <h1>Gestão de Inventário</h1>
+          <p>Monitorização de stock e catálogo de vinhos</p>
         </div>
         <div class="topbar-actions">
           <div class="api-badge offline" id="api-badge" role="status" aria-live="polite">
             <span class="api-dot"></span>
             <span id="api-label">Verificando...</span>
           </div>
+          <button class="icon-btn" title="Atualizar dados" aria-label="Atualizar">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="23 4 23 10 17 10"/>
+              <path d="M20.49 15a9 9 0 11-2-8.12M23 12a9 9 0 11-9-9"/>
+            </svg>
+          </button>
           <button class="icon-btn" onclick="logout()" title="Sair" aria-label="Terminar sessão">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/>
@@ -115,7 +108,7 @@
 
       <div class="page" id="main-content">
         <nav class="breadcrumbs">
-          <span class="breadcrumb-item"><a href="#">Home</a></span>
+          <span class="breadcrumb-item"><a href="index.html">Home</a></span>
           <span class="breadcrumb-separator">/</span>
           <span class="breadcrumb-item active">Inventário</span>
         </nav>
@@ -126,11 +119,11 @@
             <div class="kpi-card-accent"></div>
             <div class="kpi-icon">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <path d="M8 22h8M12 11v11M7 11c0 2.8 2.2 5 5 5s5-2.2 5-5V3H7v8z"/>
-                <path d="M7 8h10"/>
+                <circle cx="12" cy="12" r="1"/>
+                <path d="M12 8v-2m0 12v2m3.315-10.315l1.414-1.414m-8.058 8.058l1.414 1.414M16 12h2m-12 0H2m10.315-3.315l1.414 1.414M7.27 18.27l1.414-1.414"/>
               </svg>
             </div>
-            <div class="kpi-label">Total Vinhos</div>
+            <div class="kpi-label">Total Referências</div>
             <div class="kpi-value" id="stat-total">0</div>
           </div>
 
@@ -138,20 +131,18 @@
             <div class="kpi-card-accent"></div>
             <div class="kpi-icon">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
+                <path d="M6 3h12a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V5a2 2 0 012-2zm0 8h12"/>
               </svg>
             </div>
-            <div class="kpi-label">Total Unidades</div>
+            <div class="kpi-label">Unidades em Stock</div>
             <div class="kpi-value" id="stat-units">0</div>
           </div>
 
           <div class="kpi-card">
             <div class="kpi-card-accent"></div>
-            <div class="kpi-icon" style="color: var(--danger);">
+            <div class="kpi-icon">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
-                <line x1="12" y1="9" x2="12" y2="13"/>
-                <line x1="12" y1="17" x2="12.01" y2="17"/>
+                <path d="M12 2v20m0-20a10 10 0 110 20 10 10 0 010-20z"/>
               </svg>
             </div>
             <div class="kpi-label">Stock Crítico</div>
@@ -183,7 +174,7 @@
                 <line x1="12" y1="5" x2="12" y2="19"/>
                 <line x1="5" y1="12" x2="19" y2="12"/>
               </svg>
-              Adicionar Vinho
+              Adicionar
             </button>
           </div>
 
@@ -193,10 +184,10 @@
                 <circle cx="11" cy="11" r="8"/>
                 <line x1="21" y1="21" x2="16.65" y2="16.65"/>
               </svg>
-              <input type="text" class="form-input" id="stock-search" placeholder="Pesquisar..." style="padding-left: 38px;" aria-label="Pesquisar vinhos">
+              <input type="text" class="form-input" id="stock-search" placeholder="Pesquisar por nome..." aria-label="Pesquisar vinhos">
             </div>
             <select class="form-select" id="tipo-filter" aria-label="Filtrar por tipo">
-              <option value="">Todos</option>
+              <option value="">Todos os Tipos</option>
               <option value="Tinto">Tinto</option>
               <option value="Branco">Branco</option>
               <option value="Rosé">Rosé</option>
@@ -209,7 +200,7 @@
             <table class="data-table" role="grid">
               <thead>
                 <tr>
-                  <th>Vinho</th>
+                  <th>Nome</th>
                   <th>Tipo</th>
                   <th>Região</th>
                   <th>Produtor</th>
