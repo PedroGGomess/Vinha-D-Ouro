@@ -693,9 +693,23 @@
             <!-- Submit Button -->
             <button type="submit" class="btn-login">ENTRAR</button>
 
-            <!-- Forgot Password Link -->
-            <div class="forgot-password-container">
-              <a href="#" class="forgot-password-link">Esqueceu a password?</a>
+            <!-- Demo Credentials -->
+            <div style="margin-top: var(--sp-4); padding-top: var(--sp-4); border-top: 1px solid var(--border-subtle);">
+              <p style="font-size: 11px; color: var(--text-muted); text-align: center; margin-bottom: var(--sp-3);">Credenciais de demonstração:</p>
+              <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--sp-2);">
+                <div onclick="fillLogin('gerente','1234')" style="cursor:pointer;background:rgba(201,162,39,0.06);border:1px solid rgba(201,162,39,0.2);border-radius:var(--r-md);padding:var(--sp-3);text-align:center;transition:all 0.2s;" onmouseover="this.style.background='rgba(201,162,39,0.14)';this.style.borderColor='rgba(201,162,39,0.5)'" onmouseout="this.style.background='rgba(201,162,39,0.06)';this.style.borderColor='rgba(201,162,39,0.2)'">
+                  <div style="font-size:12px;font-weight:700;color:var(--text-gold);">gerente</div>
+                  <div style="font-size:10px;color:var(--text-muted);">1234</div>
+                </div>
+                <div onclick="fillLogin('loja','1234')" style="cursor:pointer;background:rgba(74,158,255,0.06);border:1px solid rgba(74,158,255,0.2);border-radius:var(--r-md);padding:var(--sp-3);text-align:center;transition:all 0.2s;" onmouseover="this.style.background='rgba(74,158,255,0.14)';this.style.borderColor='rgba(74,158,255,0.5)'" onmouseout="this.style.background='rgba(74,158,255,0.06)';this.style.borderColor='rgba(74,158,255,0.2)'">
+                  <div style="font-size:12px;font-weight:700;color:#4a9eff;">loja</div>
+                  <div style="font-size:10px;color:var(--text-muted);">1234</div>
+                </div>
+                <div onclick="fillLogin('stock','1234')" style="cursor:pointer;background:rgba(46,204,107,0.06);border:1px solid rgba(46,204,107,0.2);border-radius:var(--r-md);padding:var(--sp-3);text-align:center;transition:all 0.2s;" onmouseover="this.style.background='rgba(46,204,107,0.14)';this.style.borderColor='rgba(46,204,107,0.5)'" onmouseout="this.style.background='rgba(46,204,107,0.06)';this.style.borderColor='rgba(46,204,107,0.2)'">
+                  <div style="font-size:12px;font-weight:700;color:#2ecc6b;">stock</div>
+                  <div style="font-size:10px;color:var(--text-muted);">1234</div>
+                </div>
+              </div>
             </div>
           </form>
         </div>

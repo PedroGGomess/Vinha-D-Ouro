@@ -55,14 +55,14 @@ function logout() {
    ══════════════════════════════════════════════ */
 async function handleLogin(e) {
   if (e) e.preventDefault();
-  const username = document.getElementById('login-username')?.value?.trim();
-  const password = document.getElementById('login-password')?.value;
-  const btn      = document.getElementById('login-btn');
-  const errorEl  = document.getElementById('login-error');
+  const username = (document.getElementById('login-username') || document.getElementById('username'))?.value?.trim();
+  const password = (document.getElementById('login-password') || document.getElementById('password'))?.value;
+  const btn      = document.getElementById('login-btn') || document.querySelector('.btn-login');
+  const errorEl  = document.getElementById('login-error') || document.getElementById('loginError');
 
   if (!username || !password) { showLoginError('Preencha todos os campos'); return; }
   if (btn) { btn.disabled = true; btn.textContent = 'A verificar...'; }
-  if (errorEl) errorEl.style.display = 'none';
+  if (errorEl) { errorEl.style.display = 'none'; errorEl.classList.remove('show'); }
 
   try {
     const res  = await fetch(`${API}/login`, {
@@ -76,22 +76,46 @@ async function handleLogin(e) {
     window.location.href = data.redirect;
   } catch(err) {
     showLoginError(err.message || 'Erro de ligação ao servidor');
-    if (btn) { btn.disabled = false; btn.textContent = 'Entrar'; }
+    if (btn) { btn.disabled = false; btn.textContent = 'ENTRAR'; }
   }
 }
 
 function showLoginError(msg) {
-  const el = document.getElementById('login-error');
+  const el = document.getElementById('login-error') || document.getElementById('loginError');
   if (!el) return;
   const span = el.querySelector('span');
   if (span) span.textContent = msg;
-  el.style.display = 'flex';
+  else el.textContent = msg;
+  el.style.display = 'block';
+  el.classList.add('show');
 }
 
 function fillLogin(user, pass) {
-  const u = document.getElementById('login-username'); if (u) u.value = user;
-  const p = document.getElementById('login-password'); if (p) p.value = pass;
-  const e = document.getElementById('login-error');    if (e) e.style.display = 'none';
+  const u = document.getElementById('login-username') || document.getElementById('username');
+  if (u) u.value = user;
+  const p = document.getElementById('login-password') || document.getElementById('password');
+  if (p) p.value = pass;
+  const e = document.getElementById('login-error') || document.getElementById('loginError');
+  if (e) { e.style.display = 'none'; e.classList.remove('show'); }
+}
+
+/* ══════════════════════════════════════════════
+   2b. LOGIN PAGE INIT
+   ══════════════════════════════════════════════ */
+function initLogin() {
+  // If already logged in, redirect
+  const session = Session.get();
+  if (session && session.redirect) { window.location.href = session.redirect; return; }
+
+  // Hook into existing form (supports both old and new HTML IDs)
+  const form = document.getElementById('loginForm') || document.getElementById('login-form');
+  if (form) {
+    form.addEventListener('submit', handleLogin);
+  }
+
+  // Show demo credentials hint if role cards exist
+  const roleSection = document.getElementById('roleSection');
+  if (roleSection) roleSection.classList.remove('show');
 }
 
 /* ══════════════════════════════════════════════
