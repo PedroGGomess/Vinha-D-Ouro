@@ -469,7 +469,7 @@ function openAddModal(){
   document.getElementById('modal-title').textContent='Adicionar Vinho';
   document.getElementById('wine-id').value='';
   ['wine-nome','wine-regiao','wine-produtor','wine-ano','wine-preco','wine-qty'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-  document.getElementById('wine-modal')?.classList.add('open');
+  document.getElementById('wine-modal')?.classList.remove('hidden');
 }
 function openEditModal(id){
   const v=allVinhos.find(x=>x.id===id);if(!v)return;
@@ -479,9 +479,9 @@ function openEditModal(id){
   set('wine-nome',v.nome);set('wine-regiao',v.regiao);set('wine-produtor',v.produtor);
   set('wine-ano',v.anoColheita);set('wine-preco',v.preco);set('wine-qty',v.quantidade);
   const s=document.getElementById('wine-tipo');if(s)s.value=v.tipo||'Tinto';
-  document.getElementById('wine-modal')?.classList.add('open');
+  document.getElementById('wine-modal')?.classList.remove('hidden');
 }
-function closeModal(){document.getElementById('wine-modal')?.classList.remove('open');}
+function closeModal(){document.getElementById('wine-modal')?.classList.add('hidden');}
 async function saveWine(){
   const id=document.getElementById('wine-id')?.value;
   const body={nome:document.getElementById('wine-nome')?.value,tipo:document.getElementById('wine-tipo')?.value,regiao:document.getElementById('wine-regiao')?.value,produtor:document.getElementById('wine-produtor')?.value,anoColheita:+document.getElementById('wine-ano')?.value||0,preco:+document.getElementById('wine-preco')?.value||0,quantidade:+document.getElementById('wine-qty')?.value||0};
@@ -503,9 +503,9 @@ function openStockModal(id){
   const n=document.getElementById('stock-wine-name');if(n)n.textContent=v.nome;
   const c=document.getElementById('stock-current');if(c)c.textContent=v.quantidade||0;
   const q=document.getElementById('stock-qty');if(q)q.value=v.quantidade||0;
-  document.getElementById('stock-modal')?.classList.add('open');
+  document.getElementById('stock-modal')?.classList.remove('hidden');
 }
-function closeStockModal(){document.getElementById('stock-modal')?.classList.remove('open');}
+function closeStockModal(){document.getElementById('stock-modal')?.classList.add('hidden');}
 async function saveStock(){
   const id=document.getElementById('stock-wine-id')?.value;
   const qty=+document.getElementById('stock-qty')?.value||0;
@@ -669,9 +669,9 @@ function addToCart(id){
       <div class="size-option-desc">${s.desc}</div>
       <div class="size-option-price">${fmt.eur(v.preco*s.mult)}</div>
     </button>`).join('');
-  document.getElementById('size-modal')?.classList.add('open');
+  document.getElementById('size-modal')?.classList.remove('hidden');
 }
-function closeSizeModal(){document.getElementById('size-modal')?.classList.remove('open');}
+function closeSizeModal(){document.getElementById('size-modal')?.classList.add('hidden');}
 
 function addToCartWithSize(id,vol,nomeTamanho,mult){
   const v=catalog.find(x=>x.id===id);if(!v)return;
@@ -742,9 +742,9 @@ function checkout(){
   document.getElementById('co-card-panel')?.style.display=payMethod==='Cartão'?'block':'none';
   // Update totals
   updateCoTotals();
-  document.getElementById('checkout-modal')?.classList.add('open');
+  document.getElementById('checkout-modal')?.classList.remove('hidden');
 }
-function closeCheckoutModal(){document.getElementById('checkout-modal')?.classList.remove('open');}
+function closeCheckoutModal(){document.getElementById('checkout-modal')?.classList.add('hidden');}
 
 function updateCoTotals(){
   const sub=cart.reduce((s,x)=>s+x.preco*x.qty,0);
@@ -828,12 +828,12 @@ async function processPayment(){
   closeCheckoutModal();
   clearCart();
   renderCatalog(document.querySelector('.filter-btn.active')?.dataset.filter||'todos');
-  document.getElementById('receipt-modal')?.classList.add('open');
+  document.getElementById('receipt-modal')?.classList.remove('hidden');
   if(btn){btn.disabled=false;btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="20 6 9 17 4 12"/></svg>Confirmar Pagamento';}
 }
 
 function closeReceiptAndReset(){
-  document.getElementById('receipt-modal')?.classList.remove('open');
+  document.getElementById('receipt-modal')?.classList.add('hidden');
 }
 
 /* ──────────────────────────────────────────────
@@ -874,7 +874,7 @@ function openAddFuncModal(){
   document.getElementById('func-modal-title').textContent='Novo Funcionário';
   document.getElementById('func-id').value='';
   ['func-nome','func-email','func-cargo','func-salario'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-  document.getElementById('func-modal')?.classList.add('open');
+  document.getElementById('func-modal')?.classList.remove('hidden');
 }
 function openEditFuncModal(id){
   const f=allFuncs.find(x=>x.id===id);if(!f)return;
@@ -886,9 +886,9 @@ function openEditFuncModal(id){
   set('func-nome',nome);set('func-email',email);set('func-cargo',f.cargo);set('func-salario',f.salario);
   const nv=document.getElementById('func-nivel');if(nv)nv.value=f.nivelAcesso||'FUNCIONARIO';
   const av=document.getElementById('func-ativo');if(av)av.value=f.ativo?'1':'0';
-  document.getElementById('func-modal')?.classList.add('open');
+  document.getElementById('func-modal')?.classList.remove('hidden');
 }
-function closeFuncModal(){document.getElementById('func-modal')?.classList.remove('open');}
+function closeFuncModal(){document.getElementById('func-modal')?.classList.add('hidden');}
 async function saveFuncionario(){
   const id=document.getElementById('func-id')?.value;
   const body={nome:document.getElementById('func-nome')?.value,email:document.getElementById('func-email')?.value,cargo:document.getElementById('func-cargo')?.value,salario:+document.getElementById('func-salario')?.value||0,nivelAcesso:document.getElementById('func-nivel')?.value||'FUNCIONARIO',ativo:+document.getElementById('func-ativo')?.value||1};
@@ -1090,7 +1090,7 @@ function openAddProvaModal(){
   const d=new Date();d.setDate(d.getDate()+7);d.setHours(19,0,0);
   document.getElementById('prova-data').value=d.toISOString().slice(0,16);
   populateProvaWines([]);
-  document.getElementById('prova-modal')?.classList.add('open');
+  document.getElementById('prova-modal')?.classList.remove('hidden');
 }
 function openEditProvaModal(id){
   const p=allProvas.find(x=>x.id===id);if(!p)return;
@@ -1106,7 +1106,7 @@ function openEditProvaModal(id){
   if(p.dataHora) document.getElementById('prova-data').value=p.dataHora.slice(0,16);
   const selWines=(p.vinhos||'').split(',').map(w=>w.trim());
   populateProvaWines(selWines);
-  document.getElementById('prova-modal')?.classList.add('open');
+  document.getElementById('prova-modal')?.classList.remove('hidden');
 }
 function populateProvaWines(selected){
   const container=document.getElementById('prova-wine-checks');if(!container)return;
@@ -1117,7 +1117,7 @@ function populateProvaWines(selected){
       <span>${v.nome} <span style="color:var(--text-muted);font-size:10px;">(${v.tipo})</span></span>
     </label>`).join('');
 }
-function closeProvaModal(){document.getElementById('prova-modal')?.classList.remove('open');}
+function closeProvaModal(){document.getElementById('prova-modal')?.classList.add('hidden');}
 
 async function saveProva(){
   const id=document.getElementById('prova-id')?.value;
