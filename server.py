@@ -971,8 +971,9 @@ def registar_movimento():
         if not d.get('vinhoId') or not d.get('tipo') or d.get('quantidade') is None:
             return jsonify({'error':'vinhoId, tipo e quantidade são obrigatórios'}), 400
 
-        if d.get('tipo') not in ['entrada', 'saida']:
-            return jsonify({'error':'tipo deve ser entrada ou saida'}), 400
+        tipo_raw = d.get('tipo','').upper()
+        if tipo_raw not in ['ENTRADA', 'SAIDA']:
+            return jsonify({'error':'tipo deve ser ENTRADA ou SAIDA'}), 400
 
         conn, db_type = get_db()
 
@@ -980,7 +981,7 @@ def registar_movimento():
         vinho = db_fetchone(conn, db_type, "SELECT quantidade FROM vinhos WHERE id=?", (d.get('vinhoId'),))
         if vinho:
             current_qty = vinho['quantidade'] or 0
-            if d.get('tipo') == 'entrada':
+            if tipo_raw == 'ENTRADA':
                 new_qty = current_qty + d.get('quantidade',0)
             else:
                 new_qty = max(0, current_qty - d.get('quantidade',0))
@@ -990,7 +991,7 @@ def registar_movimento():
         # Registar movimento
         db_exec(conn, db_type,
                 "INSERT INTO movimentos_stock (vinho_id,tipo,quantidade,motivo,funcionario_id) VALUES (?,?,?,?,?)",
-                (d.get('vinhoId'), d.get('tipo'), d.get('quantidade'), d.get('motivo',''), d.get('funcionarioId')))
+                (d.get('vinhoId'), tipo_raw, d.get('quantidade'), d.get('motivo',''), d.get('funcionarioId')))
 
         conn.commit()
         conn.close()
@@ -1005,7 +1006,7 @@ def listar_clientes():
     try:
         conn, db_type = get_db()
         rows = db_fetchall(conn, db_type, """
-            SELECT c.*, p.nome, p.email, p.telefone, p.morada
+            SELECT c.*, p.nome, p.email, p.telefone
             FROM clientes c
             LEFT JOIN pessoas p ON c.pessoa_id = p.id
             WHERE c.ativo = 1
@@ -1019,7 +1020,7 @@ def listar_clientes():
                 'nome':             r.get('nome',''),
                 'email':            r.get('email',''),
                 'telefone':         r.get('telefone',''),
-                'morada':           r.get('morada',''),
+                'morada':           '',
                 'nif':              r.get('nif',''),
                 'dataNascimento':   str(r['data_nascimento']) if r.get('data_nascimento') else None,
                 'preferencias':     json.loads(r['preferencias']) if r.get('preferencias') else {},

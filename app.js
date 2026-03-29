@@ -1296,7 +1296,10 @@ async function processPayment() {
   try {
     const user = Session.get();
     await apiFetch('/vendas', { method: 'POST', body: JSON.stringify({ itens, metodoPagamento: payMethod, funcionarioId: user?.id || 1, desconto: discPct, nif, notas }) });
+    // API success — update local catalog stock
+    itens.forEach(item => { const v = catalog.find(x => x.id === item.vinhoId); if (v) v.quantidade = Math.max(0, (v.quantidade || 0) - item.quantidade); });
   } catch {
+    // API offline — update local catalog stock for demo mode
     itens.forEach(item => { const v = catalog.find(x => x.id === item.vinhoId); if (v) v.quantidade = Math.max(0, (v.quantidade || 0) - item.quantidade); });
   }
 
@@ -1335,6 +1338,7 @@ function closeReceiptAndReset() {
 /* ══════════════════════════════════════════════
    16B. ALIAS FUNCTIONS FOR loja.html onclick HANDLERS
    ══════════════════════════════════════════════ */
+function closeReceipt() { closeReceiptAndReset(); }
 function openCheckout() { checkout(); }
 function closeCheckout() { closeCheckoutModal(); }
 function updateCheckoutTotals() { updateCoTotals(); }
