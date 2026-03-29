@@ -1006,11 +1006,11 @@ async function saveStock() {
    ══════════════════════════════════════════════ */
 function getWineBottleImage(tipo) {
   const images = {
-    'Tinto': 'https://images.vivino.com/thumbs/Apnck_K8DkwQOqmJlsYPTg_375x500.jpg',
-    'Branco': 'https://images.vivino.com/thumbs/Lhkq9Y_HQ3mmxMMbPJxm8w_375x500.jpg',
-    'Rosé': 'https://images.vivino.com/thumbs/VB0IhqGGRF6g4BPkRivenw_375x500.jpg',
-    'Espumante': 'https://images.vivino.com/thumbs/U-Gvf5c4TKIN-7FmAUCuuA_375x500.jpg',
-    'Porto': 'https://images.vivino.com/thumbs/Hh_a0gfRReGI7AEVDZnYBA_375x500.jpg'
+    'Tinto':     'https://images.vivino.com/widgetimages/02_Apnck_K84B6sFpXmXSsAfA.png',
+    'Branco':    'https://images.vivino.com/widgetimages/01_Lhkq9Yri8BYMwvSRpKVA.png',
+    'Rosé':      'https://images.vivino.com/widgetimages/03_VB0IhqHWEk3VVGqShMbA.png',
+    'Espumante': 'https://images.vivino.com/widgetimages/04_U-Gvf54BfufJsp1E67QA.png',
+    'Porto':     'https://images.vivino.com/widgetimages/05_Hh_a0gMCRPmRhDDBxSXA.png',
   };
   return images[tipo] || images['Tinto'];
 }
@@ -1098,7 +1098,7 @@ function renderCatalog(filter = 'todos') {
   const q = (document.getElementById('wine-search')?.value || '').toLowerCase();
   const list = catalog.filter(v =>
     (`${v.nome || ''} ${v.regiao || ''} ${v.produtor || ''}`.toLowerCase()).includes(q) &&
-    (filter === 'todos' || v.tipo === filter)
+    (!filter || filter === 'todos' || filter === '' || v.tipo === filter)
   );
   if (!list.length) {
     grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--text-muted);">Nenhum vinho encontrado</div>`;
@@ -1325,6 +1325,48 @@ async function processPayment() {
 
 function closeReceiptAndReset() {
   document.getElementById('receipt-modal')?.classList.add('hidden');
+}
+
+/* ══════════════════════════════════════════════
+   16B. ALIAS FUNCTIONS FOR loja.html onclick HANDLERS
+   ══════════════════════════════════════════════ */
+function openCheckout() { checkout(); }
+function closeCheckout() { closeCheckoutModal(); }
+function updateCheckoutTotals() { updateCoTotals(); }
+function calculateChange() { calcTroco(); }
+
+function filterByType(type) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  const target = document.querySelector(`.filter-btn[data-filter="${type}"]`);
+  if (target) target.classList.add('active');
+  renderCatalog(type || 'todos');
+}
+
+function searchWines(query) {
+  const active = document.querySelector('.filter-btn.active');
+  renderCatalog(active?.dataset?.filter || 'todos');
+}
+
+function selectPaymentMethod(method) {
+  document.querySelectorAll('.pay-method').forEach(b => b.classList.remove('active'));
+  const target = document.querySelector(`.pay-method[data-method="${method}"]`);
+  if (target) target.classList.add('active');
+  payMethod = method;
+  // Show/hide payment panels
+  const cashP = document.getElementById('co-cash-panel');
+  const mbwayP = document.getElementById('co-mbway-panel');
+  const cardP = document.getElementById('co-card-panel');
+  if (cashP) cashP.style.display = method === 'Numerário' ? 'block' : 'none';
+  if (mbwayP) mbwayP.style.display = method === 'MB Way' ? 'block' : 'none';
+  if (cardP) cardP.style.display = method === 'Cartão' ? 'block' : 'none';
+}
+
+function printReceipt() {
+  window.print();
+}
+
+function newSale() {
+  closeReceiptAndReset();
 }
 
 /* ══════════════════════════════════════════════
@@ -1732,6 +1774,31 @@ function clearSlot() {
   delete caveData[selectedSlot];
   toast('Posição esvaziada');
   renderCaveGrid(); resetSlotInfo(); selectedSlot = null; updateCaveStats();
+}
+
+/* ══════════════════════════════════════════════
+   20. EXPORT FUNCTIONS
+   ══════════════════════════════════════════════ */
+function exportRelatorioCSV() {
+  const table = document.getElementById('top-wines-table');
+  if (!table) { toast('Sem dados para exportar', 'warning'); return; }
+
+  let csv = 'Pos.,Produto,Tipo,Vendas,Receita,Quota\n';
+  table.querySelectorAll('tr').forEach(row => {
+    const cells = row.querySelectorAll('td');
+    if (cells.length) {
+      const vals = Array.from(cells).map(c => '"' + c.textContent.trim().replace(/"/g, '""') + '"');
+      csv += vals.join(',') + '\n';
+    }
+  });
+
+  const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = `relatorio_vinhadouro_${new Date().toISOString().slice(0,10)}.csv`;
+  link.click();
+  URL.revokeObjectURL(link.href);
+  toast('Relatório exportado com sucesso', 'success');
 }
 
 /* ══════════════════════════════════════════════

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Vinha D'Ouro - Sistema de Gestão de Vinhos Premium">
-    <meta name="theme-color" content="#09080c">
+    <meta name="theme-color" content="#050203">
     <title>Vinha D'Ouro - Gestão de Vinhos Premium</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -25,204 +25,162 @@
 
         body {
             font-family: 'Inter', sans-serif;
-            background: #09080c;
+            background: radial-gradient(ellipse at center, #1a0f12 0%, #050203 70%, #000 100%);
             color: #f5f5f5;
-            display: flex;
-            overflow: hidden;
-            position: relative;
-        }
-
-        /* ===== SPLIT LAYOUT ===== */
-        .login-container {
-            display: flex;
-            width: 100%;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        /* Left Panel: Brand & Atmosphere */
-        .left-panel {
-            flex: 1;
-            background: linear-gradient(135deg, #09080c 0%, #1a0812 50%, #0d0609 100%);
-            position: relative;
-            overflow: hidden;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 60px 40px;
             min-height: 100vh;
+            overflow: auto;
+            position: relative;
         }
 
         /* Floating particles animation */
         @keyframes float-particle {
             0%, 100% {
                 transform: translate(0, 0) scale(1);
-                opacity: 0.4;
+                opacity: 0.3;
             }
             50% {
                 transform: translate(var(--tx), var(--ty)) scale(0.8);
-                opacity: 0.2;
+                opacity: 0.1;
             }
         }
 
         .particle {
-            position: absolute;
-            width: 3px;
-            height: 3px;
+            position: fixed;
+            width: 2px;
+            height: 2px;
             background: #C9A227;
             border-radius: 50%;
             pointer-events: none;
-            opacity: 0.3;
+            opacity: 0.2;
         }
 
-        .particle:nth-child(1) { --tx: 80px; --ty: -100px; animation: float-particle 12s ease-in-out infinite; left: 20%; top: 20%; }
-        .particle:nth-child(2) { --tx: -60px; --ty: 120px; animation: float-particle 14s ease-in-out infinite 1s; left: 30%; top: 50%; }
-        .particle:nth-child(3) { --tx: 100px; --ty: 80px; animation: float-particle 16s ease-in-out infinite 2s; left: 60%; top: 30%; }
-        .particle:nth-child(4) { --tx: -90px; --ty: -60px; animation: float-particle 18s ease-in-out infinite 0.5s; left: 70%; top: 70%; }
-        .particle:nth-child(5) { --tx: 70px; --ty: 110px; animation: float-particle 15s ease-in-out infinite 1.5s; left: 15%; top: 60%; }
-        .particle:nth-child(6) { --tx: -100px; --ty: 70px; animation: float-particle 17s ease-in-out infinite 2.5s; left: 80%; top: 40%; }
+        .particle:nth-child(1) { --tx: 80px; --ty: -100px; animation: float-particle 12s ease-in-out infinite; left: 10%; top: 15%; }
+        .particle:nth-child(2) { --tx: -60px; --ty: 120px; animation: float-particle 14s ease-in-out infinite 1s; left: 20%; top: 60%; }
+        .particle:nth-child(3) { --tx: 100px; --ty: 80px; animation: float-particle 16s ease-in-out infinite 2s; left: 85%; top: 25%; }
+        .particle:nth-child(4) { --tx: -90px; --ty: -60px; animation: float-particle 18s ease-in-out infinite 0.5s; left: 75%; top: 75%; }
+        .particle:nth-child(5) { --tx: 70px; --ty: 110px; animation: float-particle 15s ease-in-out infinite 1.5s; left: 5%; top: 50%; }
+        .particle:nth-child(6) { --tx: -100px; --ty: 70px; animation: float-particle 17s ease-in-out infinite 2.5s; left: 90%; top: 40%; }
 
-        /* Brand content (left panel) */
-        .brand-section {
+        /* ===== CENTERED GLASS CARD ===== */
+        .login-container {
+            width: 100%;
+            max-width: 420px;
+            padding: 40px 20px;
+            animation: slideUp 0.8s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .glass-card {
+            background: rgba(15, 8, 10, 0.7);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1.5px solid rgba(201, 162, 39, 0.15);
+            border-radius: 24px;
+            padding: 60px 40px;
+            box-shadow:
+                0 8px 32px rgba(0, 0, 0, 0.4),
+                0 0 1px rgba(201, 162, 39, 0.2),
+                inset 0 1px 1px rgba(255, 255, 255, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Premium glow effect */
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(201, 162, 39, 0.08) 0%, transparent 70%);
+            pointer-events: none;
+            animation: glow-rotate 8s linear infinite;
+        }
+
+        @keyframes glow-rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Card content wrapper */
+        .card-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Brand header inside card */
+        .brand-header {
             text-align: center;
-            z-index: 10;
-            animation: fadeInDown 0.9s ease-out;
+            margin-bottom: 40px;
         }
 
-        .wine-glass-large {
-            width: 120px;
-            height: 120px;
-            margin: 0 auto 40px;
-            filter: drop-shadow(0 8px 24px rgba(201, 162, 39, 0.3));
-            animation: glass-float 4s ease-in-out infinite;
+        .wine-glass-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            filter: drop-shadow(0 4px 16px rgba(201, 162, 39, 0.2));
+            animation: gentle-float 3s ease-in-out infinite;
         }
 
-        @keyframes glass-float {
+        @keyframes gentle-float {
             0%, 100% {
                 transform: translateY(0px);
             }
             50% {
-                transform: translateY(-20px);
+                transform: translateY(-12px);
             }
         }
 
-        .brand-name {
+        .brand-title {
             font-family: 'Playfair Display', serif;
-            font-size: 72px;
+            font-size: 44px;
             font-weight: 700;
-            letter-spacing: -1.5px;
-            color: #f5f5f5;
-            margin-bottom: 12px;
-            line-height: 1;
-        }
-
-        .brand-tagline {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 24px;
-            font-style: italic;
-            font-weight: 400;
-            color: #C9A227;
-            letter-spacing: 0.5px;
-            margin-bottom: 32px;
-        }
-
-        /* Decorative gold lines */
-        .decoration-line {
-            width: 60px;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, #C9A227, transparent);
-            margin: 32px auto;
-            opacity: 0.6;
-        }
-
-        .brand-description {
-            font-size: 14px;
-            color: #b0a080;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            font-weight: 500;
-            opacity: 0.8;
-        }
-
-        @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Right Panel: Login Form */
-        .right-panel {
-            flex: 1;
-            background: #050203;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 40px 60px;
-            position: relative;
-            overflow-y: auto;
-        }
-
-        /* Right panel decorative top accent */
-        .right-panel::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, #C9A227, transparent);
-            opacity: 0.5;
-        }
-
-        .login-form-wrapper {
-            width: 100%;
-            max-width: 380px;
-            animation: fadeInUp 0.9s ease-out 0.1s both;
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .form-header {
-            margin-bottom: 36px;
-        }
-
-        .form-header h2 {
-            font-family: 'Playfair Display', serif;
-            font-size: 32px;
-            font-weight: 600;
-            letter-spacing: -0.5px;
+            letter-spacing: -1px;
             color: #f5f5f5;
             margin-bottom: 8px;
+            line-height: 1.1;
         }
 
-        .form-header p {
-            font-size: 13px;
-            color: #888;
-            letter-spacing: 0.5px;
+        .brand-line {
+            width: 40px;
+            height: 1.5px;
+            background: #C9A227;
+            margin: 14px auto;
+            box-shadow: 0 0 12px rgba(201, 162, 39, 0.4);
         }
 
-        /* Form */
+        .brand-subtitle {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 18px;
+            font-style: italic;
+            color: #C9A227;
+            letter-spacing: 0.3px;
+            font-weight: 400;
+            margin-top: 12px;
+        }
+
+        /* Form section */
         .login-form {
             margin-bottom: 32px;
         }
 
         .form-group {
-            margin-bottom: 24px;
+            margin-bottom: 20px;
         }
 
         label {
@@ -231,44 +189,44 @@
             font-weight: 600;
             letter-spacing: 0.8px;
             text-transform: uppercase;
-            color: #888;
+            color: #999;
             margin-bottom: 10px;
         }
 
         input[type="text"],
         input[type="password"] {
             width: 100%;
-            padding: 14px 16px;
-            background: rgba(255, 255, 255, 0.02);
-            border: 1.5px solid rgba(201, 162, 39, 0.12);
-            border-radius: 10px;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1.5px solid rgba(201, 162, 39, 0.2);
+            border-radius: 12px;
             font-family: 'Inter', sans-serif;
             font-size: 14px;
             color: #f5f5f5;
             transition: all 0.3s ease;
             outline: none;
-            letter-spacing: 0.3px;
+            letter-spacing: 0.2px;
         }
 
         input[type="text"]::placeholder,
         input[type="password"]::placeholder {
-            color: #555;
+            color: #666;
             font-weight: 400;
         }
 
         input[type="text"]:focus,
         input[type="password"]:focus {
-            background: rgba(201, 162, 39, 0.04);
+            background: rgba(201, 162, 39, 0.05);
             border-color: #C9A227;
-            box-shadow: 0 0 0 4px rgba(201, 162, 39, 0.06);
+            box-shadow: 0 0 0 3px rgba(201, 162, 39, 0.1);
         }
 
         /* Error message */
         .login-error {
             display: none;
-            background: rgba(155, 35, 53, 0.08);
-            border: 1px solid rgba(155, 35, 53, 0.25);
-            border-radius: 10px;
+            background: rgba(155, 35, 53, 0.12);
+            border: 1px solid rgba(155, 35, 53, 0.35);
+            border-radius: 12px;
             padding: 12px 14px;
             margin-bottom: 20px;
             font-size: 12px;
@@ -291,13 +249,13 @@
             }
         }
 
-        /* Submit button */
+        /* Wine-red gradient login button */
         .btn-login {
             width: 100%;
             padding: 14px 20px;
-            background: linear-gradient(135deg, #9B2335 0%, #6B1825 100%);
+            background: linear-gradient(135deg, #A02643 0%, #7B1E32 100%);
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             font-family: 'Inter', sans-serif;
             font-size: 13px;
             font-weight: 600;
@@ -306,13 +264,32 @@
             color: #f5f5f5;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 6px 20px rgba(155, 35, 53, 0.25);
+            box-shadow: 0 4px 16px rgba(155, 35, 53, 0.3),
+                        0 0 24px rgba(201, 162, 39, 0) transition-property;
             margin-bottom: 28px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-login::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            transition: left 0.4s ease;
         }
 
         .btn-login:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 28px rgba(155, 35, 53, 0.35);
+            box-shadow: 0 6px 24px rgba(155, 35, 53, 0.4),
+                        0 0 32px rgba(201, 162, 39, 0.15);
+        }
+
+        .btn-login:hover::before {
+            left: 100%;
         }
 
         .btn-login:active {
@@ -326,7 +303,7 @@
 
         /* Demo credentials section */
         .demo-section {
-            border-top: 1px solid rgba(201, 162, 39, 0.1);
+            border-top: 1px solid rgba(201, 162, 39, 0.12);
             padding-top: 28px;
         }
 
@@ -335,8 +312,8 @@
             font-size: 10px;
             letter-spacing: 1.2px;
             text-transform: uppercase;
-            color: #666;
-            margin-bottom: 16px;
+            color: #777;
+            margin-bottom: 18px;
             text-align: center;
             font-weight: 600;
         }
@@ -348,9 +325,9 @@
         }
 
         .demo-card {
-            background: rgba(201, 162, 39, 0.04);
-            border: 1.5px solid rgba(201, 162, 39, 0.12);
-            border-radius: 10px;
+            background: rgba(201, 162, 39, 0.05);
+            border: 1.5px solid rgba(201, 162, 39, 0.18);
+            border-radius: 12px;
             padding: 16px 12px;
             text-align: center;
             cursor: pointer;
@@ -374,8 +351,8 @@
 
         .demo-card:hover {
             border-color: #C9A227;
-            transform: translateY(-3px);
-            box-shadow: 0 4px 16px rgba(201, 162, 39, 0.12);
+            transform: translateY(-4px);
+            box-shadow: 0 6px 20px rgba(201, 162, 39, 0.15);
         }
 
         .demo-card:hover::before {
@@ -383,8 +360,9 @@
         }
 
         .demo-icon {
-            font-size: 24px;
-            margin-bottom: 8px;
+            width: 32px;
+            height: 32px;
+            margin: 0 auto 8px;
             display: block;
         }
 
@@ -399,7 +377,7 @@
 
         .demo-cred {
             font-size: 9px;
-            color: #666;
+            color: #777;
             letter-spacing: 0.2px;
         }
 
@@ -411,11 +389,11 @@
             right: 0;
             padding: 16px 20px;
             text-align: center;
-            font-size: 9px;
+            font-size: 8px;
             letter-spacing: 0.8px;
-            color: #555;
+            color: #666;
             z-index: 5;
-            background: linear-gradient(to top, rgba(5, 2, 3, 0.95), transparent);
+            background: linear-gradient(to top, rgba(5, 2, 3, 0.98), transparent);
             pointer-events: none;
         }
 
@@ -426,216 +404,98 @@
         }
 
         /* ===== RESPONSIVE ===== */
-        @media (max-width: 1024px) {
-            .left-panel {
-                padding: 50px 30px;
-            }
-
-            .right-panel {
-                padding: 40px 50px;
-            }
-
-            .brand-name {
-                font-size: 56px;
-            }
-
-            .brand-tagline {
-                font-size: 20px;
-            }
-
-            .wine-glass-large {
-                width: 100px;
-                height: 100px;
-                margin-bottom: 30px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            /* Stack vertically */
-            .login-container {
-                flex-direction: column;
-                height: auto;
-                min-height: 100vh;
-            }
-
-            .left-panel {
-                flex: 0 0 auto;
-                min-height: 280px;
-                padding: 40px 20px;
-                justify-content: center;
-            }
-
-            .right-panel {
-                flex: 1;
-                padding: 40px 20px 100px;
-                min-height: auto;
-            }
-
-            .brand-name {
-                font-size: 48px;
-            }
-
-            .brand-tagline {
-                font-size: 18px;
-                margin-bottom: 24px;
-            }
-
-            .wine-glass-large {
-                width: 90px;
-                height: 90px;
-                margin-bottom: 24px;
-            }
-
-            .demo-cards {
-                grid-template-columns: 1fr 1fr;
-            }
-
-            .login-form-wrapper {
-                max-width: 100%;
-            }
-
-            .form-header h2 {
-                font-size: 28px;
-            }
-        }
-
         @media (max-width: 480px) {
-            body {
-                overflow-y: auto;
-            }
-
             .login-container {
-                min-height: auto;
+                max-width: 100%;
+                padding: 20px;
             }
 
-            .left-panel {
-                min-height: 240px;
-                padding: 32px 16px;
+            .glass-card {
+                padding: 40px 24px;
+                border-radius: 20px;
             }
 
-            .right-panel {
-                padding: 32px 16px 100px;
+            .brand-title {
+                font-size: 36px;
             }
 
-            .brand-name {
-                font-size: 40px;
-            }
-
-            .brand-tagline {
+            .brand-subtitle {
                 font-size: 16px;
-                margin-bottom: 20px;
             }
 
-            .wine-glass-large {
-                width: 80px;
-                height: 80px;
-                margin-bottom: 20px;
-            }
-
-            .decoration-line {
-                width: 50px;
-                margin: 24px auto;
-            }
-
-            .form-header h2 {
-                font-size: 24px;
+            .wine-glass-icon {
+                width: 70px;
+                height: 70px;
             }
 
             .demo-cards {
                 grid-template-columns: 1fr;
             }
 
-            .demo-card {
-                padding: 14px 12px;
-            }
-
-            .demo-icon {
-                font-size: 20px;
-                margin-bottom: 6px;
-            }
-
-            .demo-role {
-                font-size: 11px;
-            }
-
             .footer {
                 padding: 12px 16px;
-                font-size: 8px;
+                font-size: 7px;
             }
         }
 
-        /* Gold top border accent */
-        .login-container::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, #C9A227, transparent);
-            z-index: 100;
-            box-shadow: 0 0 16px rgba(201, 162, 39, 0.4);
+        @media (max-width: 768px) {
+            .brand-title {
+                font-size: 40px;
+            }
+
+            .brand-subtitle {
+                font-size: 17px;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Floating particles background -->
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+
+    <!-- Centered glass card login -->
     <div class="login-container">
-        <!-- LEFT PANEL: Brand & Atmosphere -->
-        <div class="left-panel">
-            <!-- Floating particles -->
-            <div class="particle"></div>
-            <div class="particle"></div>
-            <div class="particle"></div>
-            <div class="particle"></div>
-            <div class="particle"></div>
-            <div class="particle"></div>
+        <div class="glass-card">
+            <div class="card-content">
+                <!-- Brand header -->
+                <div class="brand-header">
+                    <!-- Wine glass SVG icon -->
+                    <svg class="wine-glass-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="glassGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#C9A227;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#A02643;stop-opacity:0.9" />
+                            </linearGradient>
+                        </defs>
+                        <!-- Wine glass bowl -->
+                        <path d="M 32 20 L 28 55 Q 28 72 50 78 Q 72 72 72 55 L 68 20 Z" fill="none" stroke="url(#glassGradient)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <!-- Stem -->
+                        <line x1="50" y1="78" x2="50" y2="88" stroke="url(#glassGradient)" stroke-width="2" stroke-linecap="round"/>
+                        <!-- Base -->
+                        <ellipse cx="50" cy="90" rx="14" ry="3.5" fill="none" stroke="url(#glassGradient)" stroke-width="2"/>
+                        <!-- Wine level -->
+                        <path d="M 32 58 Q 32 68 50 74 Q 68 68 68 58" fill="url(#glassGradient)" opacity="0.4"/>
+                    </svg>
 
-            <div class="brand-section">
-                <!-- Wine glass SVG -->
-                <svg class="wine-glass-large" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                        <linearGradient id="glassGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" style="stop-color:#C9A227;stop-opacity:1" />
-                            <stop offset="100%" style="stop-color:#9B2335;stop-opacity:0.8" />
-                        </linearGradient>
-                    </defs>
-                    <!-- Wine glass bowl -->
-                    <path d="M 32 20 L 28 55 Q 28 72 50 78 Q 72 72 72 55 L 68 20 Z" fill="none" stroke="url(#glassGradient)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    <!-- Stem -->
-                    <line x1="50" y1="78" x2="50" y2="88" stroke="url(#glassGradient)" stroke-width="2" stroke-linecap="round"/>
-                    <!-- Base -->
-                    <ellipse cx="50" cy="90" rx="14" ry="3.5" fill="none" stroke="url(#glassGradient)" stroke-width="2"/>
-                    <!-- Wine level -->
-                    <path d="M 32 58 Q 32 68 50 74 Q 68 68 68 58" fill="url(#glassGradient)" opacity="0.3"/>
-                </svg>
+                    <!-- Brand title -->
+                    <h1 class="brand-title">Vinha D'Ouro</h1>
 
-                <!-- Brand name -->
-                <h1 class="brand-name">Vinha D'Ouro</h1>
+                    <!-- Gold line -->
+                    <div class="brand-line"></div>
 
-                <!-- Tagline -->
-                <p class="brand-tagline">Gestão de Vinhos Premium</p>
-
-                <!-- Decorative line -->
-                <div class="decoration-line"></div>
-
-                <!-- Description -->
-                <p class="brand-description">Para connoisseurs exigentes</p>
-            </div>
-        </div>
-
-        <!-- RIGHT PANEL: Login Form -->
-        <div class="right-panel">
-            <div class="login-form-wrapper">
-                <!-- Form header -->
-                <div class="form-header">
-                    <h2>Bem-vindo</h2>
-                    <p>Aceda ao seu sistema de gestão</p>
+                    <!-- Tagline -->
+                    <p class="brand-subtitle">Sistema de Gestão Premium</p>
                 </div>
 
                 <!-- Login form -->
                 <form id="loginForm" class="login-form">
                     <!-- Error display -->
-                    <div id="loginError" class="login-error" style="display: none;">
+                    <div id="loginError" class="login-error">
                         <span id="loginErrorMessage"></span>
                     </div>
 
@@ -673,17 +533,31 @@
                         <span class="demo-label">Credenciais de Demo</span>
                         <div class="demo-cards">
                             <button type="button" class="demo-card" onclick="fillLogin('gerente', '1234')">
-                                <span class="demo-icon">👔</span>
+                                <svg class="demo-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#C9A227" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                    <path d="M16 11h6"></path>
+                                </svg>
                                 <div class="demo-role">Gerente</div>
                                 <div class="demo-cred">gerente / 1234</div>
                             </button>
                             <button type="button" class="demo-card" onclick="fillLogin('loja', '1234')">
-                                <span class="demo-icon">🛍️</span>
+                                <svg class="demo-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#C9A227" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="9" cy="21" r="1"></circle>
+                                    <circle cx="20" cy="21" r="1"></circle>
+                                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                                </svg>
                                 <div class="demo-role">Loja</div>
                                 <div class="demo-cred">loja / 1234</div>
                             </button>
                             <button type="button" class="demo-card" onclick="fillLogin('stock', '1234')">
-                                <span class="demo-icon">📦</span>
+                                <svg class="demo-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#C9A227" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="9" y1="2" x2="9" y2="20"></line>
+                                    <line x1="15" y1="2" x2="15" y2="20"></line>
+                                    <line x1="3" y1="8" x2="21" y2="8"></line>
+                                    <line x1="3" y1="14" x2="21" y2="14"></line>
+                                    <rect x="3" y="2" width="18" height="20" rx="2"></rect>
+                                </svg>
                                 <div class="demo-role">Stock</div>
                                 <div class="demo-cred">stock / 1234</div>
                             </button>

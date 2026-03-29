@@ -266,10 +266,25 @@
   <script src="app.js"></script>
   <script>
     function exportToCSV() {
-      showToast('Exportação iniciada...', 'info');
-      setTimeout(() => {
-        showToast('Ficheiro descarregado com sucesso', 'success');
-      }, 1500);
+      const table = document.getElementById('vendas-table');
+      if (!table) { toast('Sem dados para exportar', 'warning'); return; }
+
+      let csv = 'ID Venda,Cliente,Itens,Total,Método,Status,Data/Hora\n';
+      table.querySelectorAll('tr').forEach(row => {
+        const cells = row.querySelectorAll('td');
+        if (cells.length) {
+          const vals = Array.from(cells).map(c => '"' + c.textContent.trim().replace(/"/g, '""') + '"');
+          csv += vals.join(',') + '\n';
+        }
+      });
+
+      const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `vendas_vinhadouro_${new Date().toISOString().slice(0,10)}.csv`;
+      link.click();
+      URL.revokeObjectURL(link.href);
+      showToast('Exportação concluída com sucesso', 'success');
     }
   </script>
 </body>
