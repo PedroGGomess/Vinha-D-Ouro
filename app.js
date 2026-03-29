@@ -206,7 +206,7 @@ function buildSidebar() {
           a.setAttribute('aria-current', 'page');
         }
 
-        a.innerHTML = `${iconSvgs[item.icon] || ''}${item.label}`;
+        a.innerHTML = `${iconSvgs[item.icon] || ''}<span>${item.label}</span>`;
         li.appendChild(a);
         ul.appendChild(li);
       });
@@ -255,10 +255,21 @@ function buildSidebar() {
           ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4h12v5c0 1-1 2-2 2H8c-1 0-2-1-2-2V4z"></path><path d="M9 9v11M15 9v11"></path><circle cx="12" cy="20" r="1"></circle></svg>'
           : '';
 
-        a.innerHTML = `${iconHtml}${item.label}`;
+        a.innerHTML = `${iconHtml}<span>${item.label}</span>`;
         sidebarNav.appendChild(a);
       });
     });
+  }
+}
+
+function toggleSidebar() {
+  const sidebar = document.querySelector('.sidebar');
+  const main = document.querySelector('.main-content');
+  if (sidebar) {
+    sidebar.classList.toggle('collapsed');
+    if (main) {
+      main.style.marginLeft = sidebar.classList.contains('collapsed') ? '64px' : '';
+    }
   }
 }
 
@@ -1005,14 +1016,8 @@ async function saveStock() {
    12. WINE BOTTLE IMAGE SELECTOR
    ══════════════════════════════════════════════ */
 function getWineBottleImage(tipo) {
-  const images = {
-    'Tinto':     'https://images.vivino.com/widgetimages/02_Apnck_K84B6sFpXmXSsAfA.png',
-    'Branco':    'https://images.vivino.com/widgetimages/01_Lhkq9Yri8BYMwvSRpKVA.png',
-    'Rosé':      'https://images.vivino.com/widgetimages/03_VB0IhqHWEk3VVGqShMbA.png',
-    'Espumante': 'https://images.vivino.com/widgetimages/04_U-Gvf54BfufJsp1E67QA.png',
-    'Porto':     'https://images.vivino.com/widgetimages/05_Hh_a0gMCRPmRhDDBxSXA.png',
-  };
-  return images[tipo] || images['Tinto'];
+  // Return transparent pixel - visual handled by CSS gradient backgrounds and SVG
+  return 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
 }
 
 /* ══════════════════════════════════════════════
@@ -1041,7 +1046,7 @@ function wineBottleSVG(tipo) {
   const bodyBot = 150;
   const labelY = s.by + 18;
 
-  return `<svg viewBox="0 0 80 164" xmlns="http://www.w3.org/2000/svg">
+  return `<svg viewBox="0 0 80 164" xmlns="http://www.w3.org/2000/svg" class="wine-card-svg">
 <defs>
   <linearGradient id="${uid}body" x1="0.1" y1="0" x2="0.9" y2="0"><stop offset="0%" stop-color="${c.b2}"/><stop offset="28%" stop-color="${c.b1}"/><stop offset="72%" stop-color="${c.b1}"/><stop offset="100%" stop-color="${c.b2}"/></linearGradient>
   <linearGradient id="${uid}foil" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="${c.f1}"/><stop offset="100%" stop-color="${c.f2}"/></linearGradient>
