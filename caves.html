@@ -568,6 +568,77 @@
       letter-spacing: 1px;
     }
 
+    /* KPI Summary Cards */
+    .cave-kpi-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .cave-kpi {
+      background: rgba(12, 8, 10, 0.6);
+      border: 1px solid rgba(201, 162, 39, 0.12);
+      border-left: 3px solid rgba(201, 162, 39, 0.4);
+      border-radius: 10px;
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      backdrop-filter: blur(8px);
+    }
+
+    .cave-kpi-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: rgba(201, 162, 39, 0.6);
+    }
+
+    .cave-kpi-value {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px;
+      font-weight: 700;
+      color: #f5f5f5;
+    }
+
+    /* Cave Legend */
+    .cave-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      margin-top: 20px;
+      padding: 16px 24px;
+      background: rgba(201, 162, 39, 0.04);
+      border: 1px solid rgba(201, 162, 39, 0.1);
+      border-radius: 10px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.7);
+      font-weight: 500;
+      letter-spacing: 0.3px;
+    }
+
+    .legend-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    }
+
+    .legend-dot-empty {
+      background: radial-gradient(circle, rgba(20, 10, 5, 0.9), rgba(0, 0, 0, 0.98));
+      border: 2px solid rgba(107, 68, 35, 0.5);
+    }
+
     /* Responsive for smaller screens */
     @media (max-width: 1024px) {
       .caves-layout {
@@ -591,6 +662,19 @@
 
       .page-title {
         font-size: 24px;
+      }
+
+      .cave-kpi-row {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .cave-legend {
+        gap: 12px;
+        padding: 12px 16px;
+      }
+
+      .legend-item {
+        font-size: 11px;
       }
     }
   </style>
@@ -655,7 +739,27 @@
       <div class="page-header">
         <div>
           <h1 class="page-title">Gestão de Caves</h1>
-          <p id="cave-name" class="page-subtitle">Organização e localização de vinhos</p>
+          <p id="cave-name" class="page-subtitle">Cave A — Organização e localização de vinhos</p>
+        </div>
+      </div>
+
+      <!-- KPI Summary Cards -->
+      <div class="cave-kpi-row">
+        <div class="cave-kpi">
+          <span class="cave-kpi-label">Capacidade Total</span>
+          <span class="cave-kpi-value" id="cave-total-cap">300</span>
+        </div>
+        <div class="cave-kpi">
+          <span class="cave-kpi-label">Ocupadas</span>
+          <span class="cave-kpi-value" id="cave-total-occ">0</span>
+        </div>
+        <div class="cave-kpi">
+          <span class="cave-kpi-label">Disponíveis</span>
+          <span class="cave-kpi-value cave-free-color" id="cave-total-free">300</span>
+        </div>
+        <div class="cave-kpi">
+          <span class="cave-kpi-label">Taxa de Ocupação</span>
+          <span class="cave-kpi-value" id="cave-total-pct">0%</span>
         </div>
       </div>
 
@@ -738,6 +842,15 @@
         <div id="cave-grid-container" class="cave-grid-container">
           <!-- Filled by JavaScript -->
         </div>
+      </div>
+
+      <!-- Cave Legend -->
+      <div class="cave-legend">
+        <span class="legend-item"><span class="legend-dot" style="background: linear-gradient(135deg, #8B0000, #A52A2A);"></span> Tinto</span>
+        <span class="legend-item"><span class="legend-dot" style="background: linear-gradient(135deg, #D4AF37, #FFE4B5);"></span> Branco</span>
+        <span class="legend-item"><span class="legend-dot" style="background: linear-gradient(135deg, #E75480, #FF69B4);"></span> Rosé</span>
+        <span class="legend-item"><span class="legend-dot" style="background: linear-gradient(135deg, #C9A227, #FFD700);"></span> Espumante</span>
+        <span class="legend-item"><span class="legend-dot legend-dot-empty"></span> Disponível</span>
       </div>
     </main>
   </div>

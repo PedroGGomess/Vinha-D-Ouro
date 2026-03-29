@@ -9,23 +9,15 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Cormorant+Garamond:ital@0;1&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:ital@0;1&display=swap" rel="stylesheet">
 
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html, body {
-            width: 100%;
-            height: 100%;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { width: 100%; height: 100%; }
 
         body {
             font-family: 'Inter', sans-serif;
-            background: radial-gradient(ellipse at center, #1a0f12 0%, #050203 70%, #000 100%);
+            background: radial-gradient(ellipse at 30% 20%, #1a0f12 0%, #050203 60%, #000 100%);
             color: #f5f5f5;
             display: flex;
             flex-direction: column;
@@ -36,224 +28,344 @@
             position: relative;
         }
 
-        /* Floating particles animation */
-        @keyframes float-particle {
-            0%, 100% {
-                transform: translate(0, 0) scale(1);
-                opacity: 0.3;
-            }
-            50% {
-                transform: translate(var(--tx), var(--ty)) scale(0.8);
-                opacity: 0.1;
-            }
+        /* Gold top accent */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #C9A227, transparent);
+            z-index: 100;
+            box-shadow: 0 0 20px rgba(201, 162, 39, 0.3);
         }
 
+        /* Floating particles */
+        @keyframes float-p {
+            0%, 100% { transform: translate(0, 0); opacity: 0.25; }
+            50% { transform: translate(var(--tx), var(--ty)); opacity: 0.08; }
+        }
         .particle {
             position: fixed;
-            width: 2px;
-            height: 2px;
+            width: 2px; height: 2px;
             background: #C9A227;
             border-radius: 50%;
             pointer-events: none;
-            opacity: 0.2;
         }
+        .particle:nth-child(1) { --tx: 80px; --ty: -100px; animation: float-p 12s ease-in-out infinite; left: 8%; top: 12%; }
+        .particle:nth-child(2) { --tx: -60px; --ty: 120px; animation: float-p 14s ease-in-out infinite 1s; left: 22%; top: 65%; }
+        .particle:nth-child(3) { --tx: 100px; --ty: 80px; animation: float-p 16s ease-in-out infinite 2s; left: 88%; top: 20%; }
+        .particle:nth-child(4) { --tx: -90px; --ty: -60px; animation: float-p 18s ease-in-out infinite 0.5s; left: 78%; top: 78%; }
+        .particle:nth-child(5) { --tx: 70px; --ty: 110px; animation: float-p 15s ease-in-out infinite 1.5s; left: 4%; top: 45%; }
+        .particle:nth-child(6) { --tx: -100px; --ty: 70px; animation: float-p 17s ease-in-out infinite 2.5s; left: 92%; top: 38%; }
 
-        .particle:nth-child(1) { --tx: 80px; --ty: -100px; animation: float-particle 12s ease-in-out infinite; left: 10%; top: 15%; }
-        .particle:nth-child(2) { --tx: -60px; --ty: 120px; animation: float-particle 14s ease-in-out infinite 1s; left: 20%; top: 60%; }
-        .particle:nth-child(3) { --tx: 100px; --ty: 80px; animation: float-particle 16s ease-in-out infinite 2s; left: 85%; top: 25%; }
-        .particle:nth-child(4) { --tx: -90px; --ty: -60px; animation: float-particle 18s ease-in-out infinite 0.5s; left: 75%; top: 75%; }
-        .particle:nth-child(5) { --tx: 70px; --ty: 110px; animation: float-particle 15s ease-in-out infinite 1.5s; left: 5%; top: 50%; }
-        .particle:nth-child(6) { --tx: -100px; --ty: 70px; animation: float-particle 17s ease-in-out infinite 2.5s; left: 90%; top: 40%; }
-
-        /* ===== CENTERED GLASS CARD ===== */
-        .login-container {
+        /* Container */
+        .page-wrap {
             width: 100%;
-            max-width: 420px;
-            padding: 40px 20px;
-            animation: slideUp 0.8s ease-out;
+            max-width: 900px;
+            padding: 40px 24px;
+            position: relative;
+            z-index: 10;
         }
 
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(40px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        /* ===== STEP 1: ROLE SELECTION ===== */
+        #step-roles {
+            animation: fadeIn 0.6s ease-out;
         }
 
-        .glass-card {
-            background: rgba(15, 8, 10, 0.7);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            border: 1.5px solid rgba(201, 162, 39, 0.15);
-            border-radius: 24px;
-            padding: 60px 40px;
-            box-shadow:
-                0 8px 32px rgba(0, 0, 0, 0.4),
-                0 0 1px rgba(201, 162, 39, 0.2),
-                inset 0 1px 1px rgba(255, 255, 255, 0.05);
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .brand-top {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .brand-top h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 52px;
+            font-weight: 700;
+            color: #f5f5f5;
+            letter-spacing: -1px;
+            margin-bottom: 6px;
+        }
+
+        .brand-top .gold-line {
+            width: 48px;
+            height: 2px;
+            background: #C9A227;
+            margin: 16px auto;
+            box-shadow: 0 0 12px rgba(201, 162, 39, 0.4);
+        }
+
+        .brand-top .tagline {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 20px;
+            font-style: italic;
+            color: #C9A227;
+            letter-spacing: 0.3px;
+        }
+
+        .select-label {
+            text-align: center;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: #666;
+            margin-bottom: 28px;
+        }
+
+        /* Role cards grid */
+        .role-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .role-card {
+            background: rgba(12, 8, 10, 0.6);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1.5px solid rgba(201, 162, 39, 0.12);
+            border-radius: 20px;
+            padding: 36px 20px 32px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.35s ease;
             position: relative;
             overflow: hidden;
         }
 
-        /* Premium glow effect */
-        .glass-card::before {
+        .role-card::before {
             content: '';
             position: absolute;
-            top: -50%;
-            right: -50%;
-            width: 400px;
-            height: 400px;
-            background: radial-gradient(circle, rgba(201, 162, 39, 0.08) 0%, transparent 70%);
-            pointer-events: none;
-            animation: glow-rotate 8s linear infinite;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--card-accent), transparent);
+            opacity: 0;
+            transition: opacity 0.35s ease;
         }
 
-        @keyframes glow-rotate {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .role-card:hover {
+            border-color: var(--card-accent);
+            transform: translateY(-6px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4), 0 0 30px var(--card-glow);
         }
 
-        /* Card content wrapper */
-        .card-content {
-            position: relative;
-            z-index: 2;
+        .role-card:hover::before {
+            opacity: 1;
         }
 
-        /* Brand header inside card */
-        .brand-header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
+        .role-card[data-role="gerente"] { --card-accent: #C9A227; --card-glow: rgba(201, 162, 39, 0.15); }
+        .role-card[data-role="loja"]    { --card-accent: #9B2335; --card-glow: rgba(155, 35, 53, 0.15); }
+        .role-card[data-role="stock"]   { --card-accent: #5B8A72; --card-glow: rgba(91, 138, 114, 0.15); }
+        .role-card[data-role="admin"]   { --card-accent: #7B6BAE; --card-glow: rgba(123, 107, 174, 0.15); }
 
-        .wine-glass-icon {
-            width: 80px;
-            height: 80px;
+        .role-icon {
+            width: 56px;
+            height: 56px;
             margin: 0 auto 20px;
-            filter: drop-shadow(0 4px 16px rgba(201, 162, 39, 0.2));
-            animation: gentle-float 3s ease-in-out infinite;
-        }
-
-        @keyframes gentle-float {
-            0%, 100% {
-                transform: translateY(0px);
-            }
-            50% {
-                transform: translateY(-12px);
-            }
-        }
-
-        .brand-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 44px;
-            font-weight: 700;
-            letter-spacing: -1px;
-            color: #f5f5f5;
-            margin-bottom: 8px;
-            line-height: 1.1;
-        }
-
-        .brand-line {
-            width: 40px;
-            height: 1.5px;
-            background: #C9A227;
-            margin: 14px auto;
-            box-shadow: 0 0 12px rgba(201, 162, 39, 0.4);
-        }
-
-        .brand-subtitle {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 18px;
-            font-style: italic;
-            color: #C9A227;
-            letter-spacing: 0.3px;
-            font-weight: 400;
-            margin-top: 12px;
-        }
-
-        /* Form section */
-        .login-form {
-            margin-bottom: 32px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            font-size: 11px;
-            font-weight: 600;
-            letter-spacing: 0.8px;
-            text-transform: uppercase;
-            color: #999;
-            margin-bottom: 10px;
-        }
-
-        input[type="text"],
-        input[type="password"] {
-            width: 100%;
-            padding: 12px 16px;
             background: rgba(255, 255, 255, 0.03);
-            border: 1.5px solid rgba(201, 162, 39, 0.2);
+            border: 1.5px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.35s ease;
+        }
+
+        .role-card:hover .role-icon {
+            border-color: var(--card-accent);
+            background: rgba(255, 255, 255, 0.05);
+            box-shadow: 0 0 20px var(--card-glow);
+        }
+
+        .role-icon svg {
+            width: 26px;
+            height: 26px;
+            stroke: #888;
+            transition: stroke 0.35s ease;
+        }
+
+        .role-card:hover .role-icon svg {
+            stroke: var(--card-accent);
+        }
+
+        .role-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 18px;
+            font-weight: 600;
+            color: #e8e0d4;
+            margin-bottom: 6px;
+            letter-spacing: 0.2px;
+        }
+
+        .role-desc {
+            font-size: 11px;
+            color: #777;
+            line-height: 1.5;
+            letter-spacing: 0.2px;
+        }
+
+        .role-cred {
+            margin-top: 14px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 10px;
+            color: #555;
+            letter-spacing: 0.3px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* ===== STEP 2: LOGIN FORM ===== */
+        #step-login {
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: none;
+            border: none;
+            color: #777;
+            font-size: 12px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            padding: 8px 0;
+            margin-bottom: 24px;
+            transition: color 0.2s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .back-btn:hover {
+            color: #C9A227;
+        }
+
+        .back-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .login-card {
+            max-width: 400px;
+            margin: 0 auto;
+            background: rgba(12, 8, 10, 0.7);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1.5px solid rgba(201, 162, 39, 0.15);
+            border-radius: 24px;
+            padding: 48px 40px;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.4), 0 0 1px rgba(201, 162, 39, 0.2);
+            position: relative;
+        }
+
+        .login-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--login-accent, #C9A227), transparent);
+            border-radius: 24px 24px 0 0;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 36px;
+        }
+
+        .login-role-icon {
+            width: 52px;
+            height: 52px;
+            margin: 0 auto 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1.5px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-role-icon svg {
+            width: 24px;
+            height: 24px;
+            stroke: var(--login-accent, #C9A227);
+        }
+
+        .login-header h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            font-weight: 600;
+            color: #f5f5f5;
+            margin-bottom: 4px;
+        }
+
+        .login-header p {
+            font-size: 12px;
+            color: #888;
+            letter-spacing: 0.3px;
+        }
+
+        /* Form */
+        .login-form { margin-bottom: 0; }
+
+        .form-group { margin-bottom: 20px; }
+
+        .form-group label {
+            display: block;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #888;
+            margin-bottom: 8px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 13px 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1.5px solid rgba(201, 162, 39, 0.15);
             border-radius: 12px;
             font-family: 'Inter', sans-serif;
             font-size: 14px;
             color: #f5f5f5;
             transition: all 0.3s ease;
             outline: none;
-            letter-spacing: 0.2px;
         }
 
-        input[type="text"]::placeholder,
-        input[type="password"]::placeholder {
-            color: #666;
-            font-weight: 400;
+        .form-group input::placeholder {
+            color: #555;
         }
 
-        input[type="text"]:focus,
-        input[type="password"]:focus {
-            background: rgba(201, 162, 39, 0.05);
-            border-color: #C9A227;
-            box-shadow: 0 0 0 3px rgba(201, 162, 39, 0.1);
+        .form-group input:focus {
+            background: rgba(201, 162, 39, 0.04);
+            border-color: var(--login-accent, #C9A227);
+            box-shadow: 0 0 0 3px rgba(201, 162, 39, 0.08);
         }
 
-        /* Error message */
+        /* Error */
         .login-error {
             display: none;
-            background: rgba(155, 35, 53, 0.12);
-            border: 1px solid rgba(155, 35, 53, 0.35);
+            background: rgba(155, 35, 53, 0.1);
+            border: 1px solid rgba(155, 35, 53, 0.3);
             border-radius: 12px;
             padding: 12px 14px;
-            margin-bottom: 20px;
+            margin-bottom: 18px;
             font-size: 12px;
             color: #ff9a9a;
-            animation: slideInDown 0.3s ease-out;
         }
+        .login-error.show { display: block; }
 
-        .login-error.show {
-            display: block;
-        }
-
-        @keyframes slideInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Wine-red gradient login button */
+        /* Submit */
         .btn-login {
             width: 100%;
             padding: 14px 20px;
-            background: linear-gradient(135deg, #A02643 0%, #7B1E32 100%);
+            background: linear-gradient(135deg, var(--login-accent, #9B2335) 0%, color-mix(in srgb, var(--login-accent, #9B2335) 70%, #000) 100%);
             border: none;
             border-radius: 12px;
             font-family: 'Inter', sans-serif;
@@ -264,193 +376,74 @@
             color: #f5f5f5;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 16px rgba(155, 35, 53, 0.3),
-                        0 0 24px rgba(201, 162, 39, 0) transition-property;
-            margin-bottom: 28px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn-login::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.1);
-            transition: left 0.4s ease;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
         }
 
         .btn-login:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 24px rgba(155, 35, 53, 0.4),
-                        0 0 32px rgba(201, 162, 39, 0.15);
+            box-shadow: 0 6px 28px rgba(0, 0, 0, 0.4);
+            filter: brightness(1.1);
         }
 
-        .btn-login:hover::before {
-            left: 100%;
-        }
+        .btn-login:active { transform: translateY(0); }
+        .btn-login:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        .btn-login:active {
-            transform: translateY(0);
-        }
-
-        .btn-login:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        /* Demo credentials section */
-        .demo-section {
-            border-top: 1px solid rgba(201, 162, 39, 0.12);
-            padding-top: 28px;
-        }
-
-        .demo-label {
-            display: block;
-            font-size: 10px;
-            letter-spacing: 1.2px;
-            text-transform: uppercase;
-            color: #777;
-            margin-bottom: 18px;
+        .login-hint {
             text-align: center;
-            font-weight: 600;
-        }
-
-        .demo-cards {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 12px;
-        }
-
-        .demo-card {
-            background: rgba(201, 162, 39, 0.05);
-            border: 1.5px solid rgba(201, 162, 39, 0.18);
-            border-radius: 12px;
-            padding: 16px 12px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: 'Inter', sans-serif;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .demo-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: rgba(201, 162, 39, 0.08);
-            transition: left 0.3s ease;
-            z-index: -1;
-        }
-
-        .demo-card:hover {
-            border-color: #C9A227;
-            transform: translateY(-4px);
-            box-shadow: 0 6px 20px rgba(201, 162, 39, 0.15);
-        }
-
-        .demo-card:hover::before {
-            left: 0;
-        }
-
-        .demo-icon {
-            width: 32px;
-            height: 32px;
-            margin: 0 auto 8px;
-            display: block;
-        }
-
-        .demo-role {
-            font-size: 12px;
-            font-weight: 600;
-            color: #C9A227;
+            margin-top: 20px;
+            font-size: 11px;
+            color: #555;
             letter-spacing: 0.3px;
-            margin-bottom: 4px;
-            line-height: 1.3;
         }
 
-        .demo-cred {
-            font-size: 9px;
-            color: #777;
-            letter-spacing: 0.2px;
+        .login-hint strong {
+            color: #888;
+            font-weight: 600;
         }
 
         /* Footer */
         .footer {
             position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            padding: 16px 20px;
+            bottom: 0; left: 0; right: 0;
+            padding: 16px;
             text-align: center;
-            font-size: 8px;
-            letter-spacing: 0.8px;
-            color: #666;
-            z-index: 5;
-            background: linear-gradient(to top, rgba(5, 2, 3, 0.98), transparent);
-            pointer-events: none;
-        }
-
-        .footer-text {
-            display: block;
+            font-size: 9px;
+            letter-spacing: 1px;
+            color: #444;
             text-transform: uppercase;
             font-weight: 500;
+            background: linear-gradient(to top, rgba(5, 2, 3, 0.9), transparent);
+            pointer-events: none;
+            z-index: 5;
         }
 
-        /* ===== RESPONSIVE ===== */
-        @media (max-width: 480px) {
-            .login-container {
-                max-width: 100%;
-                padding: 20px;
-            }
-
-            .glass-card {
-                padding: 40px 24px;
-                border-radius: 20px;
-            }
-
-            .brand-title {
-                font-size: 36px;
-            }
-
-            .brand-subtitle {
-                font-size: 16px;
-            }
-
-            .wine-glass-icon {
-                width: 70px;
-                height: 70px;
-            }
-
-            .demo-cards {
-                grid-template-columns: 1fr;
-            }
-
-            .footer {
-                padding: 12px 16px;
-                font-size: 7px;
-            }
-        }
-
+        /* Responsive */
         @media (max-width: 768px) {
-            .brand-title {
-                font-size: 40px;
+            .role-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 16px;
             }
+            .brand-top h1 { font-size: 40px; }
+            .brand-top .tagline { font-size: 17px; }
+            .role-card { padding: 28px 16px 24px; }
+            .login-card { padding: 40px 28px; }
+        }
 
-            .brand-subtitle {
-                font-size: 17px;
+        @media (max-width: 480px) {
+            .role-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
             }
+            .brand-top h1 { font-size: 32px; }
+            .role-title { font-size: 15px; }
+            .role-desc { font-size: 10px; }
+            .login-card { padding: 32px 20px; }
+            .page-wrap { padding: 24px 16px; }
         }
     </style>
 </head>
 <body>
-    <!-- Floating particles background -->
+    <!-- Floating particles -->
     <div class="particle"></div>
     <div class="particle"></div>
     <div class="particle"></div>
@@ -458,144 +451,196 @@
     <div class="particle"></div>
     <div class="particle"></div>
 
-    <!-- Centered glass card login -->
-    <div class="login-container">
-        <div class="glass-card">
-            <div class="card-content">
-                <!-- Brand header -->
-                <div class="brand-header">
-                    <!-- Wine glass SVG icon -->
-                    <svg class="wine-glass-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                        <defs>
-                            <linearGradient id="glassGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" style="stop-color:#C9A227;stop-opacity:1" />
-                                <stop offset="100%" style="stop-color:#A02643;stop-opacity:0.9" />
-                            </linearGradient>
-                        </defs>
-                        <!-- Wine glass bowl -->
-                        <path d="M 32 20 L 28 55 Q 28 72 50 78 Q 72 72 72 55 L 68 20 Z" fill="none" stroke="url(#glassGradient)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-                        <!-- Stem -->
-                        <line x1="50" y1="78" x2="50" y2="88" stroke="url(#glassGradient)" stroke-width="2" stroke-linecap="round"/>
-                        <!-- Base -->
-                        <ellipse cx="50" cy="90" rx="14" ry="3.5" fill="none" stroke="url(#glassGradient)" stroke-width="2"/>
-                        <!-- Wine level -->
-                        <path d="M 32 58 Q 32 68 50 74 Q 68 68 68 58" fill="url(#glassGradient)" opacity="0.4"/>
-                    </svg>
+    <div class="page-wrap">
 
-                    <!-- Brand title -->
-                    <h1 class="brand-title">Vinha D'Ouro</h1>
+        <!-- ===== STEP 1: Role Selection ===== -->
+        <div id="step-roles">
+            <div class="brand-top">
+                <h1>Vinha D'Ouro</h1>
+                <div class="gold-line"></div>
+                <p class="tagline">Sistema de Gestão Premium</p>
+            </div>
 
-                    <!-- Gold line -->
-                    <div class="brand-line"></div>
+            <p class="select-label">Selecione o seu perfil de acesso</p>
 
-                    <!-- Tagline -->
-                    <p class="brand-subtitle">Sistema de Gestão Premium</p>
+            <div class="role-grid">
+                <!-- Gerente -->
+                <div class="role-card" data-role="gerente" onclick="selectRole('gerente', '1234', 'Gerente', '#C9A227')">
+                    <div class="role-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="12 3 20 7.5 20 16.5 12 21 4 16.5 4 7.5 12 3"/>
+                            <polyline points="12 12 20 7.5"/>
+                            <polyline points="12 12 12 21"/>
+                            <polyline points="12 12 4 7.5"/>
+                        </svg>
+                    </div>
+                    <div class="role-title">Gerente</div>
+                    <div class="role-desc">Dashboard, vendas, relatórios e gestão de equipa</div>
+                    <div class="role-cred">gerente / 1234</div>
                 </div>
 
-                <!-- Login form -->
-                <form id="loginForm" class="login-form">
-                    <!-- Error display -->
-                    <div id="loginError" class="login-error">
-                        <span id="loginErrorMessage"></span>
+                <!-- Funcionário / Loja -->
+                <div class="role-card" data-role="loja" onclick="selectRole('loja', '1234', 'Loja', '#9B2335')">
+                    <div class="role-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="9" cy="21" r="1"/>
+                            <circle cx="20" cy="21" r="1"/>
+                            <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/>
+                        </svg>
                     </div>
+                    <div class="role-title">Loja</div>
+                    <div class="role-desc">Ponto de venda e provas de vinhos</div>
+                    <div class="role-cred">loja / 1234</div>
+                </div>
 
-                    <!-- Username field -->
-                    <div class="form-group">
-                        <label for="username">Utilizador</label>
-                        <input
-                            type="text"
-                            id="username"
-                            name="username"
-                            placeholder="Introduza o seu utilizador"
-                            autocomplete="username"
-                            required
-                        >
+                <!-- Armazenista / Stock -->
+                <div class="role-card" data-role="stock" onclick="selectRole('stock', '1234', 'Stock', '#5B8A72')">
+                    <div class="role-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
+                            <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                            <line x1="12" y1="22.08" x2="12" y2="12"/>
+                        </svg>
                     </div>
+                    <div class="role-title">Stock</div>
+                    <div class="role-desc">Inventário e gestão de caves</div>
+                    <div class="role-cred">stock / 1234</div>
+                </div>
 
-                    <!-- Password field -->
-                    <div class="form-group">
-                        <label for="password">Palavra-passe</label>
-                        <input
-                            type="password"
-                            id="password"
-                            name="password"
-                            placeholder="Introduza a sua palavra-passe"
-                            autocomplete="current-password"
-                            required
-                        >
+                <!-- Admin -->
+                <div class="role-card" data-role="admin" onclick="selectRole('admin', '1234', 'Admin', '#7B6BAE')">
+                    <div class="role-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="3"/>
+                            <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 8.6a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
+                        </svg>
                     </div>
-
-                    <!-- Submit button -->
-                    <button type="submit" class="btn-login">Entrar</button>
-
-                    <!-- Demo credentials section -->
-                    <div class="demo-section">
-                        <span class="demo-label">Credenciais de Demo</span>
-                        <div class="demo-cards">
-                            <button type="button" class="demo-card" onclick="fillLogin('gerente', '1234')">
-                                <svg class="demo-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#C9A227" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                                    <circle cx="12" cy="7" r="4"></circle>
-                                    <path d="M16 11h6"></path>
-                                </svg>
-                                <div class="demo-role">Gerente</div>
-                                <div class="demo-cred">gerente / 1234</div>
-                            </button>
-                            <button type="button" class="demo-card" onclick="fillLogin('loja', '1234')">
-                                <svg class="demo-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#C9A227" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                    <circle cx="9" cy="21" r="1"></circle>
-                                    <circle cx="20" cy="21" r="1"></circle>
-                                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-                                </svg>
-                                <div class="demo-role">Loja</div>
-                                <div class="demo-cred">loja / 1234</div>
-                            </button>
-                            <button type="button" class="demo-card" onclick="fillLogin('stock', '1234')">
-                                <svg class="demo-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#C9A227" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                    <line x1="9" y1="2" x2="9" y2="20"></line>
-                                    <line x1="15" y1="2" x2="15" y2="20"></line>
-                                    <line x1="3" y1="8" x2="21" y2="8"></line>
-                                    <line x1="3" y1="14" x2="21" y2="14"></line>
-                                    <rect x="3" y="2" width="18" height="20" rx="2"></rect>
-                                </svg>
-                                <div class="demo-role">Stock</div>
-                                <div class="demo-cred">stock / 1234</div>
-                            </button>
-                        </div>
-                    </div>
-                </form>
+                    <div class="role-title">Admin</div>
+                    <div class="role-desc">Acesso total ao sistema</div>
+                    <div class="role-cred">admin / 1234</div>
+                </div>
             </div>
         </div>
+
+        <!-- ===== STEP 2: Login Form ===== -->
+        <div id="step-login">
+            <button class="back-btn" onclick="goBack()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="15 18 9 12 15 6"/>
+                </svg>
+                Voltar
+            </button>
+
+            <div class="login-card" id="login-card">
+                <div class="card-content">
+                    <div class="login-header">
+                        <div class="login-role-icon" id="login-role-icon">
+                            <!-- Icon injected by JS -->
+                        </div>
+                        <h2 id="login-title">Acesso</h2>
+                        <p>Introduza as suas credenciais</p>
+                    </div>
+
+                    <form id="loginForm" class="login-form" autocomplete="off">
+                        <div id="loginError" class="login-error" style="display: none;">
+                            <span id="loginErrorMessage"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="username">Utilizador</label>
+                            <input type="text" id="username" name="username" placeholder="Introduza o utilizador" autocomplete="username" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="password">Palavra-passe</label>
+                            <input type="password" id="password" name="password" placeholder="Introduza a palavra-passe" autocomplete="current-password" required>
+                        </div>
+
+                        <button type="submit" class="btn-login" id="login-btn">Entrar</button>
+
+                        <div class="login-hint" id="login-hint"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <!-- Footer -->
-    <div class="footer">
-        <span class="footer-text">Universidade Lusófona · Grupo 13 · ADS</span>
-    </div>
+    <div class="footer">Universidade Lusófona &middot; Grupo 13 &middot; ADS 2025/2026</div>
 
-    <!-- External stylesheets -->
     <link rel="stylesheet" href="style.css">
 
     <script>
-        /**
-         * Fill login form with demo credentials
-         * @param {string} username - Demo username
-         * @param {string} password - Demo password
-         */
-        function fillLogin(username, password) {
-            const usernameInput = document.getElementById('username');
-            const passwordInput = document.getElementById('password');
+        // Role icon SVGs for the login step
+        const roleIcons = {
+            gerente: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="12 3 20 7.5 20 16.5 12 21 4 16.5 4 7.5 12 3"/><polyline points="12 12 20 7.5"/><polyline points="12 12 12 21"/><polyline points="12 12 4 7.5"/></svg>',
+            loja:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>',
+            stock:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>',
+            admin:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 8.6a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>'
+        };
 
-            if (usernameInput && passwordInput) {
-                usernameInput.value = username;
-                passwordInput.value = password;
-                usernameInput.focus();
-            }
+        const roleColors = {
+            gerente: '#C9A227',
+            loja: '#9B2335',
+            stock: '#5B8A72',
+            admin: '#7B6BAE'
+        };
+
+        const roleNames = {
+            gerente: 'Gerente',
+            loja: 'Ponto de Venda',
+            stock: 'Armazém',
+            admin: 'Administrador'
+        };
+
+        let selectedUser = '';
+        let selectedPass = '';
+
+        function selectRole(user, pass, label, color) {
+            selectedUser = user;
+            selectedPass = pass;
+
+            // Fill form
+            document.getElementById('username').value = user;
+            document.getElementById('password').value = pass;
+
+            // Update login card visuals
+            document.getElementById('login-title').textContent = roleNames[user] || label;
+            document.getElementById('login-role-icon').innerHTML = roleIcons[user] || '';
+            document.getElementById('login-card').style.setProperty('--login-accent', color);
+            document.getElementById('login-hint').innerHTML = 'Credenciais: <strong>' + user + '</strong> / <strong>' + pass + '</strong>';
+
+            // Hide error
+            const err = document.getElementById('loginError');
+            if (err) { err.style.display = 'none'; err.classList.remove('show'); }
+
+            // Transition
+            document.getElementById('step-roles').style.display = 'none';
+            document.getElementById('step-login').style.display = 'block';
+            document.getElementById('step-login').style.animation = 'fadeIn 0.5s ease-out';
+
+            // Focus password (username already filled)
+            document.getElementById('password').focus();
         }
 
-        /**
-         * Initialize login on DOM ready
-         */
+        function goBack() {
+            document.getElementById('step-login').style.display = 'none';
+            document.getElementById('step-roles').style.display = 'block';
+            document.getElementById('step-roles').style.animation = 'fadeIn 0.4s ease-out';
+
+            // Clear error
+            const err = document.getElementById('loginError');
+            if (err) { err.style.display = 'none'; err.classList.remove('show'); }
+        }
+
+        function fillLogin(user, pass) {
+            document.getElementById('username').value = user;
+            document.getElementById('password').value = pass;
+            const err = document.getElementById('loginError');
+            if (err) { err.style.display = 'none'; err.classList.remove('show'); }
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             if (typeof initLogin === 'function') {
                 initLogin();
