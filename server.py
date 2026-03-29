@@ -103,11 +103,12 @@ def _init_mysql(conn):
         c.execute("""
         CREATE TABLE IF NOT EXISTS utilizadores (
             id INT AUTO_INCREMENT PRIMARY KEY,
-            username VARCHAR(50) NOT NULL UNIQUE,
-            password VARCHAR(100) NOT NULL,
-            nome VARCHAR(150) NOT NULL,
-            role VARCHAR(30) NOT NULL,
-            redirect VARCHAR(100) NOT NULL
+            pessoa_id INT,
+            username VARCHAR(100) UNIQUE NOT NULL,
+            password_hash VARCHAR(255) NOT NULL,
+            role ENUM('FUNCIONARIO','GERENTE','ARMAZENISTA','ADMIN') DEFAULT 'FUNCIONARIO',
+            ativo TINYINT(1) DEFAULT 1,
+            criado_em DATETIME DEFAULT CURRENT_TIMESTAMP
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
         """)
 
@@ -230,14 +231,24 @@ def _init_mysql(conn):
 
 def _seed_mysql(conn, c):
     """Preencher dados iniciais MySQL"""
+    # Inserir pessoas primeiro
+    pessoas = [
+        ("António Ferreira", "gerente@vinhadouro.pt", "912000001"),
+        ("Sofia Martins", "loja@vinhadouro.pt", "912000002"),
+        ("João Rodrigues", "stock@vinhadouro.pt", "912000003"),
+        ("Admin Sistema", "admin@vinhadouro.pt", "912000004"),
+    ]
+    for p in pessoas:
+        c.execute("INSERT IGNORE INTO pessoas (nome,email,telefone) VALUES (%s,%s,%s)", p)
+    conn.commit()
     utilizadores = [
-        ("gerente", "1234", "António Ferreira",  "GERENTE",     "gerente.html"),
-        ("loja",    "1234", "Sofia Martins",      "FUNCIONARIO", "loja.html"),
-        ("stock",   "1234", "João Rodrigues",     "ARMAZENISTA", "stock.html"),
-        ("admin",   "admin","Admin Sistema",      "ADMIN",       "gerente.html"),
+        (1, "gerente", "1234", "GERENTE"),
+        (2, "loja",    "1234", "FUNCIONARIO"),
+        (3, "stock",   "1234", "ARMAZENISTA"),
+        (4, "admin",   "1234", "ADMIN"),
     ]
     for u in utilizadores:
-        c.execute("INSERT IGNORE INTO utilizadores (username,password,nome,role,redirect) VALUES (%s,%s,%s,%s,%s)", u)
+        c.execute("INSERT IGNORE INTO utilizadores (pessoa_id,username,password_hash,role) VALUES (%s,%s,%s,%s)", u)
 
     vinhos = [
         ("Anselmo Mendes Alvarinho","Branco","Vinho Verde","Anselmo Mendes",2022,14.90,21,"Fresco e mineral, notas cítricas e floral",None),
@@ -294,13 +305,21 @@ def _seed_mysql(conn, c):
 def _init_sqlite(conn):
     """Inicializar tabelas SQLite básicas"""
     conn.executescript("""
+    CREATE TABLE IF NOT EXISTS pessoas (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        nome TEXT NOT NULL,
+        email TEXT,
+        telefone TEXT
+    );
     CREATE TABLE IF NOT EXISTS utilizadores (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
+        pessoa_id INTEGER,
         username TEXT NOT NULL UNIQUE,
-        password TEXT NOT NULL,
-        nome TEXT NOT NULL,
-        role TEXT NOT NULL,
-        redirect TEXT NOT NULL
+        password_hash TEXT NOT NULL,
+        role TEXT DEFAULT 'FUNCIONARIO',
+        ativo INTEGER DEFAULT 1,
+        criado_em TEXT DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (pessoa_id) REFERENCES pessoas(id)
     );
     CREATE TABLE IF NOT EXISTS pessoas (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -374,11 +393,17 @@ def _init_sqlite(conn):
 
 def _seed_sqlite(conn):
     """Preencher dados iniciais SQLite"""
-    conn.executemany("INSERT INTO utilizadores (username,password,nome,role,redirect) VALUES (?,?,?,?,?)", [
-        ("gerente","1234","António Ferreira","GERENTE","gerente.html"),
-        ("loja","1234","Sofia Martins","FUNCIONARIO","loja.html"),
-        ("stock","1234","João Rodrigues","ARMAZENISTA","stock.html"),
-        ("admin","admin","Admin Sistema","ADMIN","gerente.html"),
+    conn.executemany("INSERT INTO pessoas (nome,email,telefone) VALUES (?,?,?)", [
+        ("António Ferreira","gerente@vinhadouro.pt","912000001"),
+        ("Sofia Martins","loja@vinhadouro.pt","912000002"),
+        ("João Rodrigues","stock@vinhadouro.pt","912000003"),
+        ("Admin Sistema","admin@vinhadouro.pt","912000004"),
+    ])
+    conn.executemany("INSERT INTO utilizadores (pessoa_id,username,password_hash,role) VALUES (?,?,?,?)", [
+        (1,"gerente","1234","GERENTE"),
+        (2,"loja","1234","FUNCIONARIO"),
+        (3,"stock","1234","ARMAZENISTA"),
+        (4,"admin","1234","ADMIN"),
     ])
     vinhos = [
         ("Anselmo Mendes Alvarinho","Branco","Vinho Verde","Anselmo Mendes",2022,14.90,21,"Fresco e mineral",None),
@@ -457,11 +482,17 @@ def login():
         if not username or not password:
             return jsonify({'error':'Credenciais em falta'}), 400
         conn, db_type = get_db()
-        u = db_fetchone(conn, db_type, "SELECT * FROM utilizadores WHERE LOWER(username)=? AND password=?", (username, password))
+        u = db_fetchone(conn, db_type,
+            "SELECT u.id, u.username, u.password_hash, u.role, p.nome "
+            "FROM utilizadores u LEFT JOIN pessoas p ON u.pessoa_id = p.id "
+            "WHERE LOWER(u.username)=? AND u.password_hash=?",
+            (username, password))
         conn.close()
         if not u:
             return jsonify({'error':'Utilizador ou senha incorretos'}), 401
-        return jsonify({'id':u['id'],'username':u['username'],'nome':u['nome'],'role':u['role'],'redirect':u['redirect']})
+        # Map role to redirect page
+        role_redirects = {'GERENTE':'gerente.html','FUNCIONARIO':'loja.html','ARMAZENISTA':'stock.html','ADMIN':'gerente.html'}
+        return jsonify({'id':u['id'],'username':u['username'],'nome':u.get('nome') or u['username'],'role':u['role'],'redirect':role_redirects.get(u['role'],'loja.html')})
     except Exception as e:
         return jsonify({'error':str(e)}), 500
 
