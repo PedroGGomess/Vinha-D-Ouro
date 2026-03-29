@@ -9,337 +9,12 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
-  <style>
-    /* ════════════════════════════════════════════════════════════════════════════
-       CAVES PAGE LAYOUT
-       ════════════════════════════════════════════════════════════════════════════ */
-
-    .caves-layout {
-      display: grid;
-      grid-template-columns: 320px 1fr;
-      gap: var(--sp-6);
-      margin-bottom: var(--sp-8);
-    }
-
-    .cave-sidebar {
-      display: flex;
-      flex-direction: column;
-      gap: var(--sp-4);
-    }
-
-    .cave-selector {
-      display: flex;
-      gap: var(--sp-2);
-      margin-bottom: var(--sp-4);
-    }
-
-    .cave-selector-btn {
-      flex: 1;
-      padding: var(--sp-2) var(--sp-3);
-      background: var(--bg-surface);
-      border: 2px solid var(--border);
-      border-radius: var(--r-md);
-      color: var(--text-secondary);
-      font-weight: 600;
-      font-size: 0.8125rem;
-      cursor: pointer;
-      transition: all var(--t-base) var(--ease);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    .cave-selector-btn:hover {
-      border-color: var(--border-hover);
-      background: var(--bg-hover);
-      color: var(--text-primary);
-    }
-
-    .cave-selector-btn.active {
-      background: linear-gradient(135deg, var(--gold), var(--gold-light));
-      border-color: var(--gold);
-      color: var(--bg-base);
-      box-shadow: var(--shadow-gold);
-    }
-
-    .cave-info-card {
-      background: linear-gradient(135deg, var(--bg-elevated), var(--bg-surface));
-      border: 1px solid var(--border);
-      border-radius: var(--r-lg);
-      padding: var(--sp-4);
-      backdrop-filter: blur(10px);
-    }
-
-    .cave-stat-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: var(--sp-4);
-      margin-bottom: var(--sp-4);
-    }
-
-    .cave-stat-row:last-child {
-      margin-bottom: 0;
-    }
-
-    .cave-stat-item {
-      display: flex;
-      flex-direction: column;
-      gap: var(--sp-1);
-    }
-
-    .cave-stat-item .stat-lbl {
-      font-size: 0.75rem;
-      color: var(--text-secondary);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      font-weight: 600;
-    }
-
-    .cave-stat-item .stat-val {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: var(--gold);
-      font-family: var(--font-display);
-    }
-
-    .cave-stat-item .stat-pct {
-      font-size: 0.8125rem;
-      color: var(--text-secondary);
-      margin-top: var(--sp-1);
-    }
-
-    .cave-stat-progress {
-      width: 100%;
-      height: 6px;
-      background: var(--bg-surface);
-      border-radius: var(--r-full);
-      overflow: hidden;
-      margin-top: var(--sp-2);
-    }
-
-    .cave-stat-progress-bar {
-      height: 100%;
-      background: linear-gradient(90deg, var(--gold), var(--gold-light));
-      border-radius: var(--r-full);
-      transition: width var(--t-slow) var(--ease);
-    }
-
-    .slot-info-section {
-      background: var(--bg-surface);
-      border: 1px solid var(--border);
-      border-radius: var(--r-lg);
-      padding: var(--sp-4);
-      margin-bottom: var(--sp-4);
-    }
-
-    .slot-info-section h3 {
-      font-size: 0.8125rem;
-      color: var(--text-secondary);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      font-weight: 600;
-      margin-bottom: var(--sp-3);
-    }
-
-    .slot-info-content {
-      display: flex;
-      flex-direction: column;
-      gap: var(--sp-3);
-      min-height: 120px;
-    }
-
-    .slot-info-empty {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100px;
-      color: var(--text-muted);
-      font-style: italic;
-    }
-
-    .slot-wine-info {
-      background: var(--bg-elevated);
-      padding: var(--sp-3);
-      border-radius: var(--r-md);
-      border: 1px solid var(--border);
-    }
-
-    .slot-wine-name {
-      font-weight: 600;
-      color: var(--text-primary);
-      font-size: 0.875rem;
-      margin-bottom: var(--sp-1);
-    }
-
-    .slot-wine-details {
-      font-size: 0.75rem;
-      color: var(--text-secondary);
-      display: flex;
-      gap: var(--sp-2);
-      flex-wrap: wrap;
-    }
-
-    .slot-wine-details span {
-      display: flex;
-      gap: var(--sp-1);
-    }
-
-    .slot-actions {
-      display: flex;
-      flex-direction: column;
-      gap: var(--sp-2);
-    }
-
-    .slot-select-group {
-      display: flex;
-      gap: var(--sp-2);
-    }
-
-    #slot-wine-select {
-      flex: 1;
-    }
-
-    .cave-grid-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
-      gap: var(--sp-2);
-      background: var(--bg-surface);
-      padding: var(--sp-4);
-      border-radius: var(--r-lg);
-      border: 1px solid var(--border);
-      min-height: 600px;
-    }
-
-    .cave-slot {
-      aspect-ratio: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: var(--bg-elevated);
-      border: 2px solid var(--border-subtle);
-      border-radius: var(--r-md);
-      cursor: pointer;
-      transition: all var(--t-base) var(--ease);
-      position: relative;
-      overflow: hidden;
-      font-weight: 600;
-      font-size: 0.75rem;
-      text-align: center;
-      padding: var(--sp-2);
-    }
-
-    .cave-slot::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, rgba(201, 168, 76, 0.1), rgba(155, 35, 53, 0.1));
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity var(--t-base) var(--ease);
-    }
-
-    .cave-slot:hover {
-      border-color: var(--border-hover);
-      background: var(--bg-hover);
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-xs);
-    }
-
-    .cave-slot:hover::before {
-      opacity: 1;
-    }
-
-    .cave-slot.empty {
-      background: var(--bg-surface);
-      border-color: var(--border-subtle);
-      color: var(--text-muted);
-    }
-
-    .cave-slot.empty:hover {
-      border-color: var(--gold);
-      background: rgba(201, 168, 76, 0.05);
-    }
-
-    .cave-slot.occupied {
-      background: linear-gradient(135deg, var(--bg-elevated), var(--bg-surface));
-      border-color: var(--gold);
-      color: var(--gold);
-    }
-
-    .cave-slot.occupied:hover {
-      box-shadow: var(--shadow-gold);
-    }
-
-    .cave-slot.selected {
-      border-color: var(--gold);
-      background: rgba(201, 168, 76, 0.15);
-      box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.25);
-    }
-
-    .cave-slot-label {
-      z-index: 2;
-      position: relative;
-      line-height: 1.2;
-    }
-
-    /* ════════════════════════════════════════════════════════════════════════════
-       RESPONSIVE
-       ════════════════════════════════════════════════════════════════════════════ */
-
-    @media (max-width: 1024px) {
-      .caves-layout {
-        grid-template-columns: 1fr;
-        gap: var(--sp-4);
-      }
-
-      .cave-sidebar {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: var(--sp-4);
-      }
-
-      .cave-info-card {
-        grid-column: 1 / -1;
-      }
-
-      .cave-grid-container {
-        grid-column: 1 / -1;
-      }
-    }
-
-    @media (max-width: 640px) {
-      .caves-layout {
-        grid-template-columns: 1fr;
-      }
-
-      .cave-selector {
-        flex-wrap: wrap;
-      }
-
-      .cave-selector-btn {
-        flex: 1 1 calc(33.333% - var(--sp-2));
-      }
-
-      .cave-stat-row {
-        grid-template-columns: 1fr;
-      }
-
-      .cave-grid-container {
-        grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
-      }
-
-      .cave-sidebar {
-        grid-template-columns: 1fr;
-      }
-    }
-  </style>
 </head>
 <body>
   <a href="#main-content" class="skip-to-content">Saltar para conteúdo principal</a>
 
   <div class="app-layout">
-    <!-- ╔════════════════════════════════════════════════════════════════════════╗ -->
-    <!-- ║ SIDEBAR                                                                ║ -->
-    <!-- ╚════════════════════════════════════════════════════════════════════════╝ -->
+    <!-- SIDEBAR -->
     <nav class="sidebar">
       <div class="sidebar-brand">
         <h2>Vinha D'Ouro</h2>
@@ -387,9 +62,7 @@
       </div>
     </nav>
 
-    <!-- ╔════════════════════════════════════════════════════════════════════════╗ -->
-    <!-- ║ MAIN CONTENT                                                           ║ -->
-    <!-- ╚════════════════════════════════════════════════════════════════════════╝ -->
+    <!-- MAIN CONTENT -->
     <main class="main-content" id="main-content">
       <div id="toasts" class="toasts-container"></div>
 
@@ -428,7 +101,7 @@
             <div class="cave-stat-row">
               <div class="cave-stat-item">
                 <span class="stat-lbl">Disponível</span>
-                <span class="stat-val" style="color: var(--success);" id="cave-free">100</span>
+                <span class="stat-val cave-free-color" id="cave-free">100</span>
               </div>
               <div class="cave-stat-item">
                 <span class="stat-lbl">Taxa Ocupação</span>
@@ -437,7 +110,7 @@
             </div>
 
             <div class="cave-stat-progress">
-              <div class="cave-stat-progress-bar" id="cave-progress-bar" style="width: 0%"></div>
+              <div class="cave-stat-progress-bar" id="cave-progress-bar"></div>
             </div>
           </div>
 
@@ -465,7 +138,7 @@
                 </svg>
                 Atribuir Vinho
               </button>
-              <button class="btn btn-danger btn-sm hidden" id="clear-slot-btn" onclick="clearSlot()">
+              <button id="clear-slot-btn" class="btn btn-danger btn-sm hidden" onclick="clearSlot()">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <polyline points="3 6 5 6 21 6"></polyline>
                   <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
@@ -477,7 +150,7 @@
         </div>
 
         <!-- RIGHT: Cave Grid -->
-        <div class="cave-grid-container" id="cave-grid-container">
+        <div id="cave-grid-container" class="cave-grid-container">
           <!-- Filled by JavaScript -->
         </div>
       </div>

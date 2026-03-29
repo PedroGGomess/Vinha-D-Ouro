@@ -10,1156 +10,85 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
-  <style>
-    /* ════════════════════════════════════════
-       POS-SPECIFIC LAYOUT
-       ════════════════════════════════════════ */
-
-    .main-content {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .page-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: var(--sp-6);
-      border-bottom: 1px solid var(--border-subtle);
-      background: var(--bg-base);
-    }
-
-    .page-header h1 {
-      font-family: var(--font-display);
-      font-size: 2rem;
-      font-weight: 600;
-      color: var(--text-primary);
-      letter-spacing: -0.5px;
-    }
-
-    .pos-container {
-      display: grid;
-      grid-template-columns: 1fr 380px;
-      gap: var(--sp-6);
-      flex: 1;
-      padding: var(--sp-6);
-      overflow: hidden;
-    }
-
-    /* ════════════════════════════════════════
-       CATALOG SECTION
-       ════════════════════════════════════════ */
-
-    .catalog-section {
-      display: flex;
-      flex-direction: column;
-      gap: var(--sp-4);
-      overflow-y: auto;
-      overflow-x: hidden;
-      padding-right: var(--sp-4);
-    }
-
-    .catalog-section::-webkit-scrollbar {
-      width: 6px;
-    }
-
-    .catalog-section::-webkit-scrollbar-track {
-      background: var(--bg-surface);
-      border-radius: var(--r-xl);
-    }
-
-    .catalog-section::-webkit-scrollbar-thumb {
-      background: var(--border);
-      border-radius: var(--r-xl);
-    }
-
-    .catalog-section::-webkit-scrollbar-thumb:hover {
-      background: var(--border-hover);
-    }
-
-    /* Filter Bar */
-    .filter-bar {
-      display: flex;
-      gap: var(--sp-3);
-      flex-wrap: wrap;
-      padding: 0;
-      margin: 0;
-    }
-
-    .filter-btn {
-      padding: var(--sp-2) var(--sp-4);
-      background: var(--bg-surface);
-      border: 1px solid var(--border);
-      border-radius: var(--r-lg);
-      color: var(--text-secondary);
-      font-family: var(--font-sans);
-      font-size: 0.875rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all var(--t-base) var(--ease);
-      text-transform: uppercase;
-      letter-spacing: 0.3px;
-      outline: none;
-    }
-
-    .filter-btn:hover {
-      background: var(--bg-hover);
-      color: var(--text-primary);
-      border-color: var(--border-hover);
-    }
-
-    .filter-btn.active {
-      background: var(--wine);
-      border-color: var(--wine-light);
-      color: #FFFFFF;
-    }
-
-    /* Search */
-    .search-wrapper {
-      position: relative;
-    }
-
-    #wine-search {
-      width: 100%;
-      padding: var(--sp-3) var(--sp-4);
-      background: var(--bg-surface);
-      border: 1px solid var(--border);
-      border-radius: var(--r-lg);
-      color: var(--text-primary);
-      font-family: var(--font-sans);
-      font-size: 0.9375rem;
-      transition: all var(--t-base) var(--ease);
-    }
-
-    #wine-search::placeholder {
-      color: var(--text-muted);
-    }
-
-    #wine-search:focus {
-      outline: none;
-      background: var(--bg-hover);
-      border-color: var(--gold);
-      box-shadow: 0 0 0 3px var(--gold-subtle);
-    }
-
-    /* Wine Grid */
-    .wine-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-      gap: var(--sp-5);
-      margin: 0;
-      padding: 0;
-      list-style: none;
-    }
-
-    .wine-card {
-      display: flex;
-      flex-direction: column;
-      gap: var(--sp-3);
-      padding: var(--sp-4);
-      background: var(--bg-surface);
-      border: 1px solid var(--border);
-      border-radius: var(--r-xl);
-      cursor: pointer;
-      transition: all var(--t-base) var(--ease);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .wine-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, var(--gold-glow), transparent);
-      transition: left var(--t-slow) var(--ease);
-      pointer-events: none;
-    }
-
-    .wine-card:hover {
-      background: var(--bg-hover);
-      border-color: var(--gold);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3), var(--shadow-gold);
-      transform: translateY(-2px);
-    }
-
-    .wine-card:hover::before {
-      left: 100%;
-    }
-
-    .wine-image {
-      width: 100%;
-      height: 140px;
-      background: linear-gradient(135deg, var(--wine-dim), var(--wine));
-      border-radius: var(--r-lg);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: var(--font-serif);
-      font-size: 3rem;
-      color: rgba(255, 255, 255, 0.2);
-      overflow: hidden;
-    }
-
-    .wine-info {
-      display: flex;
-      flex-direction: column;
-      gap: var(--sp-2);
-      flex: 1;
-    }
-
-    .wine-name {
-      font-family: var(--font-display);
-      font-size: 1rem;
-      font-weight: 600;
-      color: var(--text-primary);
-      line-height: 1.3;
-      word-break: break-word;
-    }
-
-    .wine-detail {
-      font-family: var(--font-sans);
-      font-size: 0.75rem;
-      color: var(--text-muted);
-    }
-
-    .wine-detail-value {
-      color: var(--text-secondary);
-      font-weight: 500;
-    }
-
-    .wine-price {
-      font-family: var(--font-display);
-      font-size: 1.25rem;
-      font-weight: 600;
-      color: var(--gold);
-      letter-spacing: -0.5px;
-    }
-
-    .wine-stock {
-      font-family: var(--font-sans);
-      font-size: 0.75rem;
-      color: var(--text-muted);
-    }
-
-    .wine-stock.low {
-      color: var(--warning);
-    }
-
-    .wine-stock.out {
-      color: var(--danger);
-    }
-
-    .wine-actions {
-      display: flex;
-      gap: var(--sp-2);
-      margin-top: var(--sp-2);
-    }
-
-    .wine-btn {
-      flex: 1;
-      padding: var(--sp-2) var(--sp-3);
-      background: var(--wine);
-      border: 1px solid var(--wine-light);
-      border-radius: var(--r-md);
-      color: #FFFFFF;
-      font-family: var(--font-sans);
-      font-size: 0.75rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all var(--t-base) var(--ease);
-      text-transform: uppercase;
-      letter-spacing: 0.3px;
-      outline: none;
-    }
-
-    .wine-btn:hover:not(:disabled) {
-      background: var(--wine-light);
-      box-shadow: 0 4px 12px rgba(155, 35, 53, 0.3);
-      transform: translateY(-1px);
-    }
-
-    .wine-btn:active:not(:disabled) {
-      transform: translateY(0);
-    }
-
-    .wine-btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
-    /* ════════════════════════════════════════
-       CART PANEL
-       ════════════════════════════════════════ */
-
-    .cart-panel {
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-      gap: 0;
-      background: var(--bg-surface);
-      border: 1px solid var(--border);
-      border-radius: var(--r-xl);
-      overflow: hidden;
-      box-shadow: var(--shadow-md);
-    }
-
-    .cart-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: var(--sp-4) var(--sp-5);
-      border-bottom: 1px solid var(--border-subtle);
-      background: var(--bg-elevated);
-      flex-shrink: 0;
-    }
-
-    .cart-header h3 {
-      font-family: var(--font-display);
-      font-size: 1.25rem;
-      font-weight: 600;
-      color: var(--text-primary);
-      margin: 0;
-    }
-
-    #cart-count {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 24px;
-      height: 24px;
-      background: var(--wine);
-      color: #FFFFFF;
-      border-radius: var(--r-full);
-      font-family: var(--font-sans);
-      font-size: 0.75rem;
-      font-weight: 700;
-      margin-left: var(--sp-2);
-    }
-
-    .cart-content {
-      display: flex;
-      flex-direction: column;
-      flex: 1;
-      overflow-y: auto;
-      overflow-x: hidden;
-      padding: 0;
-    }
-
-    .cart-content::-webkit-scrollbar {
-      width: 4px;
-    }
-
-    .cart-content::-webkit-scrollbar-track {
-      background: transparent;
-    }
-
-    .cart-content::-webkit-scrollbar-thumb {
-      background: var(--border);
-      border-radius: var(--r-lg);
-    }
-
-    .cart-content::-webkit-scrollbar-thumb:hover {
-      background: var(--border-hover);
-    }
-
-    #cart-items {
-      display: flex;
-      flex-direction: column;
-      gap: var(--sp-3);
-      padding: var(--sp-4);
-      flex: 1;
-    }
-
-    #cart-empty {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: var(--sp-8) var(--sp-4);
-      color: var(--text-muted);
-      text-align: center;
-    }
-
-    #cart-empty.hidden {
-      display: none;
-    }
-
-    .empty-icon {
-      font-size: 2.5rem;
-      margin-bottom: var(--sp-3);
-      opacity: 0.5;
-    }
-
-    .empty-text {
-      font-family: var(--font-sans);
-      font-size: 0.875rem;
-      line-height: 1.5;
-    }
-
-    /* Cart Item */
-    .cart-item {
-      display: flex;
-      gap: var(--sp-3);
-      padding: var(--sp-3);
-      background: var(--bg-base);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--r-md);
-      transition: all var(--t-base) var(--ease);
-    }
-
-    .cart-item:hover {
-      background: var(--bg-hover);
-      border-color: var(--border);
-    }
-
-    .cart-item-image {
-      width: 50px;
-      height: 50px;
-      background: linear-gradient(135deg, var(--wine-dim), var(--wine));
-      border-radius: var(--r-md);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5rem;
-      flex-shrink: 0;
-    }
-
-    .cart-item-info {
-      display: flex;
-      flex-direction: column;
-      gap: var(--sp-1);
-      flex: 1;
-      min-width: 0;
-    }
-
-    .cart-item-name {
-      font-family: var(--font-sans);
-      font-size: 0.875rem;
-      font-weight: 600;
-      color: var(--text-primary);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .cart-item-detail {
-      font-family: var(--font-sans);
-      font-size: 0.75rem;
-      color: var(--text-muted);
-    }
-
-    .cart-item-price {
-      font-family: var(--font-display);
-      font-size: 0.875rem;
-      font-weight: 600;
-      color: var(--gold);
-    }
-
-    .cart-item-qty {
-      display: flex;
-      align-items: center;
-      gap: var(--sp-1);
-      background: var(--bg-surface);
-      border: 1px solid var(--border);
-      border-radius: var(--r-md);
-      padding: 0 var(--sp-2);
-      margin-top: var(--sp-2);
-      width: fit-content;
-    }
-
-    .qty-btn {
-      padding: var(--sp-1);
-      background: none;
-      border: none;
-      color: var(--text-secondary);
-      cursor: pointer;
-      font-weight: bold;
-      transition: color var(--t-fast) var(--ease);
-      outline: none;
-    }
-
-    .qty-btn:hover {
-      color: var(--text-primary);
-    }
-
-    .qty-value {
-      font-family: var(--font-sans);
-      font-size: 0.75rem;
-      font-weight: 600;
-      color: var(--text-primary);
-      min-width: 16px;
-      text-align: center;
-    }
-
-    .cart-item-remove {
-      padding: var(--sp-2);
-      background: none;
-      border: none;
-      color: var(--text-muted);
-      cursor: pointer;
-      transition: all var(--t-base) var(--ease);
-      border-radius: var(--r-md);
-      outline: none;
-      font-size: 1rem;
-    }
-
-    .cart-item-remove:hover {
-      color: var(--danger);
-      background: var(--danger-dim);
-    }
-
-    /* Cart Footer */
-    .cart-footer {
-      display: flex;
-      flex-direction: column;
-      gap: var(--sp-4);
-      padding: var(--sp-4) var(--sp-5);
-      border-top: 1px solid var(--border-subtle);
-      background: var(--bg-elevated);
-      flex-shrink: 0;
-    }
-
-    .cart-totals {
-      display: flex;
-      flex-direction: column;
-      gap: var(--sp-3);
-    }
-
-    .total-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-family: var(--font-sans);
-      font-size: 0.875rem;
-      color: var(--text-secondary);
-    }
-
-    .total-row.grand {
-      border-top: 1px solid var(--border-subtle);
-      padding-top: var(--sp-3);
-      font-size: 1rem;
-      font-weight: 700;
-      color: var(--text-primary);
-    }
-
-    .total-value {
-      font-family: var(--font-display);
-      font-weight: 600;
-      color: var(--gold);
-      text-align: right;
-    }
-
-    .total-row.grand .total-value {
-      font-size: 1.25rem;
-    }
-
-    #checkout-btn {
-      width: 100%;
-      padding: var(--sp-3) var(--sp-4);
-      background: var(--gold);
-      border: 1px solid var(--gold-light);
-      border-radius: var(--r-lg);
-      color: #09080c;
-      font-family: var(--font-sans);
-      font-size: 0.875rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all var(--t-base) var(--ease);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      outline: none;
-    }
-
-    #checkout-btn:hover:not(:disabled) {
-      background: var(--gold-light);
-      box-shadow: var(--shadow-gold);
-      transform: translateY(-1px);
-    }
-
-    #checkout-btn:active:not(:disabled) {
-      transform: translateY(0);
-    }
-
-    #checkout-btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
-    /* ════════════════════════════════════════
-       API BADGE
-       ════════════════════════════════════════ */
-
-    .api-badge {
-      position: absolute;
-      top: var(--sp-4);
-      right: var(--sp-4);
-      padding: var(--sp-1) var(--sp-3);
-      background: var(--gold-subtle);
-      border: 1px solid var(--gold-border);
-      border-radius: var(--r-full);
-      font-family: var(--font-sans);
-      font-size: 0.65rem;
-      font-weight: 700;
-      color: var(--gold);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      display: flex;
-      align-items: center;
-      gap: var(--sp-2);
-    }
-
-    .api-badge::before {
-      content: '●';
-      color: var(--success);
-    }
-
-    .api-badge.offline::before {
-      content: '●';
-      color: var(--warning);
-    }
-
-    /* ════════════════════════════════════════
-       MODALS
-       ════════════════════════════════════════ */
-
-    .modal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      z-index: 1000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 1;
-      transition: opacity var(--t-base) var(--ease);
-    }
-
-    .modal.hidden {
-      display: none;
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    .modal-backdrop {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.6);
-      backdrop-filter: blur(4px);
-      z-index: -1;
-    }
-
-    .modal-content {
-      position: relative;
-      background: var(--bg-surface);
-      border: 1px solid var(--border);
-      border-radius: var(--r-2xl);
-      box-shadow: var(--shadow-xl);
-      max-width: 90vw;
-      max-height: 90vh;
-      overflow-y: auto;
-    }
-
-    .modal-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: var(--sp-5) var(--sp-6);
-      border-bottom: 1px solid var(--border-subtle);
-      background: var(--bg-elevated);
-    }
-
-    .modal-title {
-      font-family: var(--font-display);
-      font-size: 1.5rem;
-      font-weight: 600;
-      color: var(--text-primary);
-      margin: 0;
-    }
-
-    .modal-close {
-      padding: var(--sp-2);
-      background: var(--bg-hover);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--r-md);
-      color: var(--text-secondary);
-      cursor: pointer;
-      transition: all var(--t-base) var(--ease);
-      font-size: 1.25rem;
-      line-height: 1;
-      outline: none;
-    }
-
-    .modal-close:hover {
-      background: var(--bg-active);
-      color: var(--text-primary);
-    }
-
-    .modal-body {
-      padding: var(--sp-6);
-    }
-
-    .modal-footer {
-      display: flex;
-      gap: var(--sp-4);
-      padding: var(--sp-5) var(--sp-6);
-      border-top: 1px solid var(--border-subtle);
-      background: var(--bg-elevated);
-    }
-
-    .modal-footer button {
-      flex: 1;
-    }
-
-    /* Size Modal */
-    #size-options {
-      display: flex;
-      flex-direction: column;
-      gap: var(--sp-4);
-    }
-
-    .size-option {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: var(--sp-4);
-      background: var(--bg-base);
-      border: 2px solid var(--border);
-      border-radius: var(--r-lg);
-      cursor: pointer;
-      transition: all var(--t-base) var(--ease);
-    }
-
-    .size-option:hover {
-      background: var(--bg-hover);
-      border-color: var(--gold);
-    }
-
-    .size-option.selected {
-      background: var(--gold-subtle);
-      border-color: var(--gold);
-    }
-
-    .size-info {
-      display: flex;
-      flex-direction: column;
-      gap: var(--sp-1);
-    }
-
-    .size-name {
-      font-family: var(--font-sans);
-      font-size: 0.875rem;
-      font-weight: 600;
-      color: var(--text-primary);
-    }
-
-    .size-detail {
-      font-family: var(--font-sans);
-      font-size: 0.75rem;
-      color: var(--text-muted);
-    }
-
-    .size-price {
-      font-family: var(--font-display);
-      font-size: 1rem;
-      font-weight: 600;
-      color: var(--gold);
-    }
-
-    /* Checkout Modal */
-    .checkout-section {
-      display: flex;
-      flex-direction: column;
-      gap: var(--sp-4);
-      margin-bottom: var(--sp-6);
-    }
-
-    .checkout-section-title {
-      font-family: var(--font-sans);
-      font-size: 0.75rem;
-      font-weight: 700;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    #co-items {
-      display: flex;
-      flex-direction: column;
-      gap: var(--sp-3);
-      max-height: 200px;
-      overflow-y: auto;
-      padding-right: var(--sp-2);
-    }
-
-    .co-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-family: var(--font-sans);
-      font-size: 0.75rem;
-      padding: var(--sp-2) 0;
-      border-bottom: 1px solid var(--border-subtle);
-    }
-
-    .co-item:last-child {
-      border-bottom: none;
-    }
-
-    .co-item-name {
-      color: var(--text-primary);
-      flex: 1;
-    }
-
-    .co-item-qty {
-      color: var(--text-muted);
-      margin: 0 var(--sp-3);
-    }
-
-    .co-item-price {
-      color: var(--gold);
-      font-weight: 600;
-    }
-
-    .checkout-totals {
-      display: flex;
-      flex-direction: column;
-      gap: var(--sp-2);
-      padding: var(--sp-4);
-      background: var(--bg-base);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--r-lg);
-    }
-
-    .co-total-row {
-      display: flex;
-      justify-content: space-between;
-      font-family: var(--font-sans);
-      font-size: 0.875rem;
-      color: var(--text-secondary);
-    }
-
-    .co-total-row.grand {
-      border-top: 1px solid var(--border-subtle);
-      padding-top: var(--sp-2);
-      font-size: 1rem;
-      font-weight: 700;
-      color: var(--text-primary);
-    }
-
-    #co-discount-line {
-      display: flex;
-      justify-content: space-between;
-      font-family: var(--font-sans);
-      font-size: 0.875rem;
-      color: var(--success);
-      border-top: 1px solid var(--border-subtle);
-      padding-top: var(--sp-2);
-    }
-
-    #co-discount-line.hidden {
-      display: none;
-    }
-
-    .pay-methods {
-      display: flex;
-      gap: var(--sp-3);
-      flex-wrap: wrap;
-    }
-
-    .pay-method {
-      flex: 1;
-      min-width: 100px;
-      padding: var(--sp-3);
-      background: var(--bg-base);
-      border: 2px solid var(--border);
-      border-radius: var(--r-lg);
-      color: var(--text-secondary);
-      font-family: var(--font-sans);
-      font-size: 0.75rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all var(--t-base) var(--ease);
-      text-transform: uppercase;
-      letter-spacing: 0.3px;
-      outline: none;
-    }
-
-    .pay-method:hover {
-      border-color: var(--gold);
-      color: var(--text-primary);
-    }
-
-    .pay-method.selected {
-      background: var(--wine);
-      border-color: var(--wine-light);
-      color: #FFFFFF;
-    }
-
-    .payment-panel {
-      display: none;
-      flex-direction: column;
-      gap: var(--sp-4);
-      padding: var(--sp-4);
-      background: var(--bg-base);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--r-lg);
-    }
-
-    .payment-panel.active {
-      display: flex;
-    }
-
-    .payment-form-group {
-      display: flex;
-      flex-direction: column;
-      gap: var(--sp-2);
-    }
-
-    .payment-label {
-      font-family: var(--font-sans);
-      font-size: 0.75rem;
-      font-weight: 600;
-      color: var(--text-secondary);
-      text-transform: uppercase;
-      letter-spacing: 0.3px;
-    }
-
-    .payment-input {
-      padding: var(--sp-3) var(--sp-4);
-      background: var(--bg-surface);
-      border: 1px solid var(--border);
-      border-radius: var(--r-md);
-      color: var(--text-primary);
-      font-family: var(--font-sans);
-      font-size: 0.875rem;
-      transition: all var(--t-base) var(--ease);
-      outline: none;
-    }
-
-    .payment-input:focus {
-      border-color: var(--gold);
-      box-shadow: 0 0 0 3px var(--gold-subtle);
-    }
-
-    .payment-input::placeholder {
-      color: var(--text-muted);
-    }
-
-    .payment-row {
-      display: flex;
-      gap: var(--sp-4);
-    }
-
-    .payment-row > div {
-      flex: 1;
-    }
-
-    .cash-display {
-      display: flex;
-      justify-content: space-between;
-      padding: var(--sp-3) var(--sp-4);
-      background: var(--bg-surface);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--r-md);
-      font-family: var(--font-sans);
-      font-size: 0.875rem;
-      color: var(--text-secondary);
-    }
-
-    .cash-display strong {
-      color: var(--text-primary);
-    }
-
-    #co-pay-display {
-      display: inline-block;
-      font-family: var(--font-display);
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: var(--gold);
-    }
-
-    /* Receipt Modal */
-    #receipt-content {
-      background: var(--bg-base);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--r-lg);
-      padding: var(--sp-4);
-      font-family: 'Courier New', monospace;
-      font-size: 0.75rem;
-      line-height: 1.6;
-      color: var(--text-primary);
-      overflow-x: auto;
-      white-space: pre-wrap;
-      word-wrap: break-word;
-      margin: 0;
-    }
-
-    #receipt-subtitle {
-      display: block;
-      font-family: var(--font-sans);
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      text-align: center;
-      margin-top: var(--sp-4);
-    }
-
-    /* ════════════════════════════════════════
-       TOAST NOTIFICATIONS
-       ════════════════════════════════════════ */
-
-    #toasts {
-      position: fixed;
-      top: var(--sp-4);
-      right: var(--sp-4);
-      z-index: 2000;
-      display: flex;
-      flex-direction: column;
-      gap: var(--sp-3);
-      max-width: 400px;
-    }
-
-    .toast {
-      display: flex;
-      gap: var(--sp-3);
-      align-items: flex-start;
-      padding: var(--sp-4);
-      background: var(--bg-surface);
-      border: 1px solid var(--border);
-      border-left: 3px solid var(--info);
-      border-radius: var(--r-lg);
-      color: var(--text-primary);
-      font-family: var(--font-sans);
-      font-size: 0.875rem;
-      box-shadow: var(--shadow-lg);
-      animation: slideIn var(--t-base) var(--ease);
-    }
-
-    .toast.success { border-left-color: var(--success); }
-    .toast.error { border-left-color: var(--danger); }
-    .toast.warning { border-left-color: var(--warning); }
-    .toast.info { border-left-color: var(--info); }
-
-    @keyframes slideIn {
-      from {
-        transform: translateX(100%);
-        opacity: 0;
-      }
-      to {
-        transform: translateX(0);
-        opacity: 1;
-      }
-    }
-
-    /* ════════════════════════════════════════
-       RESPONSIVE DESIGN
-       ════════════════════════════════════════ */
-
-    @media (max-width: 1024px) {
-      .pos-container {
-        grid-template-columns: 1fr;
-      }
-
-      .cart-panel {
-        max-height: 400px;
-      }
-
-      .wine-grid {
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-      }
-    }
-
-    @media (max-width: 640px) {
-      .page-header {
-        padding: var(--sp-4);
-      }
-
-      .page-header h1 {
-        font-size: 1.5rem;
-      }
-
-      .pos-container {
-        padding: var(--sp-4);
-        gap: var(--sp-4);
-      }
-
-      .wine-grid {
-        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-        gap: var(--sp-3);
-      }
-
-      .cart-panel {
-        max-height: 350px;
-      }
-
-      .modal-content {
-        max-width: 95vw;
-        max-height: 95vh;
-      }
-
-      #toasts {
-        left: var(--sp-4);
-        right: var(--sp-4);
-        max-width: none;
-      }
-    }
-  </style>
 </head>
 <body>
+  <a href="#main-content" class="skip-to-content">Saltar para conteúdo principal</a>
+
   <div class="app-layout">
-    <!-- Sidebar -->
-    <aside class="sidebar">
+    <!-- SIDEBAR -->
+    <nav class="sidebar">
       <div class="sidebar-brand">
         <h2>Vinha D'Ouro</h2>
-        <span class="brand-subtitle">LOJA</span>
+        <p class="brand-subtitle">LOJA</p>
       </div>
 
-      <nav class="sidebar-nav">
+      <div class="sidebar-nav">
+        <p class="nav-section-label">Vendas</p>
         <a href="loja.html" class="nav-link active">
-          <span>Catálogo</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="9" cy="21" r="1"></circle>
+            <circle cx="20" cy="21" r="1"></circle>
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+          </svg>
+          Catálogo
         </a>
         <a href="provas.html" class="nav-link">
-          <span>Provas</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M6 4h12v5c0 1-1 2-2 2H8c-1 0-2-1-2-2V4z"></path>
+            <path d="M9 9v11M15 9v11"></path>
+            <circle cx="12" cy="20" r="1"></circle>
+          </svg>
+          Provas
         </a>
-      </nav>
+      </div>
 
-      <div class="sidebar-user">
-        <div class="user-avatar" id="user-avatar">U</div>
-        <div class="user-info">
-          <div class="user-name" id="user-name">Utilizador</div>
-          <div class="user-role">Funcionário</div>
+      <div class="sidebar-footer">
+        <div class="user-block">
+          <div class="user-avatar" id="user-avatar">U</div>
+          <div class="user-info">
+            <p class="user-name" id="user-name">Utilizador</p>
+            <p class="user-role">Funcionário</p>
+          </div>
         </div>
-        <button class="btn-logout" onclick="logout()" title="Sair">→</button>
+        <button class="btn btn-ghost btn-sm" onclick="logout()" title="Terminar sessão">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+          Sair
+        </button>
       </div>
 
-      <div class="api-badge">
-        <span id="api-label">API Online</span>
+      <div class="api-badge" title="Estado de ligação da API">
+        <span class="api-status"></span>
+        <span id="api-label">API Conectado</span>
       </div>
-    </aside>
+    </nav>
 
-    <!-- Main Content -->
-    <main class="main-content">
+    <!-- MAIN CONTENT -->
+    <main class="main-content" id="main-content">
+      <div id="toasts" class="toasts-container"></div>
+
+      <!-- Page Header -->
       <div class="page-header">
-        <h1>Ponto de Venda</h1>
+        <div>
+          <h1 class="page-title">Ponto de Venda</h1>
+          <p class="page-subtitle">Gerencie vendas e emita recibos</p>
+        </div>
       </div>
 
+      <!-- POS Container -->
       <div class="pos-container">
-        <!-- Catalog Section -->
-        <section class="catalog-section">
+        <!-- CATALOG SECTION -->
+        <div class="catalog-section">
           <!-- Filter Bar -->
           <div class="filter-bar">
-            <button class="filter-btn active" data-filter="todos">Todos</button>
-            <button class="filter-btn" data-filter="tinto">Tinto</button>
-            <button class="filter-btn" data-filter="branco">Branco</button>
-            <button class="filter-btn" data-filter="rose">Rosé</button>
-            <button class="filter-btn" data-filter="espumante">Espumante</button>
+            <button class="filter-btn active" data-filter="" onclick="filterByType('')">Todos</button>
+            <button class="filter-btn" data-filter="Tinto" onclick="filterByType('Tinto')">Tinto</button>
+            <button class="filter-btn" data-filter="Branco" onclick="filterByType('Branco')">Branco</button>
+            <button class="filter-btn" data-filter="Rosé" onclick="filterByType('Rosé')">Rosé</button>
+            <button class="filter-btn" data-filter="Espumante" onclick="filterByType('Espumante')">Espumante</button>
           </div>
 
           <!-- Search -->
@@ -1167,246 +96,220 @@
             <input
               type="text"
               id="wine-search"
-              placeholder="Procurar vinho..."
-              autocomplete="off"
+              class="form-input"
+              placeholder="Procurar vinho por nome..."
+              onkeyup="searchWines(this.value)"
             >
           </div>
 
           <!-- Wine Grid -->
-          <ul class="wine-grid" id="wine-grid"></ul>
-        </section>
+          <ul id="wine-grid" class="wine-grid">
+            <li class="table-empty">Carregando catálogo...</li>
+          </ul>
+        </div>
 
-        <!-- Cart Panel -->
+        <!-- CART PANEL -->
         <div class="cart-panel">
           <div class="cart-header">
-            <h3>Carrinho <span id="cart-count">0</span></h3>
+            <h3>Carrinho <span id="cart-count" class="cart-count-badge">0</span></h3>
           </div>
 
           <div class="cart-content">
-            <div id="cart-items"></div>
-            <div id="cart-empty">
-              <div class="empty-icon">🍷</div>
-              <div class="empty-text">Carrinho vazio<br><small>Selecione vinhos para começar</small></div>
+            <div id="cart-empty" class="empty-state">
+              <div class="empty-icon">🛒</div>
+              <div class="empty-text">Carrinho vazio</div>
             </div>
+            <div id="cart-items" class="cart-items-list"></div>
           </div>
 
           <div class="cart-footer">
             <div class="cart-totals">
               <div class="total-row">
-                <span>Subtotal</span>
-                <span class="total-value" id="cart-subtotal">€0,00</span>
+                <span>Subtotal:</span>
+                <span class="total-value" id="cart-subtotal">€0.00</span>
               </div>
               <div class="total-row">
-                <span>IVA (23%)</span>
-                <span class="total-value" id="cart-iva">€0,00</span>
+                <span>IVA (23%):</span>
+                <span class="total-value" id="cart-iva">€0.00</span>
               </div>
               <div class="total-row grand">
-                <span>Total</span>
-                <span class="total-value" id="cart-total">€0,00</span>
+                <span>Total:</span>
+                <span class="total-value" id="cart-total">€0.00</span>
               </div>
             </div>
 
-            <button class="btn btn-primary" id="checkout-btn" onclick="checkout()" disabled>
-              Checkout
+            <button id="checkout-btn" class="btn btn-gold" onclick="openCheckout()" disabled>
+              Finalizar
             </button>
           </div>
         </div>
       </div>
-
-      <!-- Toast Container -->
-      <div id="toasts"></div>
     </main>
   </div>
 
-  <!-- Size Modal -->
-  <div id="size-modal" class="modal hidden">
-    <div class="modal-backdrop"></div>
-    <div class="modal-content" style="max-width: 400px;">
+  <!-- SIZE SELECTION MODAL -->
+  <div class="modal hidden" id="size-modal">
+    <div class="modal-backdrop" onclick="closeSizeModal()"></div>
+    <div class="modal-content">
       <div class="modal-header">
-        <h2 class="modal-title">Tamanho: <span id="size-wine-name"></span></h2>
-        <button class="modal-close" onclick="closeSizeModal()">✕</button>
+        <h2 class="modal-title">Selecione o Tamanho</h2>
+        <button class="modal-close" onclick="closeSizeModal()" aria-label="Fechar">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
       </div>
+
       <div class="modal-body">
-        <div id="size-options"></div>
+        <p class="modal-subtitle" id="size-wine-name">Vinho selecionado</p>
+        <div class="size-options" id="size-options"></div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeSizeModal()">Cancelar</button>
       </div>
     </div>
   </div>
 
-  <!-- Checkout Modal -->
-  <div id="checkout-modal" class="modal hidden">
-    <div class="modal-backdrop"></div>
-    <div class="modal-content" style="max-width: 500px;">
+  <!-- CHECKOUT MODAL -->
+  <div class="modal hidden" id="checkout-modal">
+    <div class="modal-backdrop" onclick="closeCheckout()"></div>
+    <div class="modal-content">
       <div class="modal-header">
-        <h2 class="modal-title">Checkout</h2>
-        <button class="modal-close" onclick="closeCheckoutModal()">✕</button>
+        <h2 class="modal-title">Finalizar Venda</h2>
+        <button class="modal-close" onclick="closeCheckout()" aria-label="Fechar">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
       </div>
+
       <div class="modal-body">
-        <!-- Summary -->
+        <!-- Order Summary -->
         <div class="checkout-section">
-          <h3 class="checkout-section-title">Resumo da Venda</h3>
-          <div id="co-items"></div>
-          <div class="checkout-totals">
-            <div class="co-total-row">
-              <span>Subtotal</span>
-              <span id="co-subtotal">€0,00</span>
-            </div>
-            <div class="co-total-row">
-              <span>IVA (23%)</span>
-              <span id="co-iva">€0,00</span>
-            </div>
-            <div class="co-total-row grand">
-              <span>Total</span>
-              <span id="co-total">€0,00</span>
-            </div>
-            <div id="co-discount-line">
-              <span>Desconto</span>
-              <span id="co-discount-val">-€0,00</span>
-            </div>
+          <h3 class="checkout-section-title">Resumo da Encomenda</h3>
+          <div class="checkout-items">
+            <div id="co-items" class="checkout-items-list"></div>
+          </div>
+        </div>
+
+        <!-- Totals -->
+        <div class="checkout-totals">
+          <div class="total-row">
+            <span>Subtotal:</span>
+            <span class="total-value" id="co-subtotal">€0.00</span>
+          </div>
+          <div class="total-row">
+            <span>IVA (23%):</span>
+            <span class="total-value" id="co-iva">€0.00</span>
+          </div>
+          <div class="total-row">
+            <span id="co-discount-line" class="hidden">Desconto:</span>
+            <span class="total-value" id="co-discount-val" class="hidden">-€0.00</span>
+          </div>
+          <div class="total-row grand">
+            <span>Total:</span>
+            <span class="total-value" id="co-total">€0.00</span>
           </div>
         </div>
 
         <!-- Discount -->
         <div class="checkout-section">
-          <h3 class="checkout-section-title">Desconto</h3>
-          <input
-            type="number"
-            id="co-discount"
-            class="payment-input"
-            placeholder="Valor (€)"
-            min="0"
-            step="0.01"
-          >
+          <label class="form-label">Desconto (opcional)</label>
+          <input type="number" id="co-discount" class="form-input" placeholder="€0.00" min="0" step="0.01" onchange="updateCheckoutTotals()">
+        </div>
+
+        <!-- Customer Info -->
+        <div class="checkout-section">
+          <label class="form-label">NIF do Cliente (opcional)</label>
+          <input type="text" id="co-nif" class="form-input" placeholder="123456789" maxlength="9">
+        </div>
+
+        <div class="checkout-section">
+          <label class="form-label">Notas (opcional)</label>
+          <textarea id="co-notes" class="form-input" placeholder="Observações..."></textarea>
         </div>
 
         <!-- Payment Method -->
         <div class="checkout-section">
           <h3 class="checkout-section-title">Método de Pagamento</h3>
           <div class="pay-methods">
-            <button class="pay-method selected" data-method="Cartão" onclick="selectPaymentMethod('Cartão')">
-              💳 Cartão
+            <button class="pay-method active" data-method="Cartão" onclick="selectPaymentMethod('Cartão')">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                <line x1="1" y1="10" x2="23" y2="10"></line>
+              </svg>
+              Cartão
             </button>
             <button class="pay-method" data-method="Numerário" onclick="selectPaymentMethod('Numerário')">
-              💵 Numerário
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+              Numerário
             </button>
             <button class="pay-method" data-method="MB Way" onclick="selectPaymentMethod('MB Way')">
-              📱 MB Way
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+              </svg>
+              MB Way
             </button>
           </div>
         </div>
 
-        <!-- Payment Panels -->
-        <div id="co-cash-panel" class="payment-panel">
-          <div class="payment-form-group">
-            <label class="payment-label">Valor Recebido</label>
-            <input
-              type="number"
-              id="co-cash-received"
-              class="payment-input"
-              placeholder="€0,00"
-              min="0"
-              step="0.01"
-            >
+        <!-- Payment Details -->
+        <div id="co-card-panel" class="payment-panel hidden">
+          <p class="payment-info">Processamento de cartão habilitado</p>
+        </div>
+
+        <div id="co-cash-panel" class="payment-panel hidden">
+          <div class="form-group">
+            <label class="form-label">Valor Recebido</label>
+            <input type="number" id="co-cash-received" class="form-input" placeholder="€0.00" min="0" step="0.01" onchange="calculateChange()">
           </div>
-          <div class="cash-display">
-            <span>Troco:</span>
-            <strong><span id="co-troco">€0,00</span></strong>
+          <div class="form-group">
+            <label class="form-label">Troco</label>
+            <div class="display-field" id="co-troco">€0.00</div>
           </div>
         </div>
 
-        <div id="co-mbway-panel" class="payment-panel">
-          <div class="payment-form-group">
-            <label class="payment-label">Número Telefónico</label>
-            <input
-              type="tel"
-              class="payment-input"
-              placeholder="964 123 456"
-              pattern="[0-9\s\-\+]+"
-            >
-          </div>
-          <div class="payment-form-group">
-            <label class="payment-label">Referência MB Way</label>
-            <input
-              type="text"
-              class="payment-input"
-              placeholder="Referência..."
-            >
-          </div>
-        </div>
-
-        <div id="co-card-panel" class="payment-panel active">
-          <div class="payment-form-group">
-            <label class="payment-label">Terminal/Máquina</label>
-            <input
-              type="text"
-              class="payment-input"
-              placeholder="Ex: Terminal 01"
-            >
-          </div>
-          <div class="payment-form-group">
-            <label class="payment-label">Referência Transação</label>
-            <input
-              type="text"
-              class="payment-input"
-              placeholder="Referência..."
-            >
-          </div>
-        </div>
-
-        <!-- Invoice Details -->
-        <div class="checkout-section">
-          <h3 class="checkout-section-title">Fatura</h3>
-          <div class="payment-form-group">
-            <label class="payment-label">NIF do Cliente</label>
-            <input
-              type="text"
-              id="co-nif"
-              class="payment-input"
-              placeholder="123456789"
-            >
-          </div>
-        </div>
-
-        <!-- Notes -->
-        <div class="checkout-section">
-          <h3 class="checkout-section-title">Notas</h3>
-          <textarea
-            id="co-notes"
-            class="payment-input"
-            placeholder="Observações adicionais..."
-            rows="3"
-            style="resize: none;"
-          ></textarea>
-        </div>
-
-        <!-- Total Display -->
-        <div style="text-align: center; padding: var(--sp-4); background: var(--bg-base); border-radius: var(--r-lg); margin-bottom: var(--sp-4);">
-          <div style="font-family: var(--font-sans); font-size: 0.75rem; color: var(--text-muted); margin-bottom: var(--sp-2);">TOTAL A PAGAR</div>
-          <div id="co-pay-display">€0,00</div>
+        <div id="co-mbway-panel" class="payment-panel hidden">
+          <p class="payment-info">Pagamento por MB Way</p>
+          <div class="display-field" id="co-pay-display">€0.00</div>
         </div>
       </div>
 
       <div class="modal-footer">
-        <button class="btn btn-secondary" onclick="closeCheckoutModal()">Cancelar</button>
-        <button class="btn btn-primary" id="process-btn" onclick="processPayment()">Processar Pagamento</button>
+        <button class="btn btn-secondary" onclick="closeCheckout()">Cancelar</button>
+        <button id="process-btn" class="btn btn-gold" onclick="processPayment()">Processar</button>
       </div>
     </div>
   </div>
 
-  <!-- Receipt Modal -->
-  <div id="receipt-modal" class="modal hidden">
-    <div class="modal-backdrop"></div>
-    <div class="modal-content" style="max-width: 500px;">
+  <!-- RECEIPT MODAL -->
+  <div class="modal hidden" id="receipt-modal">
+    <div class="modal-backdrop" onclick="closeReceipt()"></div>
+    <div class="modal-content">
       <div class="modal-header">
         <h2 class="modal-title">Recibo</h2>
-        <button class="modal-close" onclick="closeReceiptModal()">✕</button>
+        <button class="modal-close" onclick="closeReceipt()" aria-label="Fechar">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
       </div>
+
       <div class="modal-body">
-        <pre id="receipt-content"></pre>
-        <span id="receipt-subtitle"></span>
+        <div id="receipt-content" class="receipt-content"></div>
+        <p id="receipt-subtitle" class="receipt-subtitle"></p>
       </div>
+
       <div class="modal-footer">
-        <button class="btn btn-secondary" onclick="closeReceiptModal()">Fechar</button>
-        <button class="btn btn-primary" onclick="printReceipt()">🖨 Imprimir</button>
+        <button class="btn btn-secondary" onclick="printReceipt()">Imprimir</button>
+        <button class="btn btn-primary" onclick="newSale()">Nova Venda</button>
       </div>
     </div>
   </div>

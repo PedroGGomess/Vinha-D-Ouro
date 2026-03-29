@@ -9,554 +9,147 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
-  <style>
-    /* Premium Team Management Styling */
-    #team-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: var(--sp-5);
-      margin-bottom: var(--sp-8);
-    }
-
-    .team-card {
-      background: var(--bg-surface);
-      border: 1px solid var(--border);
-      border-radius: var(--r-xl);
-      padding: var(--sp-6);
-      transition: all var(--t-base) var(--ease);
-      position: relative;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .team-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, var(--gold-border), transparent);
-      opacity: 0;
-      transition: opacity var(--t-base) var(--ease);
-    }
-
-    .team-card:hover {
-      border-color: var(--border-hover);
-      box-shadow: var(--shadow-lg);
-    }
-
-    .team-card:hover::before {
-      opacity: 1;
-    }
-
-    .team-card-header {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      margin-bottom: var(--sp-4);
-      gap: var(--sp-3);
-    }
-
-    .team-card-avatar {
-      width: 48px;
-      height: 48px;
-      border-radius: var(--r-lg);
-      background: linear-gradient(135deg, var(--gold-subtle), var(--wine-subtle));
-      border: 1px solid var(--gold-border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.25rem;
-      font-weight: 600;
-      color: var(--gold);
-      flex-shrink: 0;
-    }
-
-    .team-card-actions {
-      display: flex;
-      gap: var(--sp-2);
-    }
-
-    .team-card-actions button {
-      width: 28px;
-      height: 28px;
-      padding: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: none;
-      background: var(--bg-elevated);
-      border-radius: var(--r-md);
-      color: var(--text-secondary);
-      cursor: pointer;
-      transition: all var(--t-fast) var(--ease);
-    }
-
-    .team-card-actions button:hover {
-      background: var(--bg-hover);
-      color: var(--text-primary);
-    }
-
-    .team-card-actions button.delete:hover {
-      background: var(--danger-dim);
-      color: var(--danger);
-    }
-
-    .team-card-info {
-      flex: 1;
-      margin-bottom: var(--sp-4);
-    }
-
-    .team-card-name {
-      font-size: 0.9375rem;
-      font-weight: 600;
-      color: var(--text-primary);
-      margin-bottom: var(--sp-1);
-      letter-spacing: -0.01em;
-    }
-
-    .team-card-role {
-      font-size: 0.75rem;
-      color: var(--text-secondary);
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      margin-bottom: var(--sp-2);
-    }
-
-    .team-card-email {
-      font-size: 0.8125rem;
-      color: var(--text-muted);
-      word-break: break-all;
-    }
-
-    .team-card-details {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: var(--sp-3);
-      padding: var(--sp-4) 0;
-      border-top: 1px solid var(--border-subtle);
-      border-bottom: 1px solid var(--border-subtle);
-      margin-bottom: var(--sp-4);
-    }
-
-    .team-card-detail {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .team-card-detail-label {
-      font-size: 0.625rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: var(--text-muted);
-      margin-bottom: var(--sp-1);
-    }
-
-    .team-card-detail-value {
-      font-size: 0.8125rem;
-      color: var(--text-primary);
-      font-weight: 500;
-    }
-
-    .team-card-status {
-      display: flex;
-      align-items: center;
-      gap: var(--sp-2);
-    }
-
-    .team-card-status-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: 4px var(--sp-2);
-      border-radius: var(--r-full);
-      font-size: 0.65rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    .team-card-status-badge::before {
-      content: '';
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      display: inline-block;
-    }
-
-    .team-card-status-badge.active {
-      background: var(--success-dim);
-      color: var(--success);
-    }
-
-    .team-card-status-badge.active::before {
-      background: var(--success);
-    }
-
-    .team-card-status-badge.inactive {
-      background: rgba(255, 255, 255, 0.04);
-      color: var(--text-muted);
-    }
-
-    .team-card-status-badge.inactive::before {
-      background: var(--text-muted);
-    }
-
-    /* Page Header Premium Styling */
-    .page-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: var(--sp-8);
-      gap: var(--sp-4);
-      flex-wrap: wrap;
-    }
-
-    .page-header-left {
-      flex: 1;
-      min-width: 200px;
-    }
-
-    .page-title {
-      font-family: var(--font-display);
-      font-size: 1.875rem;
-      font-weight: 600;
-      color: var(--text-primary);
-      letter-spacing: -0.02em;
-      line-height: 1.2;
-      margin-bottom: var(--sp-1);
-    }
-
-    .page-subtitle {
-      font-size: 0.8125rem;
-      color: var(--text-secondary);
-      font-weight: 400;
-    }
-
-    .page-header-right {
-      display: flex;
-      align-items: center;
-      gap: var(--sp-3);
-      flex-wrap: wrap;
-      justify-content: flex-end;
-    }
-
-    /* Empty State */
-    .empty-state {
-      grid-column: 1 / -1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: var(--sp-16);
-      text-align: center;
-      color: var(--text-muted);
-    }
-
-    .empty-state-icon {
-      width: 64px;
-      height: 64px;
-      border-radius: var(--r-xl);
-      background: var(--gold-subtle);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: var(--sp-5);
-      color: var(--gold);
-    }
-
-    .empty-state-icon svg {
-      width: 32px;
-      height: 32px;
-    }
-
-    .empty-state-title {
-      font-size: 0.9375rem;
-      font-weight: 600;
-      color: var(--text-primary);
-      margin-bottom: var(--sp-2);
-    }
-
-    .empty-state-text {
-      font-size: 0.8125rem;
-      color: var(--text-muted);
-      max-width: 300px;
-    }
-
-    /* Modal Styling */
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(9, 8, 12, 0.85);
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
-      z-index: 1000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: var(--sp-4);
-      animation: fade-in var(--t-base) var(--ease);
-    }
-
-    .modal-overlay.hidden {
-      display: none;
-    }
-
-    @keyframes fade-in {
-      from {
-        opacity: 0;
-      }
-      to {
-        opacity: 1;
-      }
-    }
-
-    .modal {
-      background: var(--bg-surface);
-      border: 1px solid var(--border);
-      border-radius: var(--r-2xl);
-      width: 100%;
-      max-width: 520px;
-      max-height: 90vh;
-      overflow-y: auto;
-      box-shadow: var(--shadow-xl);
-      animation: slide-up var(--t-slow) var(--ease-spring);
-    }
-
-    @keyframes slide-up {
-      from {
-        opacity: 0;
-        transform: translateY(16px) scale(0.97);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
-    }
-
-    .modal-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: var(--sp-5) var(--sp-6);
-      border-bottom: 1px solid var(--border-subtle);
-      gap: var(--sp-4);
-    }
-
-    .modal-title {
-      font-size: 1.125rem;
-      font-weight: 600;
-      color: var(--text-primary);
-      letter-spacing: -0.01em;
-    }
-
-    .modal-close {
-      width: 32px;
-      height: 32px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: none;
-      background: transparent;
-      color: var(--text-muted);
-      border-radius: var(--r-md);
-      cursor: pointer;
-      transition: all var(--t-fast) var(--ease);
-      flex-shrink: 0;
-    }
-
-    .modal-close:hover {
-      background: var(--bg-hover);
-      color: var(--text-primary);
-    }
-
-    .modal-close svg {
-      width: 18px;
-      height: 18px;
-    }
-
-    .modal-body {
-      padding: var(--sp-6);
-      display: flex;
-      flex-direction: column;
-      gap: var(--sp-4);
-    }
-
-    .modal-footer {
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      gap: var(--sp-3);
-      padding: var(--sp-4) var(--sp-6);
-      border-top: 1px solid var(--border-subtle);
-    }
-
-    /* Form Groups in Modal */
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: var(--sp-3);
-    }
-
-    .form-row.full {
-      grid-template-columns: 1fr;
-    }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-      #team-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .page-header {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      .page-header-right {
-        width: 100%;
-        justify-content: flex-start;
-      }
-
-      .form-row {
-        grid-template-columns: 1fr;
-      }
-
-      .team-card-details {
-        grid-template-columns: 1fr;
-      }
-
-      .modal {
-        max-width: calc(100% - var(--sp-4));
-      }
-    }
-  </style>
 </head>
 <body>
   <a href="#main-content" class="skip-to-content">Ir para conteúdo principal</a>
 
   <div class="app-layout">
-    <!-- SIDEBAR -->
+    <!-- Sidebar -->
     <aside class="sidebar">
-      <!-- Brand -->
       <div class="sidebar-brand">
-        <h2>Vinha D'Ouro</h2>
-        <span class="brand-subtitle">GERENTE</span>
-      </div>
-
-      <!-- Navigation -->
-      <nav class="sidebar-nav">
-        <!-- Gestão Section -->
-        <div class="nav-section-label">Gestão</div>
-        <a href="gerente.html" class="nav-link">
+        <div class="sidebar-brand-logo">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <rect x="3" y="3" width="7" height="7" rx="1"/>
-            <rect x="14" y="3" width="7" height="7" rx="1"/>
-            <rect x="3" y="14" width="7" height="7" rx="1"/>
-            <rect x="14" y="14" width="7" height="7" rx="1"/>
+            <path d="M8 22h8M12 11v11M7 11c0 2.8 2.2 5 5 5s5-2.2 5-5V3H7v8z"/>
+            <path d="M7 8h10"/>
           </svg>
-          Dashboard
-        </a>
-        <a href="gerente-vendas.html" class="nav-link">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <line x1="12" y1="1" x2="12" y2="23"/>
-            <path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
-          </svg>
-          Vendas
-        </a>
-        <a href="gerente-relatorios.html" class="nav-link">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <line x1="18" y1="20" x2="18" y2="10"/>
-            <line x1="12" y1="20" x2="12" y2="4"/>
-            <line x1="6" y1="20" x2="6" y2="14"/>
-          </svg>
-          Relatórios
-        </a>
-        <a href="gerente-equipa.html" class="nav-link active" aria-current="page">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
-            <circle cx="9" cy="7" r="4"/>
-            <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
-          </svg>
-          Equipa
-        </a>
-
-        <!-- Operações Section -->
-        <div class="nav-section-label">Operações</div>
-        <a href="loja.html" class="nav-link">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
-          </svg>
-          Loja
-        </a>
-        <a href="stock.html" class="nav-link">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
-          </svg>
-          Stock
-        </a>
-        <a href="caves.html" class="nav-link">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
-          </svg>
-          Caves
-        </a>
-        <a href="provas.html" class="nav-link">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-          </svg>
-          Provas
-        </a>
-      </nav>
-
-      <!-- User Block & Logout -->
-      <div class="sidebar-user">
-        <div id="user-avatar" class="user-avatar">G</div>
-        <div>
-          <div id="user-name" class="user-name">Gerente</div>
-          <div class="user-role">Acesso Total</div>
+        </div>
+        <div class="sidebar-brand-text">
+          <h2>Vinha D'Ouro</h2>
+          <p class="brand-subtitle">GERENTE</p>
         </div>
       </div>
 
-      <!-- Logout Button -->
-      <button class="btn-logout" onclick="logout()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="16" height="16">
-          <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/>
-        </svg>
-        Sair
-      </button>
+      <nav class="sidebar-nav">
+        <p class="nav-section-label">GERÊNCIA</p>
+        <ul class="sidebar-nav-list">
+          <li class="sidebar-nav-item">
+            <a href="gerente.html" class="nav-link">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <polyline points="12 3 20 7.5 20 16.5 12 21 4 16.5 4 7.5 12 3"/><polyline points="12 12 20 7.5"/>
+                <polyline points="12 12 12 21"/><polyline points="12 12 4 7.5"/>
+              </svg>
+              Dashboard
+            </a>
+          </li>
+          <li class="sidebar-nav-item">
+            <a href="gerente-vendas.html" class="nav-link">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+              </svg>
+              Vendas
+            </a>
+          </li>
+          <li class="sidebar-nav-item">
+            <a href="gerente-relatorios.html" class="nav-link">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/>
+                <line x1="6" y1="20" x2="6" y2="14"/>
+              </svg>
+              Relatórios
+            </a>
+          </li>
+          <li class="sidebar-nav-item">
+            <a href="gerente-equipa.html" class="nav-link active" aria-current="page">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/>
+                <path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>
+              </svg>
+              Equipa
+            </a>
+          </li>
+        </ul>
 
-      <!-- API Badge -->
-      <div class="api-badge offline" id="api-badge" role="status" aria-live="polite">
-        <span id="api-label">Offline</span>
+        <p class="nav-section-label">OPERAÇÕES</p>
+        <ul class="sidebar-nav-list">
+          <li class="sidebar-nav-item">
+            <a href="loja.html" class="nav-link">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+                <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/>
+              </svg>
+              Loja
+            </a>
+          </li>
+          <li class="sidebar-nav-item">
+            <a href="stock.html" class="nav-link">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
+              </svg>
+              Stock
+            </a>
+          </li>
+          <li class="sidebar-nav-item">
+            <a href="caves.html" class="nav-link">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M12 2v20M2 12h20M7 7h10a2 2 0 012 2v6a2 2 0 01-2 2H7a2 2 0 01-2-2V9a2 2 0 012-2z"/>
+              </svg>
+              Caves
+            </a>
+          </li>
+          <li class="sidebar-nav-item">
+            <a href="provas.html" class="nav-link">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M7 10c0 1.104.896 2 2 2s2-.896 2-2c0-1.105-.896-2-2-2s-2 .895-2 2z"/>
+                <path d="M17 10c0 1.104.896 2 2 2s2-.896 2-2c0-1.105-.896-2-2-2s-2 .895-2 2z"/>
+                <path d="M12 20v-8M7 12v8M17 12v8M7 20h10M4 8h16M6 3h12a3 3 0 013 3v2H3V6a3 3 0 013-3z"/>
+              </svg>
+              Provas
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-footer-version">v2.0</div>
+        <div class="sidebar-user">
+          <div class="sidebar-user-avatar" id="user-avatar">G</div>
+          <div class="sidebar-user-info">
+            <h4 id="user-name">Gerente</h4>
+            <p>Acesso Total</p>
+          </div>
+        </div>
+        <button class="icon-btn logout-btn" onclick="logout()" title="Sair" aria-label="Terminar sessão">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/>
+          </svg>
+        </button>
+        <div class="api-badge offline" id="api-badge" role="status" aria-live="polite">
+          <span class="api-dot"></span>
+          <span id="api-label">API</span>
+        </div>
       </div>
     </aside>
 
-    <!-- MAIN CONTENT -->
+    <!-- Main Content -->
     <main class="main-content" id="main-content">
       <div class="page-container">
         <!-- Page Header -->
-        <div class="page-header">
-          <div class="page-header-left">
+        <header class="page-header">
+          <div>
             <h1 class="page-title">Gestão de Equipa</h1>
             <p class="page-subtitle">Funcionários, acessos e permissões</p>
           </div>
-          <div class="page-header-right">
-            <button class="btn btn-primary" onclick="openAddFuncModal()">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
-                <line x1="12" y1="5" x2="12" y2="19"/>
-                <line x1="5" y1="12" x2="19" y2="12"/>
-              </svg>
-              Novo Funcionário
-            </button>
-          </div>
-        </div>
+          <button class="btn btn-primary" onclick="openAddFuncModal()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+              <line x1="12" y1="5" x2="12" y2="19"/>
+              <line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            Novo Funcionário
+          </button>
+        </header>
 
         <!-- Team Grid -->
-        <div id="team-grid">
+        <div id="team-grid" class="team-grid">
           <div class="empty-state">
             <div class="empty-state-icon">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -572,11 +165,12 @@
     </main>
   </div>
 
-  <!-- TEAM MEMBER MODAL -->
-  <div class="modal-overlay hidden" id="func-modal" onclick="if(event.target===this)closeFuncModal()">
-    <div class="modal">
+  <!-- Team Member Modal -->
+  <div class="modal hidden" id="func-modal" role="dialog" aria-labelledby="func-modal-title" aria-modal="true">
+    <div class="modal-backdrop" onclick="if(event.target===this)closeFuncModal()"></div>
+    <div class="modal-content">
       <!-- Modal Header -->
-      <div class="modal-header">
+      <header class="modal-header">
         <h2 class="modal-title" id="func-modal-title">Novo Funcionário</h2>
         <button class="modal-close" onclick="closeFuncModal()" aria-label="Fechar">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -584,7 +178,7 @@
             <line x1="6" y1="6" x2="18" y2="18"/>
           </svg>
         </button>
-      </div>
+      </header>
 
       <!-- Modal Body -->
       <div class="modal-body">
@@ -592,32 +186,32 @@
 
         <!-- Nome Completo -->
         <div class="form-group">
-          <label class="form-label">Nome Completo</label>
+          <label class="form-label" for="func-nome">Nome Completo</label>
           <input type="text" class="form-input" id="func-nome" placeholder="ex: João Silva" aria-required="true">
         </div>
 
         <!-- Email -->
         <div class="form-group">
-          <label class="form-label">Email</label>
+          <label class="form-label" for="func-email">Email</label>
           <input type="email" class="form-input" id="func-email" placeholder="ex: joao@vinhadouro.pt" aria-required="true">
         </div>
 
-        <!-- Cargo & Salário (2 columns) -->
+        <!-- Cargo & Salário -->
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Cargo</label>
+            <label class="form-label" for="func-cargo">Cargo</label>
             <input type="text" class="form-input" id="func-cargo" placeholder="ex: Vendedor">
           </div>
           <div class="form-group">
-            <label class="form-label">Salário (€)</label>
+            <label class="form-label" for="func-salario">Salário (€)</label>
             <input type="number" class="form-input" id="func-salario" placeholder="0.00" step="0.01">
           </div>
         </div>
 
-        <!-- Nível de Acesso & Estado (2 columns) -->
+        <!-- Nível de Acesso & Estado -->
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Nível de Acesso</label>
+            <label class="form-label" for="func-nivel">Nível de Acesso</label>
             <select class="form-input" id="func-nivel">
               <option value="FUNCIONARIO">Funcionário</option>
               <option value="GERENTE">Gerente</option>
@@ -626,7 +220,7 @@
             </select>
           </div>
           <div class="form-group">
-            <label class="form-label">Estado</label>
+            <label class="form-label" for="func-ativo">Estado</label>
             <select class="form-input" id="func-ativo">
               <option value="1">Ativo</option>
               <option value="0">Inativo</option>
@@ -636,7 +230,7 @@
       </div>
 
       <!-- Modal Footer -->
-      <div class="modal-footer">
+      <footer class="modal-footer">
         <button class="btn btn-secondary" onclick="closeFuncModal()">Cancelar</button>
         <button class="btn btn-primary" onclick="saveFuncionario()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
@@ -644,14 +238,13 @@
           </svg>
           Guardar
         </button>
-      </div>
+      </footer>
     </div>
   </div>
 
   <!-- Toast Container -->
-  <div id="toasts"></div>
+  <div id="toasts" role="region" aria-label="Notificações"></div>
 
-  <!-- Scripts -->
   <script src="app.js"></script>
 </body>
 </html>

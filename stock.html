@@ -14,9 +14,7 @@
   <a href="#main-content" class="skip-to-content">Saltar para conteúdo principal</a>
 
   <div class="app-layout">
-    <!-- ╔════════════════════════════════════════════════════════════════════════╗ -->
-    <!-- ║ SIDEBAR                                                                ║ -->
-    <!-- ╚════════════════════════════════════════════════════════════════════════╝ -->
+    <!-- SIDEBAR -->
     <nav class="sidebar">
       <div class="sidebar-brand">
         <h2>Vinha D'Ouro</h2>
@@ -64,9 +62,7 @@
       </div>
     </nav>
 
-    <!-- ╔════════════════════════════════════════════════════════════════════════╗ -->
-    <!-- ║ MAIN CONTENT                                                           ║ -->
-    <!-- ╚════════════════════════════════════════════════════════════════════════╝ -->
+    <!-- MAIN CONTENT -->
     <main class="main-content" id="main-content">
       <div id="toasts" class="toasts-container"></div>
 
@@ -136,13 +132,11 @@
               class="form-input"
               placeholder="Procurar vinho..."
               onkeyup="searchStock(this.value)"
-              style="width: 240px;"
             >
             <select
               id="tipo-filter"
               class="form-select"
               onchange="filterStockByType(this.value)"
-              style="width: 160px;"
             >
               <option value="">Todos os Tipos</option>
               <option value="Tinto">Tinto</option>
@@ -174,17 +168,15 @@
               <th>Região</th>
               <th>Produtor</th>
               <th>Ano</th>
-              <th style="text-align: right;">Quantidade</th>
-              <th style="text-align: right;">Preço Unit.</th>
-              <th style="text-align: right;">Valor Total</th>
-              <th style="text-align: center;">Ações</th>
+              <th class="align-right">Quantidade</th>
+              <th class="align-right">Preço Unit.</th>
+              <th class="align-right">Valor Total</th>
+              <th class="align-center">Ações</th>
             </tr>
           </thead>
           <tbody id="stock-table">
             <tr class="table-empty">
-              <td colspan="9" style="text-align: center; padding: var(--sp-8) var(--sp-4); color: var(--text-muted);">
-                Carregando dados...
-              </td>
+              <td colspan="9" class="align-center">Carregando dados...</td>
             </tr>
           </tbody>
         </table>
@@ -192,11 +184,7 @@
     </main>
   </div>
 
-  <!-- ╔════════════════════════════════════════════════════════════════════════╗ -->
-  <!-- ║ MODALS                                                                  ║ -->
-  <!-- ╚════════════════════════════════════════════════════════════════════════╝ -->
-
-  <!-- Wine Modal -->
+  <!-- WINE MODAL -->
   <div class="modal hidden" id="wine-modal">
     <div class="modal-backdrop" onclick="closeModal()"></div>
     <div class="modal-content">
@@ -240,7 +228,7 @@
           <input type="text" id="wine-produtor" class="form-input" placeholder="ex: Noval" required>
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-4);">
+        <div class="form-grid-2">
           <div class="form-group">
             <label class="form-label">Ano *</label>
             <input type="number" id="wine-ano" class="form-input" placeholder="2020" min="1900" max="2100" required>
@@ -265,10 +253,10 @@
     </div>
   </div>
 
-  <!-- Stock Adjustment Modal -->
+  <!-- STOCK ADJUSTMENT MODAL -->
   <div class="modal hidden" id="stock-modal">
     <div class="modal-backdrop" onclick="closeStockModal()"></div>
-    <div class="modal-content" style="max-width: 400px;">
+    <div class="modal-content modal-small">
       <div class="modal-header">
         <h2 class="modal-title">Ajustar Stock</h2>
         <button class="modal-close" onclick="closeStockModal()" aria-label="Fechar">
@@ -282,10 +270,10 @@
       <div class="modal-body">
         <input type="hidden" id="stock-wine-id" value="">
 
-        <div style="background: var(--bg-surface); padding: var(--sp-4); border-radius: var(--r-lg); margin-bottom: var(--sp-4);">
-          <p style="color: var(--text-secondary); font-size: 0.8125rem; margin-bottom: var(--sp-1);">Vinho</p>
-          <p class="modal-title" id="stock-wine-name" style="font-size: 1rem; margin: 0;">-</p>
-          <p style="color: var(--gold); font-size: 0.875rem; margin-top: var(--sp-2);">Stock Atual: <span id="stock-current">0</span> garrafas</p>
+        <div class="stock-info-box">
+          <p class="stock-info-label">Vinho</p>
+          <p class="stock-info-name" id="stock-wine-name">-</p>
+          <p class="stock-info-current">Stock Atual: <span id="stock-current">0</span> garrafas</p>
         </div>
 
         <div class="form-group">
@@ -293,9 +281,7 @@
           <input type="number" id="stock-qty" class="form-input" placeholder="75" min="0" required>
         </div>
 
-        <p style="font-size: 0.75rem; color: var(--text-secondary); background: var(--bg-surface); padding: var(--sp-3); border-radius: var(--r-sm); margin-bottom: var(--sp-4);">
-          Defina o número total de garrafas em stock. A diferença será registada como movimento.
-        </p>
+        <p class="stock-info-hint">Defina o número total de garrafas em stock. A diferença será registada como movimento.</p>
       </div>
 
       <div class="modal-footer">
