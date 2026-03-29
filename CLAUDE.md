@@ -92,5 +92,28 @@ vinha-douro-site/
 - stock / 1234 → Inventário
 - admin / 1234 → Acesso total
 
+## Bugs Corrigidos (2026-03-29)
+
+### app.js
+- Null reference no checkout: elementos de pagamento (co-cash-panel, etc.) agora usam optional chaining
+- Stock duplicado no processPayment: removida duplicação de decremento local de stock
+- Condição redundante no stockBar: simplificada a lógica qty===0/qty<10
+
+### server.py
+- Tabelas em falta no init: adicionadas provas, caves, movimentos_stock, clientes à inicialização MySQL e SQLite
+- Query vendas-mensal: corrigido DATE_TRUNC → DATE_FORMAT e v.estado → v.status
+- Query top-vinhos: corrigido SUM(iv.subtotal) → SUM(iv.quantidade * iv.preco_unitario)
+
+### HTML
+- gerente.html: logout agora usa onclick="logout()" em vez de href direto
+- gerente.html: adicionados id="user-avatar" e id="user-name" na sidebar
+- caves.html: corrigido conflito CSS display:none/display:flex
+
+## Notas para Desenvolvimento
+- Sempre testar com MySQL ligado (verificar indicador "BD Ligada" na sidebar)
+- Ao adicionar novas páginas, garantir: inclusão de style.css + app.js, botão logout com onclick="logout()", IDs user-avatar e user-name na sidebar
+- Ao adicionar novos endpoints, adicionar ao server.py E ao COMO_CORRER.md
+- Password MySQL está no server.py linha 34 — alterar conforme o ambiente
+
 ## Autores
 Eduardo Saavedra Lourenço, Kollan Andre Gafuro Intacua, Pedro Gabriel Matias Gomes

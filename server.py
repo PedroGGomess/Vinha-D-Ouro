@@ -168,6 +168,59 @@ def _init_mysql(conn):
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
         """)
 
+        c.execute("""
+        CREATE TABLE IF NOT EXISTS provas (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            nome VARCHAR(200),
+            data_evento DATETIME,
+            descricao TEXT,
+            max_participantes INT DEFAULT 20,
+            preco_pessoa DECIMAL(10,2),
+            vinho_ids JSON,
+            ativo TINYINT DEFAULT 1,
+            criado_em DATETIME DEFAULT CURRENT_TIMESTAMP
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+        """)
+
+        c.execute("""
+        CREATE TABLE IF NOT EXISTS caves (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            nome VARCHAR(200),
+            localizacao VARCHAR(300),
+            capacidade INT DEFAULT 0,
+            temperatura_ideal DECIMAL(4,1),
+            humidade_ideal DECIMAL(4,1),
+            notas TEXT,
+            ativo TINYINT DEFAULT 1,
+            criado_em DATETIME DEFAULT CURRENT_TIMESTAMP
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+        """)
+
+        c.execute("""
+        CREATE TABLE IF NOT EXISTS movimentos_stock (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            vinho_id INT,
+            tipo ENUM('ENTRADA','SAIDA','AJUSTE','TRANSFERENCIA'),
+            quantidade INT,
+            motivo VARCHAR(300),
+            funcionario_id INT,
+            criado_em DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (vinho_id) REFERENCES vinhos(id)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+        """)
+
+        c.execute("""
+        CREATE TABLE IF NOT EXISTS clientes (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            pessoa_id INT,
+            nif VARCHAR(20),
+            data_nascimento DATE,
+            preferencias JSON,
+            ativo TINYINT DEFAULT 1,
+            criado_em DATETIME DEFAULT CURRENT_TIMESTAMP
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+        """)
+
         conn.commit()
 
         # Seed data
@@ -273,6 +326,47 @@ def _init_sqlite(conn):
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         venda_id INTEGER, vinho_id INTEGER,
         quantidade INTEGER DEFAULT 1, preco_unitario REAL DEFAULT 0
+    );
+    CREATE TABLE IF NOT EXISTS provas (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        nome TEXT,
+        data_evento TEXT,
+        descricao TEXT,
+        max_participantes INTEGER DEFAULT 20,
+        preco_pessoa REAL,
+        vinho_ids TEXT,
+        ativo INTEGER DEFAULT 1,
+        criado_em TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS caves (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        nome TEXT,
+        localizacao TEXT,
+        capacidade INTEGER DEFAULT 0,
+        temperatura_ideal REAL,
+        humidade_ideal REAL,
+        notas TEXT,
+        ativo INTEGER DEFAULT 1,
+        criado_em TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS movimentos_stock (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        vinho_id INTEGER,
+        tipo TEXT,
+        quantidade INTEGER,
+        motivo TEXT,
+        funcionario_id INTEGER,
+        criado_em TEXT DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (vinho_id) REFERENCES vinhos(id)
+    );
+    CREATE TABLE IF NOT EXISTS clientes (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        pessoa_id INTEGER,
+        nif TEXT,
+        data_nascimento TEXT,
+        preferencias TEXT,
+        ativo INTEGER DEFAULT 1,
+        criado_em TEXT DEFAULT CURRENT_TIMESTAMP
     );
     """)
     if conn.execute("SELECT COUNT(*) FROM utilizadores").fetchone()[0] == 0:
@@ -913,13 +1007,13 @@ def relatorio_vendas_mensal():
         if db_type == 'mysql':
             rows = db_fetchall(conn, db_type, """
                 SELECT
-                    DATE_TRUNC(DATE(v.data_venda), YEAR_MONTH) as mes,
+                    DATE_FORMAT(v.data_venda, '%Y-%m') as mes,
                     COUNT(*) as num_vendas,
                     SUM(v.total) as total_vendas,
                     AVG(v.total) as ticket_medio
                 FROM vendas v
-                WHERE v.estado = 'CONCLUIDA'
-                GROUP BY DATE_TRUNC(DATE(v.data_venda), YEAR_MONTH)
+                WHERE v.status = 'CONCLUIDA'
+                GROUP BY DATE_FORMAT(v.data_venda, '%Y-%m')
                 ORDER BY mes DESC
                 LIMIT 12
             """)
@@ -960,7 +1054,7 @@ def relatorio_top_vinhos():
                 v.id, v.nome, v.tipo, v.regiao, v.produtor,
                 COUNT(iv.id) as num_vendas,
                 SUM(iv.quantidade) as quantidade_vendida,
-                SUM(iv.subtotal) as receita_total,
+                SUM(iv.quantidade * iv.preco_unitario) as receita_total,
                 v.preco
             FROM vinhos v
             LEFT JOIN itens_venda iv ON v.id = iv.vinho_id

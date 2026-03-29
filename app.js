@@ -146,7 +146,7 @@ const fmt = {
 
 function stockBar(qty, max=100) {
   const pct = Math.min(100,(qty/Math.max(max,1))*100);
-  const cls = qty===0?'critical': qty<10?'critical': qty<25?'low': qty<50?'ok':'high';
+  const cls = qty<10?'critical': qty<25?'low': qty<50?'ok':'high';
   return `<div class="stock-bar-wrap"><div class="stock-bar"><div class="stock-bar-fill ${cls}" style="width:${pct}%"></div></div><span class="stock-count">${qty}</span></div>`;
 }
 
@@ -737,9 +737,9 @@ function checkout(){
   const payEl=document.getElementById('co-pay-display');
   if(payEl) payEl.innerHTML=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="16" height="16">${payIcons[payMethod]||payIcons.Cartão}</svg>${payMethod}`;
   // Show/hide payment-specific panels
-  document.getElementById('co-cash-panel').style.display=payMethod==='Numerário'?'block':'none';
-  document.getElementById('co-mbway-panel').style.display=payMethod==='MB Way'?'block':'none';
-  document.getElementById('co-card-panel').style.display=payMethod==='Cartão'?'block':'none';
+  document.getElementById('co-cash-panel')?.style.display=payMethod==='Numerário'?'block':'none';
+  document.getElementById('co-mbway-panel')?.style.display=payMethod==='MB Way'?'block':'none';
+  document.getElementById('co-card-panel')?.style.display=payMethod==='Cartão'?'block':'none';
   // Update totals
   updateCoTotals();
   document.getElementById('checkout-modal')?.classList.add('open');
@@ -799,7 +799,6 @@ async function processPayment(){
   try{
     const user=Session.get();
     await apiFetch('/vendas',{method:'POST',body:JSON.stringify({itens,metodoPagamento:payMethod,funcionarioId:user?.id||1,desconto:discPct,nif,notas})});
-    itens.forEach(item=>{const v=catalog.find(x=>x.id===item.vinhoId);if(v)v.quantidade=Math.max(0,(v.quantidade||0)-item.quantidade);});
   }catch{
     itens.forEach(item=>{const v=catalog.find(x=>x.id===item.vinhoId);if(v)v.quantidade=Math.max(0,(v.quantidade||0)-item.quantidade);});
   }

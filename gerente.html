@@ -36,7 +36,7 @@
 
       <div class="sidebar-footer">
         <div class="sidebar-footer-version">v2.0</div>
-        <div class="sidebar-user"><div class="sidebar-user-avatar">G</div><div class="sidebar-user-info"><h4>Gerente</h4><p>Acesso Total</p></div></div>
+        <div class="sidebar-user"><div class="sidebar-user-avatar" id="user-avatar">G</div><div class="sidebar-user-info"><h4 id="user-name">Gerente</h4><p>Acesso Total</p></div></div>
         <p style="margin-top: var(--sp-3); font-size: 10px;">Vinha D'Ouro · 2025/2026</p>
       </div>
     </aside>
@@ -47,7 +47,7 @@
         <div class="topbar-actions">
           <div class="api-badge offline" id="api-badge" role="status" aria-live="polite"><span class="api-dot"></span><span id="api-label">Verificando...</span></div>
           <button class="icon-btn" onclick="loadDashboard()" title="Atualizar" aria-label="Atualizar dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg></button>
-          <a href="index.html" class="icon-btn" title="Sair" aria-label="Terminar sessão"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg></a>
+          <button class="icon-btn" onclick="logout()" title="Sair" aria-label="Terminar sessão"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg></button>
         </div>
       </header>
 
