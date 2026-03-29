@@ -139,7 +139,7 @@
       <header class="topbar">
         <div class="topbar-title">
           <h1>Relatórios e Análises</h1>
-          <p>Insights e métricas de desempenho</p>
+          <p>Métricas avançadas e análise de desempenho</p>
         </div>
         <div class="topbar-actions">
           <div class="time-display" id="time-display">Carregando...</div>
@@ -154,7 +154,7 @@
         <div class="page-header">
           <div>
             <h1 class="page-title">Relatórios e Análises</h1>
-            <p class="page-subtitle">Analise dados detalhados de vendas e desempenho</p>
+            <p class="page-subtitle">Análise aprofundada para decisões estratégicas</p>
           </div>
         </div>
 
@@ -168,7 +168,7 @@
               </svg>
             </div>
             <div class="kpi-content">
-              <p class="kpi-label">Receita Total</p>
+              <p class="kpi-label">Faturação Total</p>
               <p class="kpi-value" id="r-receita">0,00 €</p>
             </div>
           </div>
@@ -181,7 +181,7 @@
               </svg>
             </div>
             <div class="kpi-content">
-              <p class="kpi-label">Lucro Bruto</p>
+              <p class="kpi-label">Margem de Lucro</p>
               <p class="kpi-value" id="r-lucro">0,00 €</p>
             </div>
           </div>
@@ -208,7 +208,7 @@
               </svg>
             </div>
             <div class="kpi-content">
-              <p class="kpi-label">Total Vendas</p>
+              <p class="kpi-label">Transações Realizadas</p>
               <p class="kpi-value" id="r-vendas">0</p>
             </div>
           </div>
@@ -218,8 +218,8 @@
         <div class="charts-grid">
           <div class="table-card">
             <div class="card-header">
-              <h3 class="card-title">Vendas Mensais</h3>
-              <p class="card-subtitle">Evolução ao longo do ano</p>
+              <h3 class="card-title">Evolução Mensal de Vendas</h3>
+              <p class="card-subtitle">Tendência anual de faturação</p>
             </div>
             <svg id="chart-vendas" class="chart-svg" viewBox="0 0 400 250">
               <defs>
@@ -235,8 +235,8 @@
 
           <div class="table-card">
             <div class="card-header">
-              <h3 class="card-title">Distribuição de Receita</h3>
-              <p class="card-subtitle">Por tipo de vinho</p>
+              <h3 class="card-title">Receita por Segmento</h3>
+              <p class="card-subtitle">Contribuição de cada categoria</p>
             </div>
             <svg id="chart-receita" class="chart-svg" viewBox="0 0 400 250">
               <rect x="0" y="0" width="400" height="250" fill="var(--bg-surface)"/>
@@ -248,19 +248,19 @@
         <!-- Top Wines Table -->
         <div class="table-card">
           <div class="card-header">
-            <h3 class="card-title">Top Vinhos</h3>
-            <p class="card-subtitle">Produtos mais vendidos</p>
+            <h3 class="card-title">Ranking de Produtos</h3>
+            <p class="card-subtitle">Os campeões de vendas</p>
           </div>
           <div class="table-wrapper">
             <table class="data-table">
               <thead>
                 <tr>
-                  <th>Ranking</th>
-                  <th>Nome do Vinho</th>
+                  <th>Pos.</th>
+                  <th>Produto</th>
                   <th>Tipo</th>
-                  <th>Unidades Vendidas</th>
+                  <th>Vendas</th>
                   <th>Receita</th>
-                  <th>% Total</th>
+                  <th>Quota</th>
                 </tr>
               </thead>
               <tbody id="top-wines-table">

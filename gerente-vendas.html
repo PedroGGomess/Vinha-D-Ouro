@@ -139,7 +139,7 @@
       <header class="topbar">
         <div class="topbar-title">
           <h1>Histórico de Vendas</h1>
-          <p>Gestão completa de transações</p>
+          <p>Análise detalhada de todas as transações</p>
         </div>
         <div class="topbar-actions">
           <div class="time-display" id="time-display">Carregando...</div>
@@ -154,7 +154,7 @@
         <div class="page-header">
           <div>
             <h1 class="page-title">Histórico de Vendas</h1>
-            <p class="page-subtitle">Consulte e analise todas as transações</p>
+            <p class="page-subtitle">Acompanhe cada venda com detalhe</p>
           </div>
           <button class="btn btn-gold" onclick="exportToCSV()" aria-label="Exportar para CSV">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
@@ -170,23 +170,23 @@
         <div class="comparison-grid">
           <div class="table-card">
             <div class="card-header">
-              <h3 class="card-title">Vendas Esta Semana</h3>
-              <p class="card-subtitle">Segunda a Domingo</p>
+              <h3 class="card-title">Vendas da Semana</h3>
+              <p class="card-subtitle">Período semanal em curso</p>
             </div>
             <div class="card-content">
               <p class="stat-value" id="sales-this-week">0</p>
-              <p class="stat-label">Transações completadas</p>
+              <p class="stat-label">vendas concluídas com sucesso</p>
             </div>
           </div>
 
           <div class="table-card">
             <div class="card-header">
-              <h3 class="card-title">Total de Transações</h3>
-              <p class="card-subtitle">Todos os tempos</p>
+              <h3 class="card-title">Volume Total</h3>
+              <p class="card-subtitle">Desde o início</p>
             </div>
             <div class="card-content">
               <p class="stat-value" id="total-transactions">0</p>
-              <p class="stat-label">Registadas no sistema</p>
+              <p class="stat-label">transações registadas</p>
             </div>
           </div>
         </div>
@@ -200,7 +200,7 @@
                   <circle cx="11" cy="11" r="8"/>
                   <line x1="21" y1="21" x2="16.65" y2="16.65"/>
                 </svg>
-                <input type="text" id="vendas-search" class="form-input" placeholder="Pesquisar por ID, cliente...">
+                <input type="text" id="vendas-search" class="form-input" placeholder="Pesquisar por referência, cliente ou valor...">
               </div>
               <select id="estado-filter" class="form-input">
                 <option value="">Todos os Estados</option>
@@ -210,7 +210,7 @@
               </select>
             </div>
             <div class="table-toolbar-right">
-              <span class="table-count" id="vendas-count">0 transações</span>
+              <span class="table-count" id="vendas-count">0 resultados</span>
             </div>
           </div>
 

@@ -80,7 +80,7 @@
       <header class="topbar">
         <div class="topbar-title">
           <h1>Provas de Vinhos</h1>
-          <p>Gestão de eventos de degustação</p>
+          <p>Organize experiências vínicas memoráveis</p>
         </div>
         <div class="topbar-actions">
           <div class="time-display" id="time-display">Carregando...</div>
@@ -95,7 +95,7 @@
         <div class="page-header">
           <div>
             <h1 class="page-title">Provas de Vinhos</h1>
-            <p class="page-subtitle">Organize e gerencie eventos de degustação</p>
+            <p class="page-subtitle">Planeie e acompanhe as suas sessões de degustação</p>
           </div>
           <button class="btn btn-gold" onclick="openAddProvaModal()" aria-label="Criar nova prova">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
@@ -116,7 +116,7 @@
               </svg>
             </div>
             <div class="kpi-content">
-              <p class="kpi-label">Total de Provas</p>
+              <p class="kpi-label">Provas Registadas</p>
               <p class="kpi-value" id="pv-total">0</p>
             </div>
           </div>
@@ -129,7 +129,7 @@
               </svg>
             </div>
             <div class="kpi-content">
-              <p class="kpi-label">Agendadas</p>
+              <p class="kpi-label">Próximas Sessões</p>
               <p class="kpi-value" id="pv-agendadas">0</p>
             </div>
           </div>
@@ -143,7 +143,7 @@
               </svg>
             </div>
             <div class="kpi-content">
-              <p class="kpi-label">Inscritos</p>
+              <p class="kpi-label">Participantes Inscritos</p>
               <p class="kpi-value" id="pv-inscritos">0</p>
             </div>
           </div>
@@ -156,7 +156,7 @@
               </svg>
             </div>
             <div class="kpi-content">
-              <p class="kpi-label">Receita Total</p>
+              <p class="kpi-label">Faturação de Provas</p>
               <p class="kpi-value" id="pv-receita">0,00 €</p>
             </div>
           </div>
@@ -182,7 +182,7 @@
           <!-- Provas Grid -->
           <div id="provas-grid" class="provas-grid">
             <div class="grid-loading">
-              <p>Carregando provas...</p>
+              <p>A preparar as suas provas...</p>
             </div>
           </div>
         </div>
@@ -208,8 +208,8 @@
         <input type="hidden" id="prova-id">
 
         <div class="form-group">
-          <label for="prova-titulo" class="form-label">Título</label>
-          <input type="text" id="prova-titulo" class="form-input" placeholder="ex: Prova de Tintos Premium" required>
+          <label for="prova-titulo" class="form-label">Nome da Prova</label>
+          <input type="text" id="prova-titulo" class="form-input" placeholder="ex: Degustação de Grandes Reservas do Douro" required>
         </div>
 
         <div class="form-group">
@@ -218,7 +218,7 @@
         </div>
 
         <div class="form-group">
-          <label for="prova-capacidade" class="form-label">Capacidade (participantes)</label>
+          <label for="prova-capacidade" class="form-label">Capacidade Máxima</label>
           <input type="number" id="prova-capacidade" class="form-input" placeholder="20" min="1" required>
         </div>
 
@@ -243,12 +243,12 @@
         </div>
 
         <div class="form-group">
-          <label for="prova-notas" class="form-label">Notas Internas</label>
-          <textarea id="prova-notas" class="form-input" placeholder="Notas para a equipa..." rows="2"></textarea>
+          <label for="prova-notas" class="form-label">Observações da Equipa</label>
+          <textarea id="prova-notas" class="form-input" placeholder="Observações para a equipa..." rows="2"></textarea>
         </div>
 
         <div class="form-group">
-          <label class="form-label">Vinhos Selecionados</label>
+          <label class="form-label">Seleção de Vinhos</label>
           <div id="prova-wine-checks" class="wine-checks-grid">
           </div>
         </div>
@@ -261,7 +261,7 @@
 
       <div class="modal-footer">
         <button class="btn btn-ghost" onclick="closeProvaModal()">Cancelar</button>
-        <button class="btn btn-gold" onclick="saveProva()">Guardar Prova</button>
+        <button class="btn btn-gold" onclick="saveProva()">Guardar</button>
       </div>
     </div>
   </div>

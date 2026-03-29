@@ -138,7 +138,7 @@
         <header class="page-header">
           <div>
             <h1 class="page-title">Gestão de Equipa</h1>
-            <p class="page-subtitle">Funcionários, acessos e permissões</p>
+            <p class="page-subtitle">Gerir colaboradores, cargos e níveis de acesso</p>
           </div>
           <button class="btn btn-primary" onclick="openAddFuncModal()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
@@ -159,7 +159,7 @@
                 <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
               </svg>
             </div>
-            <p class="empty-state-title">A carregar equipa...</p>
+            <p class="empty-state-title">A carregar colaboradores...</p>
           </div>
         </div>
       </div>
@@ -188,23 +188,23 @@
         <!-- Nome Completo -->
         <div class="form-group">
           <label class="form-label" for="func-nome">Nome Completo</label>
-          <input type="text" class="form-input" id="func-nome" placeholder="ex: João Silva" aria-required="true">
+          <input type="text" class="form-input" id="func-nome" placeholder="Nome completo do colaborador" aria-required="true">
         </div>
 
         <!-- Email -->
         <div class="form-group">
           <label class="form-label" for="func-email">Email</label>
-          <input type="email" class="form-input" id="func-email" placeholder="ex: joao@vinhadouro.pt" aria-required="true">
+          <input type="email" class="form-input" id="func-email" placeholder="email@vinhadouro.pt" aria-required="true">
         </div>
 
         <!-- Cargo & Salário -->
         <div class="form-row">
           <div class="form-group">
             <label class="form-label" for="func-cargo">Cargo</label>
-            <input type="text" class="form-input" id="func-cargo" placeholder="ex: Vendedor">
+            <input type="text" class="form-input" id="func-cargo" placeholder="Cargo na empresa">
           </div>
           <div class="form-group">
-            <label class="form-label" for="func-salario">Salário (€)</label>
+            <label class="form-label" for="func-salario">Remuneração Mensal (€)</label>
             <input type="number" class="form-input" id="func-salario" placeholder="0.00" step="0.01">
           </div>
         </div>
@@ -212,7 +212,7 @@
         <!-- Nível de Acesso & Estado -->
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label" for="func-nivel">Nível de Acesso</label>
+            <label class="form-label" for="func-nivel">Perfil de Acesso</label>
             <select class="form-input" id="func-nivel">
               <option value="FUNCIONARIO">Funcionário</option>
               <option value="GERENTE">Gerente</option>

@@ -44,6 +44,224 @@ const Session = {
   }
 };
 
+/* ══════════════════════════════════════════════
+   DYNAMIC SIDEBAR BUILDER
+   ══════════════════════════════════════════════ */
+function buildSidebar() {
+  const user = Session.get();
+  if (!user) return;
+
+  const path = window.location.pathname.split('/').pop() || 'index.html';
+  if (path === 'index.html' || path === '' || path === '/') return;
+
+  const role = user.role;
+
+  // Map roles to display labels and subtitles
+  const roleDisplay = {
+    'GERENTE': { title: 'GERENTE', subtitle: 'Acesso Total' },
+    'ADMIN': { title: 'ADMIN', subtitle: 'Acesso Total' },
+    'FUNCIONARIO': { title: 'LOJA', subtitle: 'Funcionário' },
+    'ARMAZENISTA': { title: 'ARMAZÉM', subtitle: 'Armazenista' }
+  };
+
+  // Define navigation structure for each role
+  const navStructure = {
+    'GERENTE': {
+      sections: [
+        {
+          label: 'GERÊNCIA',
+          items: [
+            { href: 'gerente.html', label: 'Dashboard', icon: 'dashboard' },
+            { href: 'gerente-vendas.html', label: 'Vendas', icon: 'vendas' },
+            { href: 'gerente-relatorios.html', label: 'Relatórios', icon: 'relatorios' },
+            { href: 'gerente-equipa.html', label: 'Equipa', icon: 'equipa' }
+          ]
+        },
+        {
+          label: 'OPERAÇÕES',
+          items: [
+            { href: 'loja.html', label: 'Loja', icon: 'loja' },
+            { href: 'stock.html', label: 'Stock', icon: 'stock' },
+            { href: 'caves.html', label: 'Caves', icon: 'caves' },
+            { href: 'provas.html', label: 'Provas', icon: 'provas' }
+          ]
+        }
+      ]
+    },
+    'ADMIN': {
+      sections: [
+        {
+          label: 'GERÊNCIA',
+          items: [
+            { href: 'gerente.html', label: 'Dashboard', icon: 'dashboard' },
+            { href: 'gerente-vendas.html', label: 'Vendas', icon: 'vendas' },
+            { href: 'gerente-relatorios.html', label: 'Relatórios', icon: 'relatorios' },
+            { href: 'gerente-equipa.html', label: 'Equipa', icon: 'equipa' }
+          ]
+        },
+        {
+          label: 'OPERAÇÕES',
+          items: [
+            { href: 'loja.html', label: 'Loja', icon: 'loja' },
+            { href: 'stock.html', label: 'Stock', icon: 'stock' },
+            { href: 'caves.html', label: 'Caves', icon: 'caves' },
+            { href: 'provas.html', label: 'Provas', icon: 'provas' }
+          ]
+        }
+      ]
+    },
+    'FUNCIONARIO': {
+      sections: [
+        {
+          label: 'Vendas',
+          items: [
+            { href: 'loja.html', label: 'Catálogo', icon: 'loja' },
+            { href: 'provas.html', label: 'Provas', icon: 'provas' }
+          ]
+        }
+      ]
+    },
+    'ARMAZENISTA': {
+      sections: [
+        {
+          label: 'Inventário',
+          items: [
+            { href: 'stock.html', label: 'Stock', icon: 'stock' },
+            { href: 'caves.html', label: 'Caves', icon: 'caves' }
+          ]
+        }
+      ]
+    }
+  };
+
+  // Icon SVG templates
+  const iconSvgs = {
+    dashboard: '<svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="12 3 20 7.5 20 16.5 12 21 4 16.5 4 7.5 12 3"></polyline><polyline points="12 12 20 7.5"></polyline><polyline points="12 12 12 21"></polyline><polyline points="12 12 4 7.5"></polyline></svg>',
+    vendas: '<svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>',
+    relatorios: '<svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>',
+    equipa: '<svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 00-3-3.87"></path><path d="M16 3.13a4 4 0 010 7.75"></path></svg>',
+    loja: '<svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"></path></svg>',
+    stock: '<svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"></path></svg>',
+    caves: '<svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2v20M2 12h20M7 7h10a2 2 0 012 2v6a2 2 0 01-2 2H7a2 2 0 01-2-2V9a2 2 0 012-2z"></path></svg>',
+    provas: '<svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 10c0 1.104.896 2 2 2s2-.896 2-2c0-1.105-.896-2-2-2s-2 .895-2 2z"></path><path d="M17 10c0 1.104.896 2 2 2s2-.896 2-2c0-1.105-.896-2-2-2s-2 .895-2 2z"></path><path d="M12 20v-8M7 12v8M17 12v8M7 20h10M4 8h16M6 3h12a3 3 0 013 3v2H3V6a3 3 0 013-3z"></path></svg>'
+  };
+
+  const display = roleDisplay[role];
+  if (!display) return;
+
+  // Update brand subtitle
+  const brandSubtitle = document.querySelector('.brand-subtitle');
+  if (brandSubtitle) {
+    brandSubtitle.textContent = display.title;
+  }
+
+  // Update user role display
+  const userRole = document.querySelector('.user-role');
+  if (userRole) {
+    userRole.textContent = display.subtitle;
+  }
+
+  // Determine if we're on a gerente page (has <aside> with sidebar-nav)
+  const sidebar = document.querySelector('.sidebar');
+  if (!sidebar) return;
+
+  const isGerentePage = sidebar.tagName === 'ASIDE';
+
+  if (isGerentePage) {
+    // Rebuild the sidebar-nav for gerente pages (uses <ul><li> structure)
+    const sidebarNav = sidebar.querySelector('.sidebar-nav');
+    if (!sidebarNav) return;
+
+    // Clear existing nav items but keep section labels we'll rebuild them
+    const existingItems = sidebarNav.querySelectorAll('.sidebar-nav-item');
+    const existingLabels = sidebarNav.querySelectorAll('.nav-section-label');
+    existingItems.forEach(item => item.remove());
+    existingLabels.forEach(label => label.remove());
+
+    // Get the nav structure for this role
+    const structure = navStructure[role];
+    if (!structure) return;
+
+    // Rebuild sections
+    structure.sections.forEach(section => {
+      // Add section label
+      const label = document.createElement('p');
+      label.className = 'nav-section-label';
+      label.textContent = section.label;
+      sidebarNav.appendChild(label);
+
+      // Create UL for items
+      const ul = document.createElement('ul');
+      ul.className = 'sidebar-nav-list';
+
+      section.items.forEach(item => {
+        const li = document.createElement('li');
+        li.className = 'sidebar-nav-item';
+
+        const a = document.createElement('a');
+        a.href = item.href;
+        a.className = 'nav-link';
+        if (item.href === path) {
+          a.classList.add('active');
+          a.setAttribute('aria-current', 'page');
+        }
+
+        a.innerHTML = `${iconSvgs[item.icon] || ''}${item.label}`;
+        li.appendChild(a);
+        ul.appendChild(li);
+      });
+
+      sidebarNav.appendChild(ul);
+    });
+  } else {
+    // Rebuild sidebar for non-gerente pages (uses direct <a> links)
+    const sidebarNav = sidebar.querySelector('.sidebar-nav');
+    if (!sidebarNav) return;
+
+    // Clear existing nav items
+    const existingLinks = sidebarNav.querySelectorAll('.nav-link');
+    const existingLabels = sidebarNav.querySelectorAll('.nav-section-label');
+    existingLinks.forEach(link => link.remove());
+    existingLabels.forEach(label => label.remove());
+
+    // Get the nav structure for this role
+    const structure = navStructure[role];
+    if (!structure) return;
+
+    // Rebuild sections
+    structure.sections.forEach(section => {
+      // Add section label
+      const label = document.createElement('p');
+      label.className = 'nav-section-label';
+      label.textContent = section.label;
+      sidebarNav.appendChild(label);
+
+      section.items.forEach(item => {
+        const a = document.createElement('a');
+        a.href = item.href;
+        a.className = 'nav-link';
+        if (item.href === path) {
+          a.classList.add('active');
+        }
+
+        // Use simple SVG with width/height for non-gerente pages (matching style)
+        const iconHtml = item.icon === 'loja'
+          ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"></path></svg>'
+          : item.icon === 'stock'
+          ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>'
+          : item.icon === 'caves'
+          ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H7a2 2 0 0 1-2-2V9.414a1 1 0 0 1 .293-.707l5.414-5.414a1 1 0 0 1 1.414 0l5.414 5.414a1 1 0 0 1 .293.707V19a2 2 0 0 1-2 2h-2"></path><rect x="9" y="9" width="6" height="12"></rect></svg>'
+          : item.icon === 'provas'
+          ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4h12v5c0 1-1 2-2 2H8c-1 0-2-1-2-2V4z"></path><path d="M9 9v11M15 9v11"></path><circle cx="12" cy="20" r="1"></circle></svg>'
+          : '';
+
+        a.innerHTML = `${iconHtml}${item.label}`;
+        sidebarNav.appendChild(a);
+      });
+    });
+  }
+}
+
 function logout() {
   Screensaver.stop();
   Session.clear();
@@ -1524,6 +1742,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (path !== 'index.html' && path !== '' && path !== '/') {
     Session.guard();
+    buildSidebar();
     Screensaver.init();
   }
 

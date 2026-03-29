@@ -70,7 +70,7 @@
       <div class="page-header">
         <div>
           <h1 class="page-title">Gestão de Inventário</h1>
-          <p class="page-subtitle">Monitorize níveis de stock e movimentos de vinhos</p>
+          <p class="page-subtitle">Controle de stock e rastreabilidade de movimentos</p>
         </div>
       </div>
 
@@ -82,7 +82,7 @@
               <path d="M12 2v20M2 12h20"></path>
             </svg>
           </div>
-          <p class="kpi-label">Total de Garrafas</p>
+          <p class="kpi-label">Garrafas em Armazém</p>
           <p class="kpi-value" id="stat-total">0</p>
         </div>
 
@@ -94,7 +94,7 @@
               <circle cx="12" cy="20" r="1"></circle>
             </svg>
           </div>
-          <p class="kpi-label">Variedades</p>
+          <p class="kpi-label">Referências Ativas</p>
           <p class="kpi-value" id="stat-units">0</p>
         </div>
 
@@ -106,7 +106,7 @@
               <line x1="8" y1="12" x2="16" y2="12"></line>
             </svg>
           </div>
-          <p class="kpi-label">Stock Crítico</p>
+          <p class="kpi-label">Itens Críticos</p>
           <p class="kpi-value" id="stat-critico">0</p>
         </div>
 
@@ -117,7 +117,7 @@
               <path d="M10 17l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"></path>
             </svg>
           </div>
-          <p class="kpi-label">Valor em Stock</p>
+          <p class="kpi-label">Valor do Inventário</p>
           <p class="kpi-value" id="stat-valor">€0</p>
         </div>
       </div>
@@ -130,7 +130,7 @@
               type="text"
               id="stock-search"
               class="form-input"
-              placeholder="Procurar vinho..."
+              placeholder="Pesquisar por nome, produtor ou região..."
               onkeyup="searchStock(this.value)"
             >
             <select
@@ -163,11 +163,11 @@
         <table class="data-table">
           <thead>
             <tr>
-              <th>Nome</th>
+              <th>Nome do Vinho</th>
               <th>Tipo</th>
               <th>Região</th>
               <th>Produtor</th>
-              <th>Ano</th>
+              <th>Colheita</th>
               <th class="align-right">Quantidade</th>
               <th class="align-right">Preço Unit.</th>
               <th class="align-right">Valor Total</th>
@@ -176,7 +176,7 @@
           </thead>
           <tbody id="stock-table">
             <tr class="table-empty">
-              <td colspan="9" class="align-center">Carregando dados...</td>
+              <td colspan="9" class="align-center">A carregar dados...</td>
             </tr>
           </tbody>
         </table>
@@ -219,29 +219,29 @@
         </div>
 
         <div class="form-group">
-          <label class="form-label">Região *</label>
+          <label class="form-label">Região de Origem *</label>
           <input type="text" id="wine-regiao" class="form-input" placeholder="ex: Douro" required>
         </div>
 
         <div class="form-group">
-          <label class="form-label">Produtor *</label>
+          <label class="form-label">Casa Produtora *</label>
           <input type="text" id="wine-produtor" class="form-input" placeholder="ex: Noval" required>
         </div>
 
         <div class="form-grid-2">
           <div class="form-group">
-            <label class="form-label">Ano *</label>
+            <label class="form-label">Colheita *</label>
             <input type="number" id="wine-ano" class="form-input" placeholder="2020" min="1900" max="2100" required>
           </div>
 
           <div class="form-group">
-            <label class="form-label">Preço (€) *</label>
+            <label class="form-label">Preço de Custo (€) *</label>
             <input type="number" id="wine-preco" class="form-input" placeholder="25.50" min="0" step="0.01" required>
           </div>
         </div>
 
         <div class="form-group">
-          <label class="form-label">Quantidade (garrafas) *</label>
+          <label class="form-label">Quantidade Inicial (garrafas) *</label>
           <input type="number" id="wine-qty" class="form-input" placeholder="50" min="0" required>
         </div>
       </div>
@@ -271,17 +271,17 @@
         <input type="hidden" id="stock-wine-id" value="">
 
         <div class="stock-info-box">
-          <p class="stock-info-label">Vinho</p>
+          <p class="stock-info-label">Produto</p>
           <p class="stock-info-name" id="stock-wine-name">-</p>
           <p class="stock-info-current">Stock Atual: <span id="stock-current">0</span> garrafas</p>
         </div>
 
         <div class="form-group">
-          <label class="form-label">Nova Quantidade *</label>
+          <label class="form-label">Quantidade Corrigida *</label>
           <input type="number" id="stock-qty" class="form-input" placeholder="75" min="0" required>
         </div>
 
-        <p class="stock-info-hint">Defina o número total de garrafas em stock. A diferença será registada como movimento.</p>
+        <p class="stock-info-hint">Introduza o número total de garrafas. A diferença será registada como movimento de ajuste.</p>
       </div>
 
       <div class="modal-footer">
