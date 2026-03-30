@@ -3,749 +3,520 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Ponto de Venda — Vinha D'Ouro">
-  <meta name="theme-color" content="#09080c">
   <title>Ponto de Venda — Vinha D'Ouro</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <style>
     /* ═══════════════════════════════════════════
-       POS TERMINAL — Modern Fullscreen Layout
+       POS TERMINAL v2 — Clean Modern Design
        ═══════════════════════════════════════════ */
-    body { overflow: hidden; }
+    * { box-sizing: border-box; }
+    body { margin: 0; overflow: hidden; background: #0a0a0f; }
 
-    .pos-layout {
+    .pos {
       display: grid;
-      grid-template-columns: 1fr 380px;
+      grid-template-columns: 1fr 360px;
       height: 100vh;
-      background: var(--bg-base);
+      font-family: 'Inter', -apple-system, sans-serif;
+      color: #e8e6f0;
     }
 
-    /* ── LEFT: Products ── */
-    .pos-products {
+    /* ── LEFT PANEL ── */
+    .pos-left {
       display: flex;
       flex-direction: column;
+      background: #0e0e14;
       overflow: hidden;
-      border-right: 1px solid var(--border);
     }
 
-    .pos-topbar {
+    /* Header */
+    .pos-header {
       display: flex;
       align-items: center;
       gap: 16px;
-      padding: 16px 24px;
-      background: var(--bg-surface);
-      border-bottom: 1px solid var(--border);
+      padding: 14px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
       flex-shrink: 0;
     }
 
-    .pos-brand {
+    .pos-logo {
       display: flex;
       align-items: center;
       gap: 10px;
-      margin-right: auto;
     }
 
-    .pos-brand-icon {
-      width: 36px;
-      height: 36px;
-      background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+    .pos-logo-icon {
+      width: 38px; height: 38px;
+      background: linear-gradient(135deg, #c9a84c, #8b7535);
       border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--bg-base);
+      display: flex; align-items: center; justify-content: center;
     }
 
-    .pos-brand h1 {
-      font-family: var(--font-display);
-      font-size: 1.125rem;
-      font-weight: 600;
-      color: var(--text-primary);
-      margin: 0;
+    .pos-logo-text h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem; font-weight: 700;
+      color: #fff; margin: 0; line-height: 1.1;
     }
 
-    .pos-brand span {
-      font-size: 0.6875rem;
-      color: var(--gold);
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      font-weight: 600;
+    .pos-logo-text span {
+      font-size: 0.6rem; color: #c9a84c;
+      text-transform: uppercase; letter-spacing: 0.12em; font-weight: 600;
     }
 
     .pos-search {
-      flex: 1;
-      max-width: 400px;
-      position: relative;
+      flex: 1; max-width: 360px;
+      position: relative; margin-left: auto;
+    }
+
+    .pos-search svg {
+      position: absolute; left: 12px; top: 50%;
+      transform: translateY(-50%); color: #666; pointer-events: none;
     }
 
     .pos-search input {
-      width: 100%;
-      padding: 10px 16px 10px 40px;
-      background: var(--bg-elevated);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      color: var(--text-primary);
-      font-family: var(--font-body);
-      font-size: 0.875rem;
-      outline: none;
-      transition: all 0.2s ease;
+      width: 100%; padding: 10px 16px 10px 38px;
+      background: #18181f; border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px; color: #e8e6f0;
+      font-size: 0.8125rem; outline: none; font-family: inherit;
+      transition: border-color 0.2s;
     }
 
     .pos-search input:focus {
-      border-color: var(--gold);
-      box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.1);
+      border-color: #c9a84c;
+      box-shadow: 0 0 0 2px rgba(201,168,76,0.15);
     }
 
-    .pos-search input::placeholder { color: var(--text-muted); }
+    .pos-search input::placeholder { color: #555; }
 
-    .pos-search-icon {
-      position: absolute;
-      left: 14px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: var(--text-muted);
-      pointer-events: none;
+    .pos-user {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 14px; border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: transparent; color: #aaa;
+      font-size: 0.8125rem; cursor: pointer;
+      transition: all 0.2s; font-family: inherit;
     }
 
-    .pos-user-btn {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 14px;
-      background: transparent;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      color: var(--text-secondary);
-      font-size: 0.8125rem;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      font-family: var(--font-body);
+    .pos-user:hover { background: #18181f; color: #e8e6f0; }
+
+    .pos-avatar {
+      width: 30px; height: 30px; border-radius: 8px;
+      background: linear-gradient(135deg, #8b7535, #c9a84c);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem; font-weight: 700; color: #0a0a0f;
     }
 
-    .pos-user-btn:hover { background: var(--bg-elevated); color: var(--text-primary); }
-
-    .pos-user-avatar {
-      width: 28px;
-      height: 28px;
-      border-radius: 8px;
-      background: linear-gradient(135deg, var(--gold-dim), var(--gold));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.75rem;
-      font-weight: 700;
-      color: var(--bg-base);
-    }
-
-    /* ── Category Tabs ── */
-    .pos-categories {
-      display: flex;
-      gap: 8px;
-      padding: 12px 24px;
-      background: var(--bg-surface);
-      border-bottom: 1px solid var(--border);
+    /* Category tabs */
+    .pos-tabs {
+      display: flex; gap: 6px;
+      padding: 10px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
       flex-shrink: 0;
       overflow-x: auto;
     }
 
-    .pos-cat-btn {
-      padding: 8px 20px;
-      border-radius: 24px;
-      border: 1px solid var(--border);
-      background: transparent;
-      color: var(--text-secondary);
-      font-family: var(--font-body);
-      font-size: 0.8125rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      white-space: nowrap;
+    .pos-tab {
+      padding: 7px 18px; border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: transparent; color: #888;
+      font-size: 0.8125rem; font-weight: 500;
+      cursor: pointer; transition: all 0.2s;
+      white-space: nowrap; font-family: inherit;
     }
 
-    .pos-cat-btn:hover {
-      background: var(--bg-elevated);
-      color: var(--text-primary);
+    .pos-tab:hover { background: #18181f; color: #ccc; }
+
+    .pos-tab.active {
+      background: #c9a84c; color: #0a0a0f;
+      border-color: #c9a84c; font-weight: 600;
     }
 
-    .pos-cat-btn.active {
-      background: var(--gold);
-      color: var(--bg-base);
-      border-color: var(--gold);
-      font-weight: 600;
+    /* Product grid */
+    .pos-products {
+      flex: 1; overflow-y: auto;
+      padding: 16px 20px;
     }
 
-    /* ── Product Grid ── */
-    .pos-grid-wrapper {
-      flex: 1;
-      overflow-y: auto;
-      padding: 20px 24px;
-    }
-
-    .pos-grid-wrapper::-webkit-scrollbar { width: 6px; }
-    .pos-grid-wrapper::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 3px; }
+    .pos-products::-webkit-scrollbar { width: 5px; }
+    .pos-products::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
 
     .pos-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-      gap: 14px;
-      list-style: none;
-      padding: 0;
-      margin: 0;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 12px;
     }
 
-    .pos-product {
-      background: var(--bg-surface);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 16px;
+    .p-card {
+      background: #15151d;
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 12px;
+      padding: 14px;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.15s ease;
       display: flex;
       flex-direction: column;
       position: relative;
-      overflow: hidden;
     }
 
-    .pos-product:hover {
-      border-color: var(--gold-border);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    .p-card:hover {
+      border-color: rgba(201,168,76,0.3);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.4);
     }
 
-    .pos-product:active {
-      transform: translateY(0);
+    .p-card:active { transform: scale(0.98); }
+
+    .p-card.oos { opacity: 0.35; pointer-events: none; }
+
+    .p-badge {
+      position: absolute; top: 10px; right: 10px;
+      font-size: 0.5625rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      padding: 3px 7px; border-radius: 5px;
     }
 
-    .pos-product.out-of-stock {
-      opacity: 0.4;
-      pointer-events: none;
-    }
+    .p-badge.tinto   { background: rgba(155,35,53,0.3); color: #e8576b; }
+    .p-badge.branco  { background: rgba(201,168,76,0.2); color: #d4b76a; }
+    .p-badge.rose    { background: rgba(231,84,128,0.2); color: #f472b6; }
+    .p-badge.espumante { background: rgba(201,168,76,0.15); color: #c9a84c; }
+    .p-badge.porto   { background: rgba(139,24,37,0.3); color: #c05060; }
 
-    .pos-product-type {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      font-size: 0.625rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      padding: 3px 8px;
-      border-radius: 6px;
-      line-height: 1;
-    }
-
-    .pos-product-type.tinto   { background: rgba(155, 35, 53, 0.25); color: #e8576b; }
-    .pos-product-type.branco  { background: rgba(201, 168, 76, 0.2); color: var(--gold-light); }
-    .pos-product-type.rose    { background: rgba(231, 84, 128, 0.2); color: #f472b6; }
-    .pos-product-type.espumante { background: rgba(201, 168, 76, 0.15); color: var(--gold); }
-
-    .pos-product-visual {
-      width: 100%;
-      height: 80px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 12px;
-      position: relative;
-    }
-
-    .pos-product-visual svg {
+    .p-visual {
       height: 70px;
-      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
-    }
-
-    .pos-product-name {
-      font-family: var(--font-body);
-      font-size: 0.8125rem;
-      font-weight: 600;
-      color: var(--text-primary);
-      line-height: 1.3;
-      margin-bottom: 4px;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-
-    .pos-product-region {
-      font-size: 0.6875rem;
-      color: var(--text-muted);
+      display: flex; align-items: center; justify-content: center;
       margin-bottom: 10px;
     }
 
-    .pos-product-bottom {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-top: auto;
+    .p-visual svg { height: 60px; filter: drop-shadow(0 3px 6px rgba(0,0,0,0.4)); }
+
+    .p-name {
+      font-size: 0.8125rem; font-weight: 600; color: #e8e6f0;
+      line-height: 1.3; margin-bottom: 3px;
+      display: -webkit-box; -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical; overflow: hidden;
     }
 
-    .pos-product-price {
-      font-family: var(--font-display);
-      font-size: 1.0625rem;
-      font-weight: 700;
-      color: var(--gold);
+    .p-region {
+      font-size: 0.6875rem; color: #666;
+      margin-bottom: 10px;
     }
 
-    .pos-product-stock {
-      font-size: 0.6875rem;
-      color: var(--text-muted);
-      padding: 2px 8px;
-      background: var(--bg-elevated);
-      border-radius: 10px;
+    .p-bottom {
+      display: flex; align-items: baseline;
+      justify-content: space-between; margin-top: auto;
     }
 
-    .pos-product-stock.low { color: var(--warning); background: var(--warning-dim); }
-    .pos-product-stock.oos { color: var(--danger); background: rgba(248,113,113,0.1); }
-
-    .pos-empty-grid {
-      grid-column: 1 / -1;
-      text-align: center;
-      padding: 80px 20px;
-      color: var(--text-muted);
-      font-size: 0.9375rem;
+    .p-price {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem; font-weight: 700; color: #c9a84c;
     }
 
-    /* ── RIGHT: Cart ── */
-    .pos-cart {
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-      background: var(--bg-surface);
-    }
-
-    .pos-cart-header {
-      padding: 20px 20px 16px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-shrink: 0;
-    }
-
-    .pos-cart-header h2 {
-      font-family: var(--font-display);
-      font-size: 1.125rem;
-      font-weight: 600;
-      color: var(--text-primary);
-      margin: 0;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .pos-cart-badge {
-      background: var(--gold);
-      color: var(--bg-base);
-      font-family: var(--font-body);
-      font-size: 0.6875rem;
-      font-weight: 700;
-      min-width: 22px;
-      height: 22px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 11px;
-      padding: 0 6px;
-    }
-
-    .pos-cart-clear {
-      padding: 6px 12px;
-      border: none;
-      background: rgba(248, 113, 113, 0.1);
-      color: #f87171;
-      font-size: 0.75rem;
-      font-weight: 500;
+    .p-stock {
+      font-size: 0.625rem; color: #555;
+      background: #1a1a22; padding: 2px 7px;
       border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      font-family: var(--font-body);
     }
 
-    .pos-cart-clear:hover { background: rgba(248, 113, 113, 0.2); }
+    .p-stock.low { color: #fbbf24; background: rgba(251,191,36,0.1); }
+    .p-stock.oos { color: #f87171; }
 
-    /* Cart items list */
-    .pos-cart-items {
-      flex: 1;
-      overflow-y: auto;
-      padding: 0;
+    .pos-empty {
+      grid-column: 1/-1; text-align: center;
+      padding: 60px 20px; color: #555; font-size: 0.9rem;
     }
 
-    .pos-cart-items::-webkit-scrollbar { width: 4px; }
-    .pos-cart-items::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 2px; }
-
-    .pos-cart-empty {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100%;
-      color: var(--text-muted);
-      gap: 12px;
-      padding: 40px;
-    }
-
-    .pos-cart-empty-icon {
-      width: 64px;
-      height: 64px;
-      border-radius: 20px;
-      background: var(--bg-elevated);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5rem;
-    }
-
-    .pos-cart-empty p {
-      font-size: 0.875rem;
-      text-align: center;
-    }
-
-    .pos-ci {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 14px 20px;
-      border-bottom: 1px solid var(--border-subtle, rgba(255,255,255,0.04));
-      transition: background 0.15s ease;
-    }
-
-    .pos-ci:hover { background: var(--bg-elevated); }
-
-    .pos-ci-color {
-      width: 4px;
-      height: 40px;
-      border-radius: 2px;
-      flex-shrink: 0;
-    }
-
-    .pos-ci-color.tinto   { background: var(--wine); }
-    .pos-ci-color.branco  { background: var(--gold); }
-    .pos-ci-color.rose    { background: #e75480; }
-    .pos-ci-color.espumante { background: var(--gold-light); }
-
-    .pos-ci-info {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .pos-ci-name {
-      font-size: 0.8125rem;
-      font-weight: 500;
-      color: var(--text-primary);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .pos-ci-detail {
-      font-size: 0.6875rem;
-      color: var(--text-muted);
-      margin-top: 2px;
-    }
-
-    .pos-ci-qty {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      flex-shrink: 0;
-    }
-
-    .pos-ci-qty button {
-      width: 28px;
-      height: 28px;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      background: var(--bg-elevated);
-      color: var(--text-secondary);
-      font-size: 0.875rem;
-      cursor: pointer;
-      transition: all 0.15s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .pos-ci-qty button:hover {
-      border-color: var(--gold);
-      color: var(--gold);
-    }
-
-    .pos-ci-qty span {
-      width: 24px;
-      text-align: center;
-      font-size: 0.875rem;
-      font-weight: 600;
-      color: var(--text-primary);
-    }
-
-    .pos-ci-price {
-      font-family: var(--font-display);
-      font-size: 0.875rem;
-      font-weight: 600;
-      color: var(--gold);
-      min-width: 60px;
-      text-align: right;
-      flex-shrink: 0;
-    }
-
-    .pos-ci-remove {
-      width: 28px;
-      height: 28px;
-      border: none;
-      background: transparent;
-      color: var(--text-muted);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 6px;
-      transition: all 0.15s ease;
-      flex-shrink: 0;
-    }
-
-    .pos-ci-remove:hover { background: rgba(248,113,113,0.15); color: #f87171; }
-
-    /* ── Cart Footer / Totals ── */
-    .pos-cart-footer {
-      border-top: 1px solid var(--border);
-      padding: 16px 20px;
-      flex-shrink: 0;
-      background: var(--bg-surface);
-    }
-
-    .pos-totals {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-bottom: 16px;
-    }
-
-    .pos-totals .t-row {
-      display: flex;
+    /* Status bar */
+    .pos-status {
+      display: flex; align-items: center;
       justify-content: space-between;
-      font-size: 0.8125rem;
-      color: var(--text-secondary);
-    }
-
-    .pos-totals .t-row.grand {
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: var(--text-primary);
-      font-family: var(--font-display);
-      padding-top: 10px;
-      margin-top: 4px;
-      border-top: 1px solid var(--border);
-    }
-
-    .pos-totals .t-row.grand .t-val { color: var(--gold); }
-
-    .pos-checkout-btn {
-      width: 100%;
-      padding: 16px;
-      border: none;
-      border-radius: 14px;
-      background: linear-gradient(135deg, var(--gold), var(--gold-dim));
-      color: var(--bg-base);
-      font-family: var(--font-display);
-      font-size: 1rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      letter-spacing: 0.02em;
-    }
-
-    .pos-checkout-btn:hover:not(:disabled) {
-      transform: translateY(-1px);
-      box-shadow: 0 8px 24px rgba(201, 168, 76, 0.3);
-    }
-
-    .pos-checkout-btn:disabled {
-      opacity: 0.35;
-      cursor: not-allowed;
-    }
-
-    .pos-checkout-btn:active:not(:disabled) { transform: translateY(0); }
-
-    /* ── Status bar ── */
-    .pos-statusbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 8px 24px;
-      background: var(--bg-surface);
-      border-top: 1px solid var(--border);
-      font-size: 0.6875rem;
-      color: var(--text-muted);
+      padding: 8px 20px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      font-size: 0.6875rem; color: #555;
       flex-shrink: 0;
     }
 
-    .pos-status-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 3px;
-      background: var(--success);
-      display: inline-block;
+    .status-dot {
+      width: 6px; height: 6px; border-radius: 3px;
+      background: #34d399; display: inline-block;
       margin-right: 6px;
     }
 
-    .pos-status-dot.offline { background: var(--danger); }
+    .status-dot.off { background: #f87171; }
+
+    /* ── RIGHT PANEL: CART ── */
+    .pos-right {
+      display: flex; flex-direction: column;
+      background: #121218;
+      border-left: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .cart-head {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      padding: 16px 18px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .cart-head h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.0625rem; font-weight: 600;
+      color: #e8e6f0; margin: 0;
+      display: flex; align-items: center; gap: 10px;
+    }
+
+    .cart-badge {
+      background: #c9a84c; color: #0a0a0f;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.6875rem; font-weight: 700;
+      min-width: 20px; height: 20px;
+      display: inline-flex; align-items: center;
+      justify-content: center; border-radius: 10px;
+      padding: 0 6px;
+    }
+
+    .cart-clear {
+      padding: 5px 10px; border: none;
+      background: rgba(248,113,113,0.1);
+      color: #f87171; font-size: 0.6875rem;
+      font-weight: 500; border-radius: 6px;
+      cursor: pointer; transition: all 0.15s;
+      font-family: inherit;
+    }
+
+    .cart-clear:hover { background: rgba(248,113,113,0.2); }
+
+    /* Cart items */
+    .cart-body {
+      flex: 1; overflow-y: auto; padding: 0;
+    }
+
+    .cart-body::-webkit-scrollbar { width: 3px; }
+    .cart-body::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
+
+    .cart-empty-state {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      height: 100%; color: #444; gap: 10px; padding: 40px;
+    }
+
+    .cart-empty-state svg { opacity: 0.3; }
+    .cart-empty-state p { font-size: 0.8125rem; text-align: center; line-height: 1.5; }
+
+    /* Cart item */
+    .ci {
+      display: flex; align-items: center;
+      gap: 10px; padding: 12px 18px;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      transition: background 0.1s;
+    }
+
+    .ci:hover { background: rgba(255,255,255,0.02); }
+
+    .ci-dot {
+      width: 4px; height: 36px;
+      border-radius: 2px; flex-shrink: 0;
+    }
+
+    .ci-dot.tinto  { background: #9b2335; }
+    .ci-dot.branco { background: #c9a84c; }
+    .ci-dot.rose   { background: #e75480; }
+    .ci-dot.espumante { background: #d4b76a; }
+    .ci-dot.porto  { background: #6b1825; }
+
+    .ci-info { flex: 1; min-width: 0; }
+
+    .ci-name {
+      font-size: 0.8125rem; font-weight: 500;
+      color: #e8e6f0; white-space: nowrap;
+      overflow: hidden; text-overflow: ellipsis;
+    }
+
+    .ci-meta { font-size: 0.6875rem; color: #555; margin-top: 1px; }
+
+    .ci-qty {
+      display: flex; align-items: center; gap: 2px; flex-shrink: 0;
+    }
+
+    .ci-qty button {
+      width: 26px; height: 26px; border-radius: 6px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: #1a1a22; color: #aaa;
+      font-size: 0.875rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.1s; font-family: inherit;
+    }
+
+    .ci-qty button:hover { border-color: #c9a84c; color: #c9a84c; }
+
+    .ci-qty span {
+      width: 22px; text-align: center;
+      font-size: 0.8125rem; font-weight: 600; color: #e8e6f0;
+    }
+
+    .ci-price {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.8125rem; font-weight: 600;
+      color: #c9a84c; min-width: 54px;
+      text-align: right; flex-shrink: 0;
+    }
+
+    .ci-del {
+      width: 24px; height: 24px; border: none;
+      background: transparent; color: #555;
+      cursor: pointer; display: flex;
+      align-items: center; justify-content: center;
+      border-radius: 4px; transition: all 0.1s; flex-shrink: 0;
+    }
+
+    .ci-del:hover { background: rgba(248,113,113,0.15); color: #f87171; }
+
+    /* Cart footer */
+    .cart-foot {
+      padding: 14px 18px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      flex-shrink: 0;
+    }
+
+    .cart-totals { margin-bottom: 14px; }
+
+    .ct-row {
+      display: flex; justify-content: space-between;
+      padding: 4px 0; font-size: 0.8125rem; color: #888;
+    }
+
+    .ct-row.total {
+      font-size: 1.25rem; font-weight: 700;
+      color: #e8e6f0; padding-top: 10px;
+      margin-top: 6px; border-top: 1px solid rgba(255,255,255,0.08);
+      font-family: 'Playfair Display', serif;
+    }
+
+    .ct-row.total .ct-v { color: #c9a84c; }
+
+    .btn-checkout {
+      width: 100%; padding: 14px;
+      border: none; border-radius: 12px;
+      background: linear-gradient(135deg, #c9a84c 0%, #a08530 100%);
+      color: #0a0a0f; font-family: 'Playfair Display', serif;
+      font-size: 1rem; font-weight: 700;
+      cursor: pointer; transition: all 0.2s;
+      letter-spacing: 0.01em;
+    }
+
+    .btn-checkout:hover:not(:disabled) {
+      box-shadow: 0 6px 20px rgba(201,168,76,0.35);
+      transform: translateY(-1px);
+    }
+
+    .btn-checkout:disabled { opacity: 0.3; cursor: not-allowed; }
+
+    .btn-checkout:active:not(:disabled) { transform: translateY(0); }
 
     /* ── Responsive ── */
-    @media (max-width: 900px) {
-      .pos-layout {
-        grid-template-columns: 1fr;
-        grid-template-rows: 1fr auto;
-      }
-      .pos-cart { height: auto; max-height: 50vh; }
-      .pos-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+    @media (max-width: 860px) {
+      .pos { grid-template-columns: 1fr; }
+      .pos-right { height: 45vh; border-left: none; border-top: 1px solid rgba(255,255,255,0.06); }
+      .pos-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
     }
   </style>
 </head>
 <body>
   <div id="toasts" class="toasts-container"></div>
 
-  <div class="pos-layout">
+  <div class="pos">
     <!-- ═══ LEFT: PRODUCTS ═══ -->
-    <div class="pos-products">
-      <!-- Top Bar -->
-      <div class="pos-topbar">
-        <div class="pos-brand">
-          <div class="pos-brand-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="20" height="20">
-              <path d="M8 22h8M12 11v11M7 11c0 2.8 2.2 5 5 5s5-2.2 5-5V3H7v8z"/>
-              <path d="M7 8h10"/>
+    <div class="pos-left">
+      <div class="pos-header">
+        <div class="pos-logo">
+          <div class="pos-logo-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#0a0a0f" stroke-width="2" width="20" height="20">
+              <path d="M8 22h8M12 11v11M7 11c0 2.8 2.2 5 5 5s5-2.2 5-5V3H7v8z"/><path d="M7 8h10"/>
             </svg>
           </div>
-          <div>
+          <div class="pos-logo-text">
             <h1>Vinha D'Ouro</h1>
             <span>Ponto de Venda</span>
           </div>
         </div>
 
         <div class="pos-search">
-          <svg class="pos-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
           </svg>
           <input type="text" id="wine-search" placeholder="Pesquisar vinho..." onkeyup="searchWines(this.value)">
         </div>
 
-        <button class="pos-user-btn" onclick="logout()" title="Terminar sessão">
-          <div class="pos-user-avatar" id="user-avatar">U</div>
+        <button class="pos-user" onclick="logout()" title="Sair">
+          <div class="pos-avatar" id="user-avatar">U</div>
           <span id="user-name">Utilizador</span>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/>
-          </svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
         </button>
       </div>
 
-      <!-- Category Tabs -->
-      <div class="pos-categories">
-        <button class="pos-cat-btn active" data-filter="" onclick="filterByType('')">
-          Todos
-        </button>
-        <button class="pos-cat-btn" data-filter="Tinto" onclick="filterByType('Tinto')">
-          Tinto
-        </button>
-        <button class="pos-cat-btn" data-filter="Branco" onclick="filterByType('Branco')">
-          Branco
-        </button>
-        <button class="pos-cat-btn" data-filter="Rosé" onclick="filterByType('Rosé')">
-          Rosé
-        </button>
-        <button class="pos-cat-btn" data-filter="Espumante" onclick="filterByType('Espumante')">
-          Espumante
-        </button>
+      <div class="pos-tabs">
+        <button class="pos-tab active" data-filter="" onclick="filterByType('')">Todos</button>
+        <button class="pos-tab" data-filter="Tinto" onclick="filterByType('Tinto')">Tinto</button>
+        <button class="pos-tab" data-filter="Branco" onclick="filterByType('Branco')">Branco</button>
+        <button class="pos-tab" data-filter="Rosé" onclick="filterByType('Rosé')">Rosé</button>
+        <button class="pos-tab" data-filter="Espumante" onclick="filterByType('Espumante')">Espumante</button>
       </div>
 
-      <!-- Product Grid -->
-      <div class="pos-grid-wrapper">
+      <div class="pos-products">
         <div id="wine-grid" class="pos-grid">
-          <div class="pos-empty-grid">A carregar catálogo...</div>
+          <div class="pos-empty">A carregar catálogo...</div>
         </div>
       </div>
 
-      <!-- Status Bar -->
-      <div class="pos-statusbar">
-        <div>
-          <span class="pos-status-dot" id="api-dot"></span>
-          <span id="api-label">API</span>
-        </div>
+      <div class="pos-status">
+        <div><span class="status-dot" id="api-dot"></span><span id="api-label">API</span></div>
         <div id="pos-clock"></div>
         <div id="pos-product-count"></div>
       </div>
     </div>
 
     <!-- ═══ RIGHT: CART ═══ -->
-    <div class="pos-cart">
-      <div class="pos-cart-header">
+    <div class="pos-right">
+      <div class="cart-head">
         <h2>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+          Carrinho
+          <span class="cart-badge" id="cart-count">0</span>
+        </h2>
+        <button class="cart-clear" onclick="clearCart()" id="cart-clear-btn" style="display:none">Limpar</button>
+      </div>
+
+      <div class="cart-body" id="cart-items">
+        <div class="cart-empty-state" id="cart-empty">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
             <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
             <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/>
           </svg>
-          Carrinho
-          <span class="pos-cart-badge" id="cart-count">0</span>
-        </h2>
-        <button class="pos-cart-clear" onclick="clearCart()" id="cart-clear-btn" style="display:none;">Limpar</button>
-      </div>
-
-      <div class="pos-cart-items" id="cart-items">
-        <div class="pos-cart-empty" id="cart-empty">
-          <div class="pos-cart-empty-icon">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color:var(--text-muted);">
-              <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
-              <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/>
-            </svg>
-          </div>
-          <p>Clique num produto<br>para adicionar</p>
+          <p>Clique num vinho<br>para adicionar ao carrinho</p>
         </div>
       </div>
 
-      <div class="pos-cart-footer">
-        <div class="pos-totals">
-          <div class="t-row">
-            <span>Subtotal</span>
-            <span class="t-val" id="cart-subtotal">€0,00</span>
-          </div>
-          <div class="t-row">
-            <span>IVA (23%)</span>
-            <span class="t-val" id="cart-iva">€0,00</span>
-          </div>
-          <div class="t-row grand">
-            <span>Total</span>
-            <span class="t-val" id="cart-total">€0,00</span>
-          </div>
+      <div class="cart-foot">
+        <div class="cart-totals">
+          <div class="ct-row"><span>Subtotal</span><span class="ct-v" id="cart-subtotal">€0,00</span></div>
+          <div class="ct-row"><span>IVA (23%)</span><span class="ct-v" id="cart-iva">€0,00</span></div>
+          <div class="ct-row total"><span>Total</span><span class="ct-v" id="cart-total">€0,00</span></div>
         </div>
-        <button class="pos-checkout-btn" id="checkout-btn" onclick="openCheckout()" disabled>
+        <button class="btn-checkout" id="checkout-btn" onclick="openCheckout()" disabled>
           Finalizar Venda
         </button>
       </div>
     </div>
   </div>
 
-  <!-- SIZE SELECTION MODAL -->
+  <!-- SIZE MODAL (optional, for special sizes) -->
   <div class="modal hidden" id="size-modal">
     <div class="modal-backdrop" onclick="closeSizeModal()"></div>
     <div class="modal-content">
-      <div class="modal-header">
-        <h2 class="modal-title">Selecione o Formato</h2>
-        <button class="modal-close" onclick="closeSizeModal()" aria-label="Fechar">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-          </svg>
-        </button>
-      </div>
-      <div class="modal-body">
-        <p class="modal-subtitle" id="size-wine-name">Vinho selecionado</p>
-        <div class="size-options" id="size-options"></div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-secondary" onclick="closeSizeModal()">Cancelar</button>
-      </div>
+      <div class="modal-header"><h2 class="modal-title">Formato</h2><button class="modal-close" onclick="closeSizeModal()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+      <div class="modal-body"><p class="modal-subtitle" id="size-wine-name"></p><div class="size-options" id="size-options"></div></div>
+      <div class="modal-footer"><button class="btn btn-secondary" onclick="closeSizeModal()">Cancelar</button></div>
     </div>
   </div>
 
@@ -753,68 +524,31 @@
   <div class="modal hidden" id="checkout-modal">
     <div class="modal-backdrop" onclick="closeCheckout()"></div>
     <div class="modal-content">
-      <div class="modal-header">
-        <h2 class="modal-title">Finalizar Venda</h2>
-        <button class="modal-close" onclick="closeCheckout()" aria-label="Fechar">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-          </svg>
-        </button>
-      </div>
+      <div class="modal-header"><h2 class="modal-title">Finalizar Venda</h2><button class="modal-close" onclick="closeCheckout()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
       <div class="modal-body">
-        <div class="checkout-section">
-          <h3 class="checkout-section-title">Resumo</h3>
-          <div id="co-items" class="checkout-items-list"></div>
-        </div>
+        <div class="checkout-section"><h3 class="checkout-section-title">Resumo</h3><div id="co-items" class="checkout-items-list"></div></div>
         <div class="checkout-totals">
           <div class="total-row"><span>Subtotal:</span><span class="total-value" id="co-subtotal">€0,00</span></div>
           <div class="total-row"><span>IVA (23%):</span><span class="total-value" id="co-iva">€0,00</span></div>
           <div class="total-row"><span id="co-discount-line" class="hidden">Desconto:</span><span class="total-value hidden" id="co-discount-val">-€0,00</span></div>
           <div class="total-row grand"><span>Total:</span><span class="total-value" id="co-total">€0,00</span></div>
         </div>
-        <div class="checkout-section">
-          <label class="form-label">Desconto % (opcional)</label>
-          <input type="number" id="co-discount" class="form-input" placeholder="0" min="0" max="100" step="1" onchange="updateCheckoutTotals()">
-        </div>
-        <div class="checkout-section">
-          <label class="form-label">NIF do Cliente (opcional)</label>
-          <input type="text" id="co-nif" class="form-input" placeholder="123456789" maxlength="9">
-        </div>
-        <div class="checkout-section">
-          <label class="form-label">Notas (opcional)</label>
-          <textarea id="co-notes" class="form-input" placeholder="Observações..." rows="2"></textarea>
-        </div>
+        <div class="checkout-section"><label class="form-label">Desconto % (opcional)</label><input type="number" id="co-discount" class="form-input" placeholder="0" min="0" max="100" onchange="updateCheckoutTotals()"></div>
+        <div class="checkout-section"><label class="form-label">NIF (opcional)</label><input type="text" id="co-nif" class="form-input" placeholder="123456789" maxlength="9"></div>
+        <div class="checkout-section"><label class="form-label">Notas (opcional)</label><textarea id="co-notes" class="form-input" placeholder="Observações..." rows="2"></textarea></div>
         <div class="checkout-section">
           <h3 class="checkout-section-title">Pagamento</h3>
           <div class="pay-methods">
-            <button class="pay-method active" data-method="Cartão" onclick="selectPaymentMethod('Cartão')">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-              Cartão
-            </button>
-            <button class="pay-method" data-method="Numerário" onclick="selectPaymentMethod('Numerário')">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><circle cx="12" cy="12" r="3"/></svg>
-              Numerário
-            </button>
-            <button class="pay-method" data-method="MB Way" onclick="selectPaymentMethod('MB Way')">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
-              MB Way
-            </button>
+            <button class="pay-method active" data-method="Cartão" onclick="selectPaymentMethod('Cartão')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Cartão</button>
+            <button class="pay-method" data-method="Numerário" onclick="selectPaymentMethod('Numerário')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><circle cx="12" cy="12" r="3"/></svg>Numerário</button>
+            <button class="pay-method" data-method="MB Way" onclick="selectPaymentMethod('MB Way')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>MB Way</button>
           </div>
         </div>
-        <div id="co-card-panel" class="payment-panel"><p class="payment-info">Processamento de cartão habilitado</p></div>
-        <div id="co-cash-panel" class="payment-panel hidden">
-          <div class="form-group"><label class="form-label">Valor Recebido</label><input type="number" id="co-cash-received" class="form-input" placeholder="€0.00" min="0" step="0.01" onchange="calculateChange()"></div>
-          <div class="form-group"><label class="form-label">Troco</label><div class="display-field" id="co-troco">€0,00</div></div>
-        </div>
-        <div id="co-mbway-panel" class="payment-panel hidden">
-          <p class="payment-info">Pagamento MB Way</p>
-          <div class="display-field" id="co-pay-display">€0,00</div>
-        </div>
+        <div id="co-card-panel" class="payment-panel"><p class="payment-info">Cartão habilitado</p></div>
+        <div id="co-cash-panel" class="payment-panel hidden"><div class="form-group"><label class="form-label">Valor Recebido</label><input type="number" id="co-cash-received" class="form-input" placeholder="€0.00" min="0" step="0.01" onchange="calculateChange()"></div><div class="form-group"><label class="form-label">Troco</label><div class="display-field" id="co-troco">€0,00</div></div></div>
+        <div id="co-mbway-panel" class="payment-panel hidden"><p class="payment-info">MB Way</p><div class="display-field" id="co-pay-display">€0,00</div></div>
       </div>
-      <div class="modal-footer">
-        <button class="btn btn-secondary" onclick="closeCheckout()">Cancelar</button>
-        <button id="process-btn" class="btn btn-gold" onclick="processPayment()">Confirmar Pagamento</button>
-      </div>
+      <div class="modal-footer"><button class="btn btn-secondary" onclick="closeCheckout()">Cancelar</button><button id="process-btn" class="btn btn-gold" onclick="processPayment()">Confirmar Pagamento</button></div>
     </div>
   </div>
 
@@ -822,34 +556,20 @@
   <div class="modal hidden" id="receipt-modal">
     <div class="modal-backdrop" onclick="closeReceipt()"></div>
     <div class="modal-content">
-      <div class="modal-header">
-        <h2 class="modal-title">Recibo de Venda</h2>
-        <button class="modal-close" onclick="closeReceipt()" aria-label="Fechar">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-          </svg>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div id="receipt-content" class="receipt-content"></div>
-        <p id="receipt-subtitle" class="receipt-subtitle"></p>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-secondary" onclick="printReceipt()">Imprimir</button>
-        <button class="btn btn-primary" onclick="newSale()">Nova Venda</button>
-      </div>
+      <div class="modal-header"><h2 class="modal-title">Recibo</h2><button class="modal-close" onclick="closeReceipt()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+      <div class="modal-body"><div id="receipt-content" class="receipt-content"></div><p id="receipt-subtitle" class="receipt-subtitle"></p></div>
+      <div class="modal-footer"><button class="btn btn-secondary" onclick="printReceipt()">Imprimir</button><button class="btn btn-primary" onclick="newSale()">Nova Venda</button></div>
     </div>
   </div>
 
   <script src="app.js"></script>
   <script>
-    // POS clock
+    // Clock
     function updateClock() {
       const el = document.getElementById('pos-clock');
-      if (el) el.textContent = new Date().toLocaleTimeString('pt-PT', {hour:'2-digit',minute:'2-digit'});
+      if (el) el.textContent = new Date().toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit'});
     }
-    updateClock();
-    setInterval(updateClock, 30000);
+    updateClock(); setInterval(updateClock, 30000);
   </script>
 </body>
 </html>
