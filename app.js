@@ -1254,11 +1254,10 @@ function checkout() {
   const coItems = document.getElementById('co-items');
   if (coItems) {
     coItems.innerHTML = cart.map(item => `
-      <div class="checkout-item-row">
-        <span class="ci-name">${item.nome}</span>
-        ${item.vol ? `<span class="ci-size">${item.vol}</span>` : ''}
-        <span style="font-size:12px;color:var(--text-muted);margin-right:6px;">×${item.qty}</span>
-        <span class="ci-price">${fmt.eur(item.preco * item.qty)}</span>
+      <div class="co-item">
+        <span class="co-item-name">${item.nome}</span>
+        <span class="co-item-qty">${item.vol ? item.vol + ' · ' : ''}×${item.qty}</span>
+        <span class="co-item-price">${fmt.eur(item.preco * item.qty)}</span>
       </div>`).join('');
   }
   const disc = document.getElementById('co-discount'); if (disc) disc.value = '0';
@@ -1293,7 +1292,8 @@ function updateCoTotals() {
   s('co-total', fmt.eur(tot));
   const dl = document.getElementById('co-discount-line');
   const dv = document.getElementById('co-discount-val');
-  if (dl && dv) { dl.style.display = discPct > 0 ? 'flex' : 'none'; dv.textContent = `−${fmt.eur(discAmt)} (${discPct}%)`; }
+  if (dl) dl.style.display = discPct > 0 ? 'flex' : 'none';
+  if (dv) dv.textContent = `−${fmt.eur(discAmt)} (${discPct}%)`;
 }
 
 function calcTroco() {
@@ -1307,8 +1307,8 @@ function calcTroco() {
   if (!el) return;
   if (rec > 0) {
     el.style.display = 'block';
-    if (troco >= 0) { el.style.background = 'var(--success-bg)'; el.style.borderColor = 'var(--success-border)'; el.style.color = 'var(--success)'; el.textContent = `Troco: ${fmt.eur(troco)}`; }
-    else { el.style.background = 'var(--danger-bg)'; el.style.borderColor = 'var(--danger-border)'; el.style.color = 'var(--danger)'; el.textContent = `Faltam: ${fmt.eur(-troco)}`; }
+    if (troco >= 0) { el.className = 'troco-display ok'; el.textContent = `Troco: ${fmt.eur(troco)}`; }
+    else { el.className = 'troco-display bad'; el.textContent = `Faltam: ${fmt.eur(-troco)}`; }
   } else { el.style.display = 'none'; }
 }
 
@@ -1363,9 +1363,9 @@ async function processPayment() {
 
   closeCheckoutModal();
   clearCart();
-  renderCatalog(document.querySelector('.filter-btn.active')?.dataset.filter || 'todos');
+  renderCatalog(document.querySelector('.pos-tab.active, .filter-btn.active')?.dataset?.filter || 'todos');
   document.getElementById('receipt-modal')?.classList.remove('hidden');
-  if (btn) { btn.disabled = false; btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="20 6 9 17 4 12"/></svg>Confirmar Pagamento'; }
+  if (btn) { btn.disabled = false; btn.textContent = 'Confirmar Pagamento'; }
 }
 
 function closeReceiptAndReset() {
@@ -1389,7 +1389,7 @@ function filterByType(type) {
 }
 
 function searchWines(query) {
-  const active = document.querySelector('.filter-btn.active');
+  const active = document.querySelector('.pos-tab.active, .filter-btn.active');
   renderCatalog(active?.dataset?.filter || 'todos');
 }
 

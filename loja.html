@@ -7,199 +7,236 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
   <style>
     /* ═══════════════════════════════════════════
-       POS TERMINAL v2 — Clean Modern Design
+       POS TERMINAL v3 — Modern Shopify/Square Style
        ═══════════════════════════════════════════ */
-    * { box-sizing: border-box; }
-    body { margin: 0; overflow: hidden; background: #0a0a0f; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    .pos {
-      display: grid;
-      grid-template-columns: 1fr 360px;
-      height: 100vh;
-      font-family: 'Inter', -apple-system, sans-serif;
-      color: #e8e6f0;
+    :root {
+      --pos-bg: #0c0c12;
+      --pos-surface: #14141c;
+      --pos-elevated: #1a1a24;
+      --pos-border: rgba(255,255,255,0.07);
+      --pos-border-hover: rgba(255,255,255,0.14);
+      --pos-gold: #c9a84c;
+      --pos-gold-dim: rgba(201,168,76,0.15);
+      --pos-gold-glow: rgba(201,168,76,0.25);
+      --pos-wine: #9b2335;
+      --pos-text: #eae8f0;
+      --pos-text-sec: #8b8b9e;
+      --pos-text-dim: #55556a;
+      --pos-success: #34d399;
+      --pos-danger: #f87171;
+      --pos-warning: #fbbf24;
+      --pos-r: 12px;
+      --pos-r-sm: 8px;
+      --pos-font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --pos-display: 'Playfair Display', Georgia, serif;
     }
 
-    /* ── LEFT PANEL ── */
+    body {
+      margin: 0; overflow: hidden;
+      background: var(--pos-bg);
+      font-family: var(--pos-font);
+      color: var(--pos-text);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── MAIN LAYOUT ── */
+    .pos {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      height: 100vh;
+    }
+
+    /* ══════════════════════════════════════
+       LEFT PANEL — Products
+       ══════════════════════════════════════ */
     .pos-left {
       display: flex;
       flex-direction: column;
-      background: #0e0e14;
       overflow: hidden;
+      background: var(--pos-bg);
     }
 
-    /* Header */
-    .pos-header {
+    /* Top Bar */
+    .pos-topbar {
       display: flex;
       align-items: center;
       gap: 16px;
-      padding: 14px 20px;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 12px 24px;
+      background: var(--pos-surface);
+      border-bottom: 1px solid var(--pos-border);
       flex-shrink: 0;
     }
 
-    .pos-logo {
+    .pos-brand {
       display: flex;
       align-items: center;
       gap: 10px;
+      flex-shrink: 0;
     }
 
-    .pos-logo-icon {
-      width: 38px; height: 38px;
-      background: linear-gradient(135deg, #c9a84c, #8b7535);
+    .pos-brand-icon {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, var(--pos-gold), #8b7535);
       border-radius: 10px;
       display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
     }
 
-    .pos-logo-text h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: 1rem; font-weight: 700;
-      color: #fff; margin: 0; line-height: 1.1;
+    .pos-brand h1 {
+      font-family: var(--pos-display);
+      font-size: 1.05rem; font-weight: 700;
+      color: #fff; line-height: 1;
     }
 
-    .pos-logo-text span {
-      font-size: 0.6rem; color: #c9a84c;
-      text-transform: uppercase; letter-spacing: 0.12em; font-weight: 600;
+    .pos-brand small {
+      font-size: 0.6rem; color: var(--pos-gold);
+      text-transform: uppercase; letter-spacing: 0.14em; font-weight: 600;
     }
 
+    /* Search */
     .pos-search {
-      flex: 1; max-width: 360px;
-      position: relative; margin-left: auto;
+      flex: 1; max-width: 400px; position: relative; margin-left: auto;
     }
 
     .pos-search svg {
       position: absolute; left: 12px; top: 50%;
-      transform: translateY(-50%); color: #666; pointer-events: none;
+      transform: translateY(-50%); color: var(--pos-text-dim);
+      pointer-events: none;
     }
 
     .pos-search input {
-      width: 100%; padding: 10px 16px 10px 38px;
-      background: #18181f; border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 10px; color: #e8e6f0;
-      font-size: 0.8125rem; outline: none; font-family: inherit;
+      width: 100%; padding: 9px 14px 9px 36px;
+      background: var(--pos-bg); border: 1px solid var(--pos-border);
+      border-radius: var(--pos-r); color: var(--pos-text);
+      font-size: 0.8125rem; font-family: var(--pos-font); outline: none;
       transition: border-color 0.2s;
     }
 
     .pos-search input:focus {
-      border-color: #c9a84c;
-      box-shadow: 0 0 0 2px rgba(201,168,76,0.15);
+      border-color: var(--pos-gold);
+      box-shadow: 0 0 0 3px var(--pos-gold-dim);
     }
 
-    .pos-search input::placeholder { color: #555; }
+    .pos-search input::placeholder { color: var(--pos-text-dim); }
 
-    .pos-user {
-      display: flex; align-items: center; gap: 10px;
-      padding: 8px 14px; border-radius: 10px;
-      border: 1px solid rgba(255,255,255,0.08);
-      background: transparent; color: #aaa;
-      font-size: 0.8125rem; cursor: pointer;
-      transition: all 0.2s; font-family: inherit;
+    /* User button */
+    .pos-user-btn {
+      display: flex; align-items: center; gap: 8px;
+      padding: 7px 14px; border-radius: var(--pos-r);
+      border: 1px solid var(--pos-border);
+      background: transparent; color: var(--pos-text-sec);
+      font-size: 0.8rem; cursor: pointer;
+      font-family: var(--pos-font);
+      transition: all 0.15s;
     }
 
-    .pos-user:hover { background: #18181f; color: #e8e6f0; }
+    .pos-user-btn:hover { background: var(--pos-elevated); color: var(--pos-text); }
 
     .pos-avatar {
-      width: 30px; height: 30px; border-radius: 8px;
-      background: linear-gradient(135deg, #8b7535, #c9a84c);
+      width: 28px; height: 28px; border-radius: var(--pos-r-sm);
+      background: linear-gradient(135deg, #8b7535, var(--pos-gold));
       display: flex; align-items: center; justify-content: center;
-      font-size: 0.75rem; font-weight: 700; color: #0a0a0f;
+      font-size: 0.7rem; font-weight: 700; color: var(--pos-bg);
     }
 
-    /* Category tabs */
-    .pos-tabs {
+    /* Category Tabs */
+    .pos-categories {
       display: flex; gap: 6px;
-      padding: 10px 20px;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 10px 24px;
+      background: var(--pos-surface);
+      border-bottom: 1px solid var(--pos-border);
       flex-shrink: 0;
       overflow-x: auto;
     }
 
     .pos-tab {
-      padding: 7px 18px; border-radius: 20px;
-      border: 1px solid rgba(255,255,255,0.1);
-      background: transparent; color: #888;
-      font-size: 0.8125rem; font-weight: 500;
-      cursor: pointer; transition: all 0.2s;
-      white-space: nowrap; font-family: inherit;
+      padding: 7px 20px; border-radius: 24px;
+      border: 1px solid var(--pos-border);
+      background: transparent; color: var(--pos-text-dim);
+      font-size: 0.8rem; font-weight: 500;
+      cursor: pointer; transition: all 0.15s;
+      white-space: nowrap; font-family: var(--pos-font);
     }
 
-    .pos-tab:hover { background: #18181f; color: #ccc; }
+    .pos-tab:hover { background: var(--pos-elevated); color: var(--pos-text-sec); border-color: var(--pos-border-hover); }
 
     .pos-tab.active {
-      background: #c9a84c; color: #0a0a0f;
-      border-color: #c9a84c; font-weight: 600;
+      background: var(--pos-gold); color: var(--pos-bg);
+      border-color: var(--pos-gold); font-weight: 600;
     }
 
-    /* Product grid */
+    /* Product Grid */
     .pos-products {
       flex: 1; overflow-y: auto;
-      padding: 16px 20px;
+      padding: 20px 24px;
     }
 
-    .pos-products::-webkit-scrollbar { width: 5px; }
-    .pos-products::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+    .pos-products::-webkit-scrollbar { width: 4px; }
+    .pos-products::-webkit-scrollbar-thumb { background: #2a2a3a; border-radius: 2px; }
 
     .pos-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-      gap: 12px;
+      grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+      gap: 14px;
     }
 
+    /* Product Card */
     .p-card {
-      background: #15151d;
-      border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 12px;
-      padding: 14px;
+      background: var(--pos-surface);
+      border: 1px solid var(--pos-border);
+      border-radius: var(--pos-r);
+      padding: 16px;
       cursor: pointer;
       transition: all 0.15s ease;
       display: flex;
       flex-direction: column;
       position: relative;
+      min-height: 190px;
     }
 
     .p-card:hover {
-      border-color: rgba(201,168,76,0.3);
-      transform: translateY(-1px);
-      box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+      border-color: var(--pos-gold-glow);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.4);
     }
 
-    .p-card:active { transform: scale(0.98); }
-
-    .p-card.oos { opacity: 0.35; pointer-events: none; }
+    .p-card:active { transform: scale(0.97); }
+    .p-card.oos { opacity: 0.3; pointer-events: none; }
 
     .p-badge {
       position: absolute; top: 10px; right: 10px;
-      font-size: 0.5625rem; font-weight: 700;
-      text-transform: uppercase; letter-spacing: 0.06em;
-      padding: 3px 7px; border-radius: 5px;
+      font-size: 0.55rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.05em;
+      padding: 3px 8px; border-radius: 6px;
     }
 
-    .p-badge.tinto   { background: rgba(155,35,53,0.3); color: #e8576b; }
-    .p-badge.branco  { background: rgba(201,168,76,0.2); color: #d4b76a; }
-    .p-badge.rose    { background: rgba(231,84,128,0.2); color: #f472b6; }
-    .p-badge.espumante { background: rgba(201,168,76,0.15); color: #c9a84c; }
-    .p-badge.porto   { background: rgba(139,24,37,0.3); color: #c05060; }
+    .p-badge.tinto   { background: rgba(155,35,53,0.25); color: #e8576b; }
+    .p-badge.branco  { background: rgba(201,168,76,0.15); color: #d4b76a; }
+    .p-badge.rose    { background: rgba(231,84,128,0.15); color: #f472b6; }
+    .p-badge.espumante { background: rgba(201,168,76,0.1); color: var(--pos-gold); }
+    .p-badge.porto   { background: rgba(139,24,37,0.25); color: #c05060; }
 
     .p-visual {
-      height: 70px;
+      height: 65px;
       display: flex; align-items: center; justify-content: center;
       margin-bottom: 10px;
     }
 
-    .p-visual svg { height: 60px; filter: drop-shadow(0 3px 6px rgba(0,0,0,0.4)); }
+    .p-visual svg { height: 55px; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.35)); }
 
     .p-name {
-      font-size: 0.8125rem; font-weight: 600; color: #e8e6f0;
-      line-height: 1.3; margin-bottom: 3px;
+      font-size: 0.8125rem; font-weight: 600; color: var(--pos-text);
+      line-height: 1.3; margin-bottom: 2px;
       display: -webkit-box; -webkit-line-clamp: 2;
       -webkit-box-orient: vertical; overflow: hidden;
     }
 
     .p-region {
-      font-size: 0.6875rem; color: #666;
+      font-size: 0.6875rem; color: var(--pos-text-dim);
       margin-bottom: 10px;
     }
 
@@ -209,118 +246,122 @@
     }
 
     .p-price {
-      font-family: 'Playfair Display', serif;
-      font-size: 1rem; font-weight: 700; color: #c9a84c;
+      font-family: var(--pos-display);
+      font-size: 1.05rem; font-weight: 700; color: var(--pos-gold);
     }
 
     .p-stock {
-      font-size: 0.625rem; color: #555;
-      background: #1a1a22; padding: 2px 7px;
-      border-radius: 8px;
+      font-size: 0.6rem; color: var(--pos-text-dim);
+      background: var(--pos-elevated); padding: 2px 8px;
+      border-radius: 10px;
     }
 
-    .p-stock.low { color: #fbbf24; background: rgba(251,191,36,0.1); }
-    .p-stock.oos { color: #f87171; }
+    .p-stock.low { color: var(--pos-warning); background: rgba(251,191,36,0.08); }
+    .p-stock.oos { color: var(--pos-danger); }
 
     .pos-empty {
       grid-column: 1/-1; text-align: center;
-      padding: 60px 20px; color: #555; font-size: 0.9rem;
+      padding: 80px 20px; color: var(--pos-text-dim);
+      font-size: 0.9rem;
     }
 
-    /* Status bar */
-    .pos-status {
+    /* Status Bar */
+    .pos-statusbar {
       display: flex; align-items: center;
       justify-content: space-between;
-      padding: 8px 20px;
-      border-top: 1px solid rgba(255,255,255,0.06);
-      font-size: 0.6875rem; color: #555;
+      padding: 8px 24px;
+      background: var(--pos-surface);
+      border-top: 1px solid var(--pos-border);
+      font-size: 0.6875rem; color: var(--pos-text-dim);
       flex-shrink: 0;
     }
 
     .status-dot {
-      width: 6px; height: 6px; border-radius: 3px;
-      background: #34d399; display: inline-block;
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--pos-success); display: inline-block;
       margin-right: 6px;
     }
 
-    .status-dot.off { background: #f87171; }
+    .status-dot.off { background: var(--pos-danger); }
 
-    /* ── RIGHT PANEL: CART ── */
+    /* ══════════════════════════════════════
+       RIGHT PANEL — Cart
+       ══════════════════════════════════════ */
     .pos-right {
       display: flex; flex-direction: column;
-      background: #121218;
-      border-left: 1px solid rgba(255,255,255,0.06);
+      background: var(--pos-surface);
+      border-left: 1px solid var(--pos-border);
     }
 
-    .cart-head {
+    .cart-header {
       display: flex; align-items: center;
       justify-content: space-between;
-      padding: 16px 18px;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--pos-border);
     }
 
-    .cart-head h2 {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.0625rem; font-weight: 600;
-      color: #e8e6f0; margin: 0;
+    .cart-header h2 {
+      font-family: var(--pos-display);
+      font-size: 1.05rem; font-weight: 600;
+      color: var(--pos-text); margin: 0;
       display: flex; align-items: center; gap: 10px;
     }
 
     .cart-badge {
-      background: #c9a84c; color: #0a0a0f;
-      font-family: 'Inter', sans-serif;
-      font-size: 0.6875rem; font-weight: 700;
+      background: var(--pos-gold); color: var(--pos-bg);
+      font-family: var(--pos-font);
+      font-size: 0.65rem; font-weight: 700;
       min-width: 20px; height: 20px;
       display: inline-flex; align-items: center;
       justify-content: center; border-radius: 10px;
       padding: 0 6px;
     }
 
-    .cart-clear {
-      padding: 5px 10px; border: none;
+    .cart-clear-btn {
+      padding: 5px 12px; border: none;
       background: rgba(248,113,113,0.1);
-      color: #f87171; font-size: 0.6875rem;
+      color: var(--pos-danger); font-size: 0.7rem;
       font-weight: 500; border-radius: 6px;
       cursor: pointer; transition: all 0.15s;
-      font-family: inherit;
+      font-family: var(--pos-font);
     }
 
-    .cart-clear:hover { background: rgba(248,113,113,0.2); }
+    .cart-clear-btn:hover { background: rgba(248,113,113,0.2); }
 
-    /* Cart items */
+    /* Cart body */
     .cart-body {
       flex: 1; overflow-y: auto; padding: 0;
     }
 
     .cart-body::-webkit-scrollbar { width: 3px; }
-    .cart-body::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
+    .cart-body::-webkit-scrollbar-thumb { background: #2a2a3a; border-radius: 2px; }
 
     .cart-empty-state {
       display: flex; flex-direction: column;
       align-items: center; justify-content: center;
-      height: 100%; color: #444; gap: 10px; padding: 40px;
+      height: 100%; color: var(--pos-text-dim); gap: 12px; padding: 40px;
     }
 
-    .cart-empty-state svg { opacity: 0.3; }
-    .cart-empty-state p { font-size: 0.8125rem; text-align: center; line-height: 1.5; }
+    .cart-empty-state svg { opacity: 0.25; }
+    .cart-empty-state p { font-size: 0.8rem; text-align: center; line-height: 1.6; }
 
-    /* Cart item */
+    /* Cart items */
     .ci {
       display: flex; align-items: center;
-      gap: 10px; padding: 12px 18px;
-      border-bottom: 1px solid rgba(255,255,255,0.04);
+      gap: 10px; padding: 12px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
       transition: background 0.1s;
     }
 
-    .ci:hover { background: rgba(255,255,255,0.02); }
+    .ci:hover { background: rgba(255,255,255,0.015); }
 
     .ci-dot {
       width: 4px; height: 36px;
       border-radius: 2px; flex-shrink: 0;
     }
 
-    .ci-dot.tinto  { background: #9b2335; }
-    .ci-dot.branco { background: #c9a84c; }
+    .ci-dot.tinto  { background: var(--pos-wine); }
+    .ci-dot.branco { background: var(--pos-gold); }
     .ci-dot.rose   { background: #e75480; }
     .ci-dot.espumante { background: #d4b76a; }
     .ci-dot.porto  { background: #6b1825; }
@@ -328,12 +369,12 @@
     .ci-info { flex: 1; min-width: 0; }
 
     .ci-name {
-      font-size: 0.8125rem; font-weight: 500;
-      color: #e8e6f0; white-space: nowrap;
+      font-size: 0.8rem; font-weight: 500;
+      color: var(--pos-text); white-space: nowrap;
       overflow: hidden; text-overflow: ellipsis;
     }
 
-    .ci-meta { font-size: 0.6875rem; color: #555; margin-top: 1px; }
+    .ci-meta { font-size: 0.68rem; color: var(--pos-text-dim); margin-top: 1px; }
 
     .ci-qty {
       display: flex; align-items: center; gap: 2px; flex-shrink: 0;
@@ -341,41 +382,42 @@
 
     .ci-qty button {
       width: 26px; height: 26px; border-radius: 6px;
-      border: 1px solid rgba(255,255,255,0.1);
-      background: #1a1a22; color: #aaa;
-      font-size: 0.875rem; cursor: pointer;
+      border: 1px solid var(--pos-border);
+      background: var(--pos-elevated); color: var(--pos-text-sec);
+      font-size: 0.85rem; cursor: pointer;
       display: flex; align-items: center; justify-content: center;
-      transition: all 0.1s; font-family: inherit;
+      transition: all 0.1s; font-family: var(--pos-font);
     }
 
-    .ci-qty button:hover { border-color: #c9a84c; color: #c9a84c; }
+    .ci-qty button:hover { border-color: var(--pos-gold); color: var(--pos-gold); }
 
     .ci-qty span {
       width: 22px; text-align: center;
-      font-size: 0.8125rem; font-weight: 600; color: #e8e6f0;
+      font-size: 0.8rem; font-weight: 600; color: var(--pos-text);
     }
 
     .ci-price {
-      font-family: 'Playfair Display', serif;
-      font-size: 0.8125rem; font-weight: 600;
-      color: #c9a84c; min-width: 54px;
+      font-family: var(--pos-display);
+      font-size: 0.8rem; font-weight: 600;
+      color: var(--pos-gold); min-width: 52px;
       text-align: right; flex-shrink: 0;
     }
 
     .ci-del {
-      width: 24px; height: 24px; border: none;
-      background: transparent; color: #555;
+      width: 22px; height: 22px; border: none;
+      background: transparent; color: var(--pos-text-dim);
       cursor: pointer; display: flex;
       align-items: center; justify-content: center;
       border-radius: 4px; transition: all 0.1s; flex-shrink: 0;
     }
 
-    .ci-del:hover { background: rgba(248,113,113,0.15); color: #f87171; }
+    .ci-del:hover { background: rgba(248,113,113,0.12); color: var(--pos-danger); }
 
     /* Cart footer */
-    .cart-foot {
-      padding: 14px 18px;
-      border-top: 1px solid rgba(255,255,255,0.08);
+    .cart-footer {
+      padding: 16px 20px;
+      border-top: 1px solid var(--pos-border);
+      background: var(--pos-elevated);
       flex-shrink: 0;
     }
 
@@ -383,42 +425,306 @@
 
     .ct-row {
       display: flex; justify-content: space-between;
-      padding: 4px 0; font-size: 0.8125rem; color: #888;
+      padding: 3px 0; font-size: 0.8rem; color: var(--pos-text-sec);
     }
 
     .ct-row.total {
-      font-size: 1.25rem; font-weight: 700;
-      color: #e8e6f0; padding-top: 10px;
-      margin-top: 6px; border-top: 1px solid rgba(255,255,255,0.08);
-      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem; font-weight: 700;
+      color: var(--pos-text); padding-top: 10px;
+      margin-top: 8px; border-top: 1px solid var(--pos-border);
+      font-family: var(--pos-display);
     }
 
-    .ct-row.total .ct-v { color: #c9a84c; }
+    .ct-row.total .ct-v { color: var(--pos-gold); }
 
-    .btn-checkout {
-      width: 100%; padding: 14px;
-      border: none; border-radius: 12px;
-      background: linear-gradient(135deg, #c9a84c 0%, #a08530 100%);
-      color: #0a0a0f; font-family: 'Playfair Display', serif;
-      font-size: 1rem; font-weight: 700;
+    .btn-pay {
+      width: 100%; padding: 15px;
+      border: none; border-radius: var(--pos-r);
+      background: linear-gradient(135deg, var(--pos-gold) 0%, #a08530 100%);
+      color: var(--pos-bg); font-family: var(--pos-display);
+      font-size: 1.05rem; font-weight: 700;
       cursor: pointer; transition: all 0.2s;
       letter-spacing: 0.01em;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
     }
 
-    .btn-checkout:hover:not(:disabled) {
-      box-shadow: 0 6px 20px rgba(201,168,76,0.35);
+    .btn-pay:hover:not(:disabled) {
+      box-shadow: 0 8px 24px rgba(201,168,76,0.35);
       transform: translateY(-1px);
     }
 
-    .btn-checkout:disabled { opacity: 0.3; cursor: not-allowed; }
+    .btn-pay:disabled { opacity: 0.3; cursor: not-allowed; }
+    .btn-pay:active:not(:disabled) { transform: translateY(0); }
 
-    .btn-checkout:active:not(:disabled) { transform: translateY(0); }
+    /* ══════════════════════════════════════
+       MODALS — Self-contained POS modals
+       ══════════════════════════════════════ */
+    .pos-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.75);
+      backdrop-filter: blur(6px);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 9999;
+      opacity: 1;
+      transition: opacity 0.2s ease;
+      padding: 20px;
+    }
 
-    /* ── Responsive ── */
+    .pos-overlay.hidden {
+      opacity: 0; pointer-events: none;
+    }
+
+    .pos-modal {
+      background: var(--pos-surface);
+      border: 1px solid var(--pos-border);
+      border-radius: 16px;
+      width: 100%; max-width: 520px;
+      max-height: 85vh;
+      display: flex; flex-direction: column;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.6);
+      transform: scale(1);
+      transition: transform 0.2s ease;
+      overflow: hidden;
+    }
+
+    .pos-overlay.hidden .pos-modal {
+      transform: scale(0.95);
+    }
+
+    .pos-modal-head {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--pos-border);
+      background: linear-gradient(90deg, rgba(201,168,76,0.06) 0%, transparent 100%);
+      flex-shrink: 0;
+    }
+
+    .pos-modal-head h2 {
+      font-family: var(--pos-display);
+      font-size: 1.15rem; font-weight: 600;
+      color: var(--pos-text); margin: 0;
+    }
+
+    .pos-modal-close {
+      width: 32px; height: 32px; border: none;
+      background: transparent; color: var(--pos-text-sec);
+      cursor: pointer; border-radius: var(--pos-r-sm);
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s;
+    }
+
+    .pos-modal-close:hover { background: var(--pos-elevated); color: var(--pos-text); }
+
+    .pos-modal-body {
+      flex: 1; overflow-y: auto;
+      padding: 20px 24px;
+    }
+
+    .pos-modal-body::-webkit-scrollbar { width: 3px; }
+    .pos-modal-body::-webkit-scrollbar-thumb { background: #2a2a3a; border-radius: 2px; }
+
+    .pos-modal-foot {
+      display: flex; gap: 10px;
+      justify-content: flex-end;
+      padding: 16px 24px;
+      border-top: 1px solid var(--pos-border);
+      flex-shrink: 0;
+    }
+
+    /* Modal buttons */
+    .mbtn {
+      padding: 10px 22px; border-radius: var(--pos-r-sm);
+      font-size: 0.85rem; font-weight: 600;
+      cursor: pointer; transition: all 0.15s;
+      border: 1px solid var(--pos-border);
+      font-family: var(--pos-font);
+    }
+
+    .mbtn-ghost {
+      background: transparent; color: var(--pos-text-sec);
+    }
+
+    .mbtn-ghost:hover { background: var(--pos-elevated); color: var(--pos-text); }
+
+    .mbtn-gold {
+      background: linear-gradient(135deg, var(--pos-gold), #a08530);
+      color: var(--pos-bg); border-color: var(--pos-gold);
+    }
+
+    .mbtn-gold:hover { box-shadow: 0 4px 14px rgba(201,168,76,0.3); }
+
+    .mbtn-gold:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .mbtn-primary {
+      background: var(--pos-gold-dim); color: var(--pos-gold);
+      border-color: rgba(201,168,76,0.3);
+    }
+
+    .mbtn-primary:hover { background: var(--pos-gold-glow); }
+
+    /* Checkout sections */
+    .co-section {
+      background: var(--pos-elevated);
+      border: 1px solid var(--pos-border);
+      border-radius: var(--pos-r);
+      padding: 16px; margin-bottom: 14px;
+    }
+
+    .co-section h3 {
+      font-family: var(--pos-display);
+      font-size: 0.9rem; font-weight: 600;
+      color: var(--pos-text); margin-bottom: 12px;
+    }
+
+    .co-items-list {
+      display: flex; flex-direction: column; gap: 6px;
+    }
+
+    .co-item {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      font-size: 0.8rem; color: var(--pos-text-sec);
+      padding: 4px 0;
+    }
+
+    .co-item .co-item-name { flex: 1; color: var(--pos-text); font-weight: 500; }
+    .co-item .co-item-qty { color: var(--pos-text-dim); margin: 0 10px; font-size: 0.75rem; }
+    .co-item .co-item-price { color: var(--pos-gold); font-weight: 600; font-family: var(--pos-display); }
+
+    .co-totals {
+      background: var(--pos-elevated);
+      border: 1px solid var(--pos-border);
+      border-radius: var(--pos-r);
+      padding: 16px; margin-bottom: 14px;
+    }
+
+    .co-row {
+      display: flex; justify-content: space-between;
+      padding: 4px 0; font-size: 0.8125rem; color: var(--pos-text-sec);
+    }
+
+    .co-row.grand {
+      font-size: 1.15rem; font-weight: 700;
+      color: var(--pos-text); padding-top: 10px;
+      margin-top: 8px; border-top: 1px solid var(--pos-border);
+      font-family: var(--pos-display);
+    }
+
+    .co-row.grand span:last-child { color: var(--pos-gold); }
+
+    /* Form fields */
+    .co-label {
+      display: block; font-size: 0.75rem; font-weight: 500;
+      color: var(--pos-text-sec); margin-bottom: 6px;
+    }
+
+    .co-input {
+      width: 100%; padding: 9px 14px;
+      background: var(--pos-bg); border: 1px solid var(--pos-border);
+      border-radius: var(--pos-r-sm); color: var(--pos-text);
+      font-size: 0.825rem; font-family: var(--pos-font); outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .co-input:focus { border-color: var(--pos-gold); box-shadow: 0 0 0 2px var(--pos-gold-dim); }
+    .co-input::placeholder { color: var(--pos-text-dim); }
+
+    .co-field { margin-bottom: 12px; }
+
+    /* Pay methods */
+    .pay-methods {
+      display: flex; gap: 8px; margin-bottom: 12px;
+    }
+
+    .pay-method {
+      flex: 1; padding: 10px 8px;
+      background: var(--pos-bg); border: 2px solid var(--pos-border);
+      border-radius: var(--pos-r-sm); color: var(--pos-text-dim);
+      font-size: 0.75rem; font-weight: 500;
+      cursor: pointer; transition: all 0.15s;
+      text-align: center; font-family: var(--pos-font);
+      display: flex; flex-direction: column; align-items: center; gap: 5px;
+    }
+
+    .pay-method:hover { border-color: var(--pos-border-hover); color: var(--pos-text-sec); }
+
+    .pay-method.active {
+      background: var(--pos-gold-dim); border-color: var(--pos-gold);
+      color: var(--pos-gold);
+    }
+
+    .pay-panel {
+      padding: 12px; border: 1px solid var(--pos-border);
+      border-radius: var(--pos-r-sm); background: var(--pos-bg);
+      margin-top: 8px;
+    }
+
+    .pay-panel p {
+      font-size: 0.8rem; color: var(--pos-text-sec); text-align: center;
+    }
+
+    .troco-display {
+      padding: 10px; border-radius: var(--pos-r-sm);
+      text-align: center; font-weight: 600; font-size: 0.9rem;
+      margin-top: 8px;
+    }
+
+    .troco-display.ok { background: rgba(52,211,153,0.1); color: var(--pos-success); border: 1px solid rgba(52,211,153,0.2); }
+    .troco-display.bad { background: rgba(248,113,113,0.1); color: var(--pos-danger); border: 1px solid rgba(248,113,113,0.2); }
+
+    /* Receipt */
+    .receipt-box {
+      background: var(--pos-elevated);
+      border-radius: var(--pos-r);
+      padding: 24px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.75rem;
+      line-height: 1.8;
+      color: var(--pos-text-sec);
+    }
+
+    .receipt-line {
+      display: flex; justify-content: space-between;
+    }
+
+    .receipt-divider {
+      border-top: 1px dashed var(--pos-border);
+      margin: 8px 0;
+    }
+
+    .receipt-total-line {
+      display: flex; justify-content: space-between;
+      font-weight: 700; font-size: 0.9rem; color: var(--pos-gold);
+    }
+
+    .receipt-header {
+      text-align: center; margin-bottom: 12px;
+    }
+
+    .receipt-subtitle {
+      text-align: center; margin-top: 14px;
+      font-size: 0.75rem; color: var(--pos-text-dim);
+      font-family: var(--pos-font);
+    }
+
+    /* Toast */
+    .toasts-container {
+      position: fixed; top: 16px; right: 16px;
+      z-index: 99999; display: flex; flex-direction: column;
+      gap: 8px; pointer-events: none;
+    }
+
+    /* Responsive */
     @media (max-width: 860px) {
       .pos { grid-template-columns: 1fr; }
-      .pos-right { height: 45vh; border-left: none; border-top: 1px solid rgba(255,255,255,0.06); }
+      .pos-right {
+        height: 45vh; border-left: none;
+        border-top: 1px solid var(--pos-border);
+      }
       .pos-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+      .pos-brand h1 { display: none; }
+      .pos-brand small { display: none; }
     }
   </style>
 </head>
@@ -428,16 +734,16 @@
   <div class="pos">
     <!-- ═══ LEFT: PRODUCTS ═══ -->
     <div class="pos-left">
-      <div class="pos-header">
-        <div class="pos-logo">
-          <div class="pos-logo-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#0a0a0f" stroke-width="2" width="20" height="20">
+      <div class="pos-topbar">
+        <div class="pos-brand">
+          <div class="pos-brand-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#0c0c12" stroke-width="2" width="18" height="18">
               <path d="M8 22h8M12 11v11M7 11c0 2.8 2.2 5 5 5s5-2.2 5-5V3H7v8z"/><path d="M7 8h10"/>
             </svg>
           </div>
-          <div class="pos-logo-text">
+          <div>
             <h1>Vinha D'Ouro</h1>
-            <span>Ponto de Venda</span>
+            <small>Ponto de Venda</small>
           </div>
         </div>
 
@@ -448,14 +754,14 @@
           <input type="text" id="wine-search" placeholder="Pesquisar vinho..." onkeyup="searchWines(this.value)">
         </div>
 
-        <button class="pos-user" onclick="logout()" title="Sair">
+        <button class="pos-user-btn" onclick="logout()" title="Sair">
           <div class="pos-avatar" id="user-avatar">U</div>
           <span id="user-name">Utilizador</span>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
         </button>
       </div>
 
-      <div class="pos-tabs">
+      <div class="pos-categories">
         <button class="pos-tab active" data-filter="" onclick="filterByType('')">Todos</button>
         <button class="pos-tab" data-filter="Tinto" onclick="filterByType('Tinto')">Tinto</button>
         <button class="pos-tab" data-filter="Branco" onclick="filterByType('Branco')">Branco</button>
@@ -469,7 +775,7 @@
         </div>
       </div>
 
-      <div class="pos-status">
+      <div class="pos-statusbar">
         <div><span class="status-dot" id="api-dot"></span><span id="api-label">API</span></div>
         <div id="pos-clock"></div>
         <div id="pos-product-count"></div>
@@ -478,13 +784,13 @@
 
     <!-- ═══ RIGHT: CART ═══ -->
     <div class="pos-right">
-      <div class="cart-head">
+      <div class="cart-header">
         <h2>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
           Carrinho
           <span class="cart-badge" id="cart-count">0</span>
         </h2>
-        <button class="cart-clear" onclick="clearCart()" id="cart-clear-btn" style="display:none">Limpar</button>
+        <button class="cart-clear-btn" onclick="clearCart()" id="cart-clear-btn" style="display:none">Limpar</button>
       </div>
 
       <div class="cart-body" id="cart-items">
@@ -497,68 +803,134 @@
         </div>
       </div>
 
-      <div class="cart-foot">
+      <div class="cart-footer">
         <div class="cart-totals">
           <div class="ct-row"><span>Subtotal</span><span class="ct-v" id="cart-subtotal">€0,00</span></div>
           <div class="ct-row"><span>IVA (23%)</span><span class="ct-v" id="cart-iva">€0,00</span></div>
           <div class="ct-row total"><span>Total</span><span class="ct-v" id="cart-total">€0,00</span></div>
         </div>
-        <button class="btn-checkout" id="checkout-btn" onclick="openCheckout()" disabled>
+        <button class="btn-pay" id="checkout-btn" onclick="openCheckout()" disabled>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
           Finalizar Venda
         </button>
       </div>
     </div>
   </div>
 
-  <!-- SIZE MODAL (optional, for special sizes) -->
-  <div class="modal hidden" id="size-modal">
-    <div class="modal-backdrop" onclick="closeSizeModal()"></div>
-    <div class="modal-content">
-      <div class="modal-header"><h2 class="modal-title">Formato</h2><button class="modal-close" onclick="closeSizeModal()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
-      <div class="modal-body"><p class="modal-subtitle" id="size-wine-name"></p><div class="size-options" id="size-options"></div></div>
-      <div class="modal-footer"><button class="btn btn-secondary" onclick="closeSizeModal()">Cancelar</button></div>
+  <!-- ═══ SIZE MODAL ═══ -->
+  <div class="pos-overlay hidden" id="size-modal">
+    <div class="pos-modal" onclick="event.stopPropagation()">
+      <div class="pos-modal-head">
+        <h2>Formato</h2>
+        <button class="pos-modal-close" onclick="closeSizeModal()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      </div>
+      <div class="pos-modal-body">
+        <p style="color:var(--pos-text-sec);margin-bottom:14px;" id="size-wine-name"></p>
+        <div id="size-options" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:10px;"></div>
+      </div>
+      <div class="pos-modal-foot">
+        <button class="mbtn mbtn-ghost" onclick="closeSizeModal()">Cancelar</button>
+      </div>
     </div>
   </div>
 
-  <!-- CHECKOUT MODAL -->
-  <div class="modal hidden" id="checkout-modal">
-    <div class="modal-backdrop" onclick="closeCheckout()"></div>
-    <div class="modal-content">
-      <div class="modal-header"><h2 class="modal-title">Finalizar Venda</h2><button class="modal-close" onclick="closeCheckout()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
-      <div class="modal-body">
-        <div class="checkout-section"><h3 class="checkout-section-title">Resumo</h3><div id="co-items" class="checkout-items-list"></div></div>
-        <div class="checkout-totals">
-          <div class="total-row"><span>Subtotal:</span><span class="total-value" id="co-subtotal">€0,00</span></div>
-          <div class="total-row"><span>IVA (23%):</span><span class="total-value" id="co-iva">€0,00</span></div>
-          <div class="total-row"><span id="co-discount-line" class="hidden">Desconto:</span><span class="total-value hidden" id="co-discount-val">-€0,00</span></div>
-          <div class="total-row grand"><span>Total:</span><span class="total-value" id="co-total">€0,00</span></div>
+  <!-- ═══ CHECKOUT MODAL ═══ -->
+  <div class="pos-overlay hidden" id="checkout-modal" onclick="closeCheckout()">
+    <div class="pos-modal" onclick="event.stopPropagation()" style="max-width:540px;">
+      <div class="pos-modal-head">
+        <h2>Finalizar Venda</h2>
+        <button class="pos-modal-close" onclick="closeCheckout()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      </div>
+      <div class="pos-modal-body">
+        <!-- Items summary -->
+        <div class="co-section">
+          <h3>Resumo</h3>
+          <div class="co-items-list" id="co-items"></div>
         </div>
-        <div class="checkout-section"><label class="form-label">Desconto % (opcional)</label><input type="number" id="co-discount" class="form-input" placeholder="0" min="0" max="100" onchange="updateCheckoutTotals()"></div>
-        <div class="checkout-section"><label class="form-label">NIF (opcional)</label><input type="text" id="co-nif" class="form-input" placeholder="123456789" maxlength="9"></div>
-        <div class="checkout-section"><label class="form-label">Notas (opcional)</label><textarea id="co-notes" class="form-input" placeholder="Observações..." rows="2"></textarea></div>
-        <div class="checkout-section">
-          <h3 class="checkout-section-title">Pagamento</h3>
-          <div class="pay-methods">
-            <button class="pay-method active" data-method="Cartão" onclick="selectPaymentMethod('Cartão')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Cartão</button>
-            <button class="pay-method" data-method="Numerário" onclick="selectPaymentMethod('Numerário')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><circle cx="12" cy="12" r="3"/></svg>Numerário</button>
-            <button class="pay-method" data-method="MB Way" onclick="selectPaymentMethod('MB Way')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>MB Way</button>
+
+        <!-- Totals -->
+        <div class="co-totals">
+          <div class="co-row"><span>Subtotal</span><span id="co-subtotal">€0,00</span></div>
+          <div class="co-row"><span>IVA (23%)</span><span id="co-iva">€0,00</span></div>
+          <div class="co-row" id="co-discount-line" style="display:none"><span>Desconto</span><span id="co-discount-val">-€0,00</span></div>
+          <div class="co-row grand"><span>Total</span><span id="co-total">€0,00</span></div>
+        </div>
+
+        <!-- Discount -->
+        <div class="co-section">
+          <div class="co-field">
+            <label class="co-label">Desconto % (opcional)</label>
+            <input type="number" id="co-discount" class="co-input" placeholder="0" min="0" max="100" oninput="updateCheckoutTotals()">
+          </div>
+          <div class="co-field">
+            <label class="co-label">NIF (opcional)</label>
+            <input type="text" id="co-nif" class="co-input" placeholder="123456789" maxlength="9">
+          </div>
+          <div class="co-field" style="margin-bottom:0">
+            <label class="co-label">Notas (opcional)</label>
+            <textarea id="co-notes" class="co-input" placeholder="Observações..." rows="2" style="resize:vertical;"></textarea>
           </div>
         </div>
-        <div id="co-card-panel" class="payment-panel"><p class="payment-info">Cartão habilitado</p></div>
-        <div id="co-cash-panel" class="payment-panel hidden"><div class="form-group"><label class="form-label">Valor Recebido</label><input type="number" id="co-cash-received" class="form-input" placeholder="€0.00" min="0" step="0.01" onchange="calculateChange()"></div><div class="form-group"><label class="form-label">Troco</label><div class="display-field" id="co-troco">€0,00</div></div></div>
-        <div id="co-mbway-panel" class="payment-panel hidden"><p class="payment-info">MB Way</p><div class="display-field" id="co-pay-display">€0,00</div></div>
+
+        <!-- Payment method -->
+        <div class="co-section">
+          <h3>Pagamento</h3>
+          <div class="pay-methods">
+            <button class="pay-method active" data-method="Cartão" onclick="selectPaymentMethod('Cartão')">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+              Cartão
+            </button>
+            <button class="pay-method" data-method="Numerário" onclick="selectPaymentMethod('Numerário')">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 100 4h4a2 2 0 110 4H8"/><path d="M12 18V6"/></svg>
+              Numerário
+            </button>
+            <button class="pay-method" data-method="MB Way" onclick="selectPaymentMethod('MB Way')">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+              MB Way
+            </button>
+          </div>
+
+          <div id="co-card-panel" class="pay-panel">
+            <p>Pagamento por cartão habilitado</p>
+          </div>
+          <div id="co-cash-panel" class="pay-panel" style="display:none">
+            <div class="co-field">
+              <label class="co-label">Valor Recebido (€)</label>
+              <input type="number" id="co-cash-received" class="co-input" placeholder="0.00" min="0" step="0.01" oninput="calculateChange()">
+            </div>
+            <div class="troco-display" id="co-troco" style="display:none">€0,00</div>
+          </div>
+          <div id="co-mbway-panel" class="pay-panel" style="display:none">
+            <p>Pagamento MB Way</p>
+            <div style="text-align:center;margin-top:6px;font-family:var(--pos-display);font-size:1.1rem;font-weight:700;color:var(--pos-gold);" id="co-pay-display">€0,00</div>
+          </div>
+        </div>
       </div>
-      <div class="modal-footer"><button class="btn btn-secondary" onclick="closeCheckout()">Cancelar</button><button id="process-btn" class="btn btn-gold" onclick="processPayment()">Confirmar Pagamento</button></div>
+      <div class="pos-modal-foot">
+        <button class="mbtn mbtn-ghost" onclick="closeCheckout()">Cancelar</button>
+        <button class="mbtn mbtn-gold" id="process-btn" onclick="processPayment()">Confirmar Pagamento</button>
+      </div>
     </div>
   </div>
 
-  <!-- RECEIPT MODAL -->
-  <div class="modal hidden" id="receipt-modal">
-    <div class="modal-backdrop" onclick="closeReceipt()"></div>
-    <div class="modal-content">
-      <div class="modal-header"><h2 class="modal-title">Recibo</h2><button class="modal-close" onclick="closeReceipt()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
-      <div class="modal-body"><div id="receipt-content" class="receipt-content"></div><p id="receipt-subtitle" class="receipt-subtitle"></p></div>
-      <div class="modal-footer"><button class="btn btn-secondary" onclick="printReceipt()">Imprimir</button><button class="btn btn-primary" onclick="newSale()">Nova Venda</button></div>
+  <!-- ═══ RECEIPT MODAL ═══ -->
+  <div class="pos-overlay hidden" id="receipt-modal" onclick="closeReceipt()">
+    <div class="pos-modal" onclick="event.stopPropagation()" style="max-width:440px;">
+      <div class="pos-modal-head">
+        <h2>Recibo</h2>
+        <button class="pos-modal-close" onclick="closeReceipt()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      </div>
+      <div class="pos-modal-body">
+        <div class="receipt-box" id="receipt-content"></div>
+        <p class="receipt-subtitle" id="receipt-subtitle"></p>
+      </div>
+      <div class="pos-modal-foot">
+        <button class="mbtn mbtn-ghost" onclick="printReceipt()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          Imprimir
+        </button>
+        <button class="mbtn mbtn-gold" onclick="newSale()">Nova Venda</button>
+      </div>
     </div>
   </div>
 
