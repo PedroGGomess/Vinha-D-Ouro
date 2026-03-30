@@ -6,776 +6,673 @@
   <title>Ponto de Venda — Vinha D'Ouro</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     /* ═══════════════════════════════════════════
-       POS TERMINAL v3 — Modern Shopify/Square Style
+       POS TERMINAL v4 — Modisoft / Square Style
+       Colored product tiles, flat design, bold UI
        ═══════════════════════════════════════════ */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    :root {
-      --pos-bg: #0c0c12;
-      --pos-surface: #14141c;
-      --pos-elevated: #1a1a24;
-      --pos-border: rgba(255,255,255,0.07);
-      --pos-border-hover: rgba(255,255,255,0.14);
-      --pos-gold: #c9a84c;
-      --pos-gold-dim: rgba(201,168,76,0.15);
-      --pos-gold-glow: rgba(201,168,76,0.25);
-      --pos-wine: #9b2335;
-      --pos-text: #eae8f0;
-      --pos-text-sec: #8b8b9e;
-      --pos-text-dim: #55556a;
-      --pos-success: #34d399;
-      --pos-danger: #f87171;
-      --pos-warning: #fbbf24;
-      --pos-r: 12px;
-      --pos-r-sm: 8px;
-      --pos-font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      --pos-display: 'Playfair Display', Georgia, serif;
-    }
-
     body {
-      margin: 0; overflow: hidden;
-      background: var(--pos-bg);
-      font-family: var(--pos-font);
-      color: var(--pos-text);
-      -webkit-font-smoothing: antialiased;
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: #1a1a2e; color: #f0f0f0;
+      overflow: hidden; height: 100vh;
     }
 
-    /* ── MAIN LAYOUT ── */
-    .pos {
+    .pos-app {
       display: grid;
-      grid-template-columns: 1fr 380px;
+      grid-template-columns: 1fr 400px;
+      grid-template-rows: 60px 1fr;
       height: 100vh;
     }
 
-    /* ══════════════════════════════════════
-       LEFT PANEL — Products
-       ══════════════════════════════════════ */
-    .pos-left {
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      background: var(--pos-bg);
+    /* ── TOP BAR (spans full width) ── */
+    .topbar {
+      grid-column: 1 / -1;
+      display: flex; align-items: center; gap: 12px;
+      padding: 0 20px;
+      background: #16162a;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
     }
 
-    /* Top Bar */
-    .pos-topbar {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      padding: 12px 24px;
-      background: var(--pos-surface);
-      border-bottom: 1px solid var(--pos-border);
-      flex-shrink: 0;
+    .topbar-brand {
+      display: flex; align-items: center; gap: 10px;
+      padding-right: 20px; border-right: 1px solid rgba(255,255,255,0.08);
+      margin-right: 8px;
     }
 
-    .pos-brand {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-shrink: 0;
-    }
-
-    .pos-brand-icon {
-      width: 36px; height: 36px;
-      background: linear-gradient(135deg, var(--pos-gold), #8b7535);
-      border-radius: 10px;
+    .topbar-brand-dot {
+      width: 32px; height: 32px; border-radius: 8px;
+      background: linear-gradient(135deg, #d4a843, #9e7b2a);
       display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
+      font-size: 16px;
     }
 
-    .pos-brand h1 {
-      font-family: var(--pos-display);
-      font-size: 1.05rem; font-weight: 700;
-      color: #fff; line-height: 1;
+    .topbar-brand h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.95rem; font-weight: 700; color: #fff;
     }
 
-    .pos-brand small {
-      font-size: 0.6rem; color: var(--pos-gold);
-      text-transform: uppercase; letter-spacing: 0.14em; font-weight: 600;
+    .topbar-search {
+      flex: 1; max-width: 380px; position: relative;
     }
 
-    /* Search */
-    .pos-search {
-      flex: 1; max-width: 400px; position: relative; margin-left: auto;
+    .topbar-search input {
+      width: 100%; padding: 8px 14px 8px 36px;
+      background: #1f1f38; border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 8px; color: #eee;
+      font-size: 0.8rem; font-family: inherit; outline: none;
     }
 
-    .pos-search svg {
-      position: absolute; left: 12px; top: 50%;
-      transform: translateY(-50%); color: var(--pos-text-dim);
-      pointer-events: none;
+    .topbar-search input:focus { border-color: #d4a843; }
+    .topbar-search input::placeholder { color: #555; }
+
+    .topbar-search svg {
+      position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+      color: #555; pointer-events: none;
     }
 
-    .pos-search input {
-      width: 100%; padding: 9px 14px 9px 36px;
-      background: var(--pos-bg); border: 1px solid var(--pos-border);
-      border-radius: var(--pos-r); color: var(--pos-text);
-      font-size: 0.8125rem; font-family: var(--pos-font); outline: none;
-      transition: border-color 0.2s;
+    .topbar-actions {
+      display: flex; align-items: center; gap: 8px; margin-left: auto;
     }
 
-    .pos-search input:focus {
-      border-color: var(--pos-gold);
-      box-shadow: 0 0 0 3px var(--pos-gold-dim);
+    .topbar-btn {
+      display: flex; align-items: center; gap: 6px;
+      padding: 7px 14px; border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: transparent; color: #aaa;
+      font-size: 0.75rem; cursor: pointer;
+      font-family: inherit; transition: all 0.15s;
     }
 
-    .pos-search input::placeholder { color: var(--pos-text-dim); }
+    .topbar-btn:hover { background: #1f1f38; color: #eee; }
+    .topbar-btn.returns { border-color: rgba(251,191,36,0.2); color: #fbbf24; }
+    .topbar-btn.returns:hover { background: rgba(251,191,36,0.08); }
 
-    /* User button */
-    .pos-user-btn {
-      display: flex; align-items: center; gap: 8px;
-      padding: 7px 14px; border-radius: var(--pos-r);
-      border: 1px solid var(--pos-border);
-      background: transparent; color: var(--pos-text-sec);
-      font-size: 0.8rem; cursor: pointer;
-      font-family: var(--pos-font);
-      transition: all 0.15s;
-    }
-
-    .pos-user-btn:hover { background: var(--pos-elevated); color: var(--pos-text); }
-
-    .pos-avatar {
-      width: 28px; height: 28px; border-radius: var(--pos-r-sm);
-      background: linear-gradient(135deg, #8b7535, var(--pos-gold));
+    .topbar-avatar {
+      width: 28px; height: 28px; border-radius: 7px;
+      background: linear-gradient(135deg, #9e7b2a, #d4a843);
       display: flex; align-items: center; justify-content: center;
-      font-size: 0.7rem; font-weight: 700; color: var(--pos-bg);
+      font-size: 0.65rem; font-weight: 700; color: #16162a;
     }
 
-    /* Category Tabs */
-    .pos-categories {
-      display: flex; gap: 6px;
-      padding: 10px 24px;
-      background: var(--pos-surface);
-      border-bottom: 1px solid var(--pos-border);
-      flex-shrink: 0;
-      overflow-x: auto;
+    /* ── LEFT: Products ── */
+    .products-panel {
+      display: flex; flex-direction: column;
+      overflow: hidden; background: #1a1a2e;
     }
 
-    .pos-tab {
-      padding: 7px 20px; border-radius: 24px;
-      border: 1px solid var(--pos-border);
-      background: transparent; color: var(--pos-text-dim);
-      font-size: 0.8rem; font-weight: 500;
-      cursor: pointer; transition: all 0.15s;
-      white-space: nowrap; font-family: var(--pos-font);
+    /* Category strip */
+    .cat-strip {
+      display: flex; gap: 0; flex-shrink: 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      background: #16162a;
     }
 
-    .pos-tab:hover { background: var(--pos-elevated); color: var(--pos-text-sec); border-color: var(--pos-border-hover); }
-
-    .pos-tab.active {
-      background: var(--pos-gold); color: var(--pos-bg);
-      border-color: var(--pos-gold); font-weight: 600;
+    .cat-btn {
+      padding: 11px 22px;
+      background: transparent; border: none;
+      color: #666; font-size: 0.78rem; font-weight: 500;
+      cursor: pointer; font-family: inherit;
+      border-bottom: 2px solid transparent;
+      transition: all 0.15s; white-space: nowrap;
     }
 
-    /* Product Grid */
-    .pos-products {
-      flex: 1; overflow-y: auto;
-      padding: 20px 24px;
+    .cat-btn:hover { color: #bbb; background: rgba(255,255,255,0.02); }
+
+    .cat-btn.active {
+      color: #d4a843; border-bottom-color: #d4a843;
+      background: rgba(212,168,67,0.04);
     }
 
-    .pos-products::-webkit-scrollbar { width: 4px; }
-    .pos-products::-webkit-scrollbar-thumb { background: #2a2a3a; border-radius: 2px; }
+    /* Product grid */
+    .products-scroll {
+      flex: 1; overflow-y: auto; padding: 16px;
+    }
 
-    .pos-grid {
+    .products-scroll::-webkit-scrollbar { width: 4px; }
+    .products-scroll::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
+
+    .product-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
-      gap: 14px;
+      grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
+      gap: 10px;
     }
 
-    /* Product Card */
-    .p-card {
-      background: var(--pos-surface);
-      border: 1px solid var(--pos-border);
-      border-radius: var(--pos-r);
-      padding: 16px;
+    /* PRODUCT CARD — Colored tiles like Modisoft */
+    .wine-tile {
+      border-radius: 12px;
+      padding: 16px 14px;
       cursor: pointer;
-      transition: all 0.15s ease;
-      display: flex;
-      flex-direction: column;
-      position: relative;
-      min-height: 190px;
+      transition: all 0.12s ease;
+      display: flex; flex-direction: column;
+      min-height: 145px; position: relative;
+      border: none; overflow: hidden;
     }
 
-    .p-card:hover {
-      border-color: var(--pos-gold-glow);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+    .wine-tile:hover {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
     }
 
-    .p-card:active { transform: scale(0.97); }
-    .p-card.oos { opacity: 0.3; pointer-events: none; }
+    .wine-tile:active { transform: scale(0.97); }
+    .wine-tile.oos { opacity: 0.3; pointer-events: none; }
 
-    .p-badge {
-      position: absolute; top: 10px; right: 10px;
+    /* Color themes per wine type */
+    .wine-tile.t-tinto    { background: linear-gradient(145deg, #6b1a28 0%, #3d0f18 100%); }
+    .wine-tile.t-branco   { background: linear-gradient(145deg, #5c5220 0%, #33300f 100%); }
+    .wine-tile.t-rose     { background: linear-gradient(145deg, #6b2854 0%, #3d0f30 100%); }
+    .wine-tile.t-espumante{ background: linear-gradient(145deg, #2a4a5c 0%, #152833 100%); }
+    .wine-tile.t-porto    { background: linear-gradient(145deg, #4a1a1a 0%, #2a0d0d 100%); }
+
+    .wine-tile .tile-type {
       font-size: 0.55rem; font-weight: 700;
-      text-transform: uppercase; letter-spacing: 0.05em;
-      padding: 3px 8px; border-radius: 6px;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      opacity: 0.7; margin-bottom: 6px;
     }
 
-    .p-badge.tinto   { background: rgba(155,35,53,0.25); color: #e8576b; }
-    .p-badge.branco  { background: rgba(201,168,76,0.15); color: #d4b76a; }
-    .p-badge.rose    { background: rgba(231,84,128,0.15); color: #f472b6; }
-    .p-badge.espumante { background: rgba(201,168,76,0.1); color: var(--pos-gold); }
-    .p-badge.porto   { background: rgba(139,24,37,0.25); color: #c05060; }
-
-    .p-visual {
-      height: 65px;
-      display: flex; align-items: center; justify-content: center;
-      margin-bottom: 10px;
+    .wine-tile .tile-icon {
+      font-size: 1.6rem; margin-bottom: 8px;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
     }
 
-    .p-visual svg { height: 55px; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.35)); }
-
-    .p-name {
-      font-size: 0.8125rem; font-weight: 600; color: var(--pos-text);
-      line-height: 1.3; margin-bottom: 2px;
+    .wine-tile .tile-name {
+      font-size: 0.78rem; font-weight: 600; color: #fff;
+      line-height: 1.25; margin-bottom: auto;
       display: -webkit-box; -webkit-line-clamp: 2;
       -webkit-box-orient: vertical; overflow: hidden;
     }
 
-    .p-region {
-      font-size: 0.6875rem; color: var(--pos-text-dim);
-      margin-bottom: 10px;
-    }
-
-    .p-bottom {
+    .wine-tile .tile-bottom {
       display: flex; align-items: baseline;
-      justify-content: space-between; margin-top: auto;
+      justify-content: space-between; margin-top: 10px;
     }
 
-    .p-price {
-      font-family: var(--pos-display);
-      font-size: 1.05rem; font-weight: 700; color: var(--pos-gold);
+    .wine-tile .tile-price {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.05rem; font-weight: 700; color: #fff;
     }
 
-    .p-stock {
-      font-size: 0.6rem; color: var(--pos-text-dim);
-      background: var(--pos-elevated); padding: 2px 8px;
-      border-radius: 10px;
+    .wine-tile .tile-stock {
+      font-size: 0.6rem; opacity: 0.55;
+      background: rgba(0,0,0,0.25);
+      padding: 2px 7px; border-radius: 8px;
     }
 
-    .p-stock.low { color: var(--pos-warning); background: rgba(251,191,36,0.08); }
-    .p-stock.oos { color: var(--pos-danger); }
+    .wine-tile .tile-stock.low { color: #fbbf24; opacity: 0.9; }
+    .wine-tile .tile-stock.oos-label { color: #f87171; opacity: 0.9; }
 
     .pos-empty {
       grid-column: 1/-1; text-align: center;
-      padding: 80px 20px; color: var(--pos-text-dim);
-      font-size: 0.9rem;
+      padding: 80px 20px; color: #555; font-size: 0.85rem;
     }
 
-    /* Status Bar */
-    .pos-statusbar {
+    /* Status bar */
+    .statusbar {
       display: flex; align-items: center;
       justify-content: space-between;
-      padding: 8px 24px;
-      background: var(--pos-surface);
-      border-top: 1px solid var(--pos-border);
-      font-size: 0.6875rem; color: var(--pos-text-dim);
+      padding: 7px 16px;
+      background: #16162a;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      font-size: 0.65rem; color: #444;
       flex-shrink: 0;
     }
 
     .status-dot {
       width: 6px; height: 6px; border-radius: 50%;
-      background: var(--pos-success); display: inline-block;
-      margin-right: 6px;
+      background: #34d399; display: inline-block;
+      margin-right: 5px;
     }
 
-    .status-dot.off { background: var(--pos-danger); }
+    .status-dot.off { background: #f87171; }
 
-    /* ══════════════════════════════════════
-       RIGHT PANEL — Cart
-       ══════════════════════════════════════ */
-    .pos-right {
+    /* ── RIGHT: Cart Panel ── */
+    .cart-panel {
       display: flex; flex-direction: column;
-      background: var(--pos-surface);
-      border-left: 1px solid var(--pos-border);
+      background: #16162a;
+      border-left: 1px solid rgba(255,255,255,0.06);
     }
 
-    .cart-header {
+    .cart-head {
       display: flex; align-items: center;
       justify-content: space-between;
-      padding: 16px 20px;
-      border-bottom: 1px solid var(--pos-border);
+      padding: 14px 18px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
     }
 
-    .cart-header h2 {
-      font-family: var(--pos-display);
-      font-size: 1.05rem; font-weight: 600;
-      color: var(--pos-text); margin: 0;
-      display: flex; align-items: center; gap: 10px;
+    .cart-head h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem; font-weight: 600; color: #eee;
+      display: flex; align-items: center; gap: 8px;
     }
 
     .cart-badge {
-      background: var(--pos-gold); color: var(--pos-bg);
-      font-family: var(--pos-font);
-      font-size: 0.65rem; font-weight: 700;
-      min-width: 20px; height: 20px;
+      background: #d4a843; color: #16162a;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.6rem; font-weight: 700;
+      min-width: 18px; height: 18px;
       display: inline-flex; align-items: center;
-      justify-content: center; border-radius: 10px;
-      padding: 0 6px;
+      justify-content: center; border-radius: 9px;
+      padding: 0 5px;
     }
 
     .cart-clear-btn {
-      padding: 5px 12px; border: none;
+      padding: 4px 10px; border: none;
       background: rgba(248,113,113,0.1);
-      color: var(--pos-danger); font-size: 0.7rem;
-      font-weight: 500; border-radius: 6px;
-      cursor: pointer; transition: all 0.15s;
-      font-family: var(--pos-font);
+      color: #f87171; font-size: 0.65rem;
+      font-weight: 500; border-radius: 5px;
+      cursor: pointer; font-family: inherit;
     }
 
     .cart-clear-btn:hover { background: rgba(248,113,113,0.2); }
 
-    /* Cart body */
     .cart-body {
-      flex: 1; overflow-y: auto; padding: 0;
+      flex: 1; overflow-y: auto;
     }
 
     .cart-body::-webkit-scrollbar { width: 3px; }
-    .cart-body::-webkit-scrollbar-thumb { background: #2a2a3a; border-radius: 2px; }
+    .cart-body::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
 
     .cart-empty-state {
       display: flex; flex-direction: column;
       align-items: center; justify-content: center;
-      height: 100%; color: var(--pos-text-dim); gap: 12px; padding: 40px;
+      height: 100%; color: #444; gap: 10px; padding: 40px;
     }
 
-    .cart-empty-state svg { opacity: 0.25; }
-    .cart-empty-state p { font-size: 0.8rem; text-align: center; line-height: 1.6; }
+    .cart-empty-state svg { opacity: 0.2; }
+    .cart-empty-state p { font-size: 0.75rem; text-align: center; line-height: 1.5; }
 
-    /* Cart items */
+    /* Cart item */
     .ci {
       display: flex; align-items: center;
-      gap: 10px; padding: 12px 20px;
+      gap: 8px; padding: 10px 18px;
       border-bottom: 1px solid rgba(255,255,255,0.03);
-      transition: background 0.1s;
     }
 
-    .ci:hover { background: rgba(255,255,255,0.015); }
+    .ci:hover { background: rgba(255,255,255,0.01); }
 
     .ci-dot {
-      width: 4px; height: 36px;
-      border-radius: 2px; flex-shrink: 0;
+      width: 4px; height: 32px; border-radius: 2px; flex-shrink: 0;
     }
 
-    .ci-dot.tinto  { background: var(--pos-wine); }
-    .ci-dot.branco { background: var(--pos-gold); }
+    .ci-dot.tinto  { background: #9b2335; }
+    .ci-dot.branco { background: #d4a843; }
     .ci-dot.rose   { background: #e75480; }
-    .ci-dot.espumante { background: #d4b76a; }
+    .ci-dot.espumante { background: #5a8fa8; }
     .ci-dot.porto  { background: #6b1825; }
 
     .ci-info { flex: 1; min-width: 0; }
 
     .ci-name {
-      font-size: 0.8rem; font-weight: 500;
-      color: var(--pos-text); white-space: nowrap;
+      font-size: 0.75rem; font-weight: 500;
+      color: #eee; white-space: nowrap;
       overflow: hidden; text-overflow: ellipsis;
     }
 
-    .ci-meta { font-size: 0.68rem; color: var(--pos-text-dim); margin-top: 1px; }
+    .ci-meta { font-size: 0.65rem; color: #555; margin-top: 1px; }
 
     .ci-qty {
       display: flex; align-items: center; gap: 2px; flex-shrink: 0;
     }
 
     .ci-qty button {
-      width: 26px; height: 26px; border-radius: 6px;
-      border: 1px solid var(--pos-border);
-      background: var(--pos-elevated); color: var(--pos-text-sec);
-      font-size: 0.85rem; cursor: pointer;
+      width: 24px; height: 24px; border-radius: 5px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: #1f1f38; color: #999;
+      font-size: 0.8rem; cursor: pointer;
       display: flex; align-items: center; justify-content: center;
-      transition: all 0.1s; font-family: var(--pos-font);
     }
 
-    .ci-qty button:hover { border-color: var(--pos-gold); color: var(--pos-gold); }
+    .ci-qty button:hover { border-color: #d4a843; color: #d4a843; }
 
     .ci-qty span {
-      width: 22px; text-align: center;
-      font-size: 0.8rem; font-weight: 600; color: var(--pos-text);
+      width: 20px; text-align: center;
+      font-size: 0.75rem; font-weight: 600; color: #eee;
     }
 
     .ci-price {
-      font-family: var(--pos-display);
-      font-size: 0.8rem; font-weight: 600;
-      color: var(--pos-gold); min-width: 52px;
+      font-family: 'Playfair Display', serif;
+      font-size: 0.75rem; font-weight: 600;
+      color: #d4a843; min-width: 48px;
       text-align: right; flex-shrink: 0;
     }
 
     .ci-del {
-      width: 22px; height: 22px; border: none;
-      background: transparent; color: var(--pos-text-dim);
+      width: 20px; height: 20px; border: none;
+      background: transparent; color: #444;
       cursor: pointer; display: flex;
       align-items: center; justify-content: center;
-      border-radius: 4px; transition: all 0.1s; flex-shrink: 0;
+      border-radius: 4px; flex-shrink: 0;
     }
 
-    .ci-del:hover { background: rgba(248,113,113,0.12); color: var(--pos-danger); }
+    .ci-del:hover { background: rgba(248,113,113,0.1); color: #f87171; }
 
     /* Cart footer */
     .cart-footer {
-      padding: 16px 20px;
-      border-top: 1px solid var(--pos-border);
-      background: var(--pos-elevated);
+      padding: 14px 18px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      background: #131325;
       flex-shrink: 0;
     }
 
-    .cart-totals { margin-bottom: 14px; }
+    .cart-totals { margin-bottom: 12px; }
 
     .ct-row {
       display: flex; justify-content: space-between;
-      padding: 3px 0; font-size: 0.8rem; color: var(--pos-text-sec);
+      padding: 3px 0; font-size: 0.75rem; color: #777;
     }
 
     .ct-row.total {
-      font-size: 1.3rem; font-weight: 700;
-      color: var(--pos-text); padding-top: 10px;
-      margin-top: 8px; border-top: 1px solid var(--pos-border);
-      font-family: var(--pos-display);
+      font-size: 1.25rem; font-weight: 700;
+      color: #eee; padding-top: 8px;
+      margin-top: 6px; border-top: 1px solid rgba(255,255,255,0.08);
+      font-family: 'Playfair Display', serif;
     }
 
-    .ct-row.total .ct-v { color: var(--pos-gold); }
+    .ct-row.total .ct-v { color: #d4a843; }
 
     .btn-pay {
-      width: 100%; padding: 15px;
-      border: none; border-radius: var(--pos-r);
-      background: linear-gradient(135deg, var(--pos-gold) 0%, #a08530 100%);
-      color: var(--pos-bg); font-family: var(--pos-display);
-      font-size: 1.05rem; font-weight: 700;
+      width: 100%; padding: 14px;
+      border: none; border-radius: 10px;
+      background: linear-gradient(135deg, #d4a843 0%, #9e7b2a 100%);
+      color: #16162a; font-family: 'Playfair Display', serif;
+      font-size: 1rem; font-weight: 700;
       cursor: pointer; transition: all 0.2s;
-      letter-spacing: 0.01em;
       display: flex; align-items: center; justify-content: center; gap: 8px;
     }
 
     .btn-pay:hover:not(:disabled) {
-      box-shadow: 0 8px 24px rgba(201,168,76,0.35);
+      box-shadow: 0 6px 20px rgba(212,168,67,0.35);
       transform: translateY(-1px);
     }
 
     .btn-pay:disabled { opacity: 0.3; cursor: not-allowed; }
-    .btn-pay:active:not(:disabled) { transform: translateY(0); }
 
     /* ══════════════════════════════════════
-       MODALS — Self-contained POS modals
+       MODALS (self-contained, no style.css)
        ══════════════════════════════════════ */
     .pos-overlay {
       position: fixed; inset: 0;
-      background: rgba(0,0,0,0.75);
-      backdrop-filter: blur(6px);
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: blur(8px);
       display: flex; align-items: center; justify-content: center;
-      z-index: 9999;
-      opacity: 1;
-      transition: opacity 0.2s ease;
-      padding: 20px;
+      z-index: 9999; padding: 20px;
+      opacity: 1; transition: opacity 0.2s;
     }
 
-    .pos-overlay.hidden {
-      opacity: 0; pointer-events: none;
-    }
+    .pos-overlay.hidden { opacity: 0; pointer-events: none; }
 
     .pos-modal {
-      background: var(--pos-surface);
-      border: 1px solid var(--pos-border);
+      background: #1e1e36;
+      border: 1px solid rgba(255,255,255,0.08);
       border-radius: 16px;
       width: 100%; max-width: 520px;
       max-height: 85vh;
       display: flex; flex-direction: column;
       box-shadow: 0 24px 80px rgba(0,0,0,0.6);
-      transform: scale(1);
-      transition: transform 0.2s ease;
+      transform: scale(1); transition: transform 0.2s;
       overflow: hidden;
     }
 
-    .pos-overlay.hidden .pos-modal {
-      transform: scale(0.95);
-    }
+    .pos-overlay.hidden .pos-modal { transform: scale(0.95); }
 
     .pos-modal-head {
       display: flex; align-items: center;
       justify-content: space-between;
-      padding: 18px 24px;
-      border-bottom: 1px solid var(--pos-border);
-      background: linear-gradient(90deg, rgba(201,168,76,0.06) 0%, transparent 100%);
+      padding: 16px 22px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
       flex-shrink: 0;
     }
 
     .pos-modal-head h2 {
-      font-family: var(--pos-display);
-      font-size: 1.15rem; font-weight: 600;
-      color: var(--pos-text); margin: 0;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem; font-weight: 600; color: #eee;
     }
 
     .pos-modal-close {
-      width: 32px; height: 32px; border: none;
-      background: transparent; color: var(--pos-text-sec);
-      cursor: pointer; border-radius: var(--pos-r-sm);
+      width: 30px; height: 30px; border: none;
+      background: transparent; color: #777;
+      cursor: pointer; border-radius: 6px;
       display: flex; align-items: center; justify-content: center;
-      transition: all 0.15s;
     }
 
-    .pos-modal-close:hover { background: var(--pos-elevated); color: var(--pos-text); }
+    .pos-modal-close:hover { background: #2a2a44; color: #eee; }
 
     .pos-modal-body {
-      flex: 1; overflow-y: auto;
-      padding: 20px 24px;
+      flex: 1; overflow-y: auto; padding: 18px 22px;
     }
 
     .pos-modal-body::-webkit-scrollbar { width: 3px; }
-    .pos-modal-body::-webkit-scrollbar-thumb { background: #2a2a3a; border-radius: 2px; }
+    .pos-modal-body::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
 
     .pos-modal-foot {
       display: flex; gap: 10px;
       justify-content: flex-end;
-      padding: 16px 24px;
-      border-top: 1px solid var(--pos-border);
+      padding: 14px 22px;
+      border-top: 1px solid rgba(255,255,255,0.06);
       flex-shrink: 0;
     }
 
-    /* Modal buttons */
     .mbtn {
-      padding: 10px 22px; border-radius: var(--pos-r-sm);
-      font-size: 0.85rem; font-weight: 600;
-      cursor: pointer; transition: all 0.15s;
-      border: 1px solid var(--pos-border);
-      font-family: var(--pos-font);
+      padding: 9px 20px; border-radius: 8px;
+      font-size: 0.8rem; font-weight: 600;
+      cursor: pointer; border: 1px solid rgba(255,255,255,0.08);
+      font-family: inherit; transition: all 0.15s;
     }
 
-    .mbtn-ghost {
-      background: transparent; color: var(--pos-text-sec);
-    }
-
-    .mbtn-ghost:hover { background: var(--pos-elevated); color: var(--pos-text); }
+    .mbtn-ghost { background: transparent; color: #999; }
+    .mbtn-ghost:hover { background: #2a2a44; color: #eee; }
 
     .mbtn-gold {
-      background: linear-gradient(135deg, var(--pos-gold), #a08530);
-      color: var(--pos-bg); border-color: var(--pos-gold);
+      background: linear-gradient(135deg, #d4a843, #9e7b2a);
+      color: #16162a; border-color: #d4a843;
     }
 
-    .mbtn-gold:hover { box-shadow: 0 4px 14px rgba(201,168,76,0.3); }
-
+    .mbtn-gold:hover { box-shadow: 0 4px 14px rgba(212,168,67,0.3); }
     .mbtn-gold:disabled { opacity: 0.4; cursor: not-allowed; }
-
-    .mbtn-primary {
-      background: var(--pos-gold-dim); color: var(--pos-gold);
-      border-color: rgba(201,168,76,0.3);
-    }
-
-    .mbtn-primary:hover { background: var(--pos-gold-glow); }
 
     /* Checkout sections */
     .co-section {
-      background: var(--pos-elevated);
-      border: 1px solid var(--pos-border);
-      border-radius: var(--pos-r);
-      padding: 16px; margin-bottom: 14px;
+      background: #25253e;
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 10px;
+      padding: 14px; margin-bottom: 12px;
     }
 
     .co-section h3 {
-      font-family: var(--pos-display);
-      font-size: 0.9rem; font-weight: 600;
-      color: var(--pos-text); margin-bottom: 12px;
-    }
-
-    .co-items-list {
-      display: flex; flex-direction: column; gap: 6px;
+      font-family: 'Playfair Display', serif;
+      font-size: 0.85rem; font-weight: 600;
+      color: #ddd; margin-bottom: 10px;
     }
 
     .co-item {
       display: flex; align-items: center;
       justify-content: space-between;
-      font-size: 0.8rem; color: var(--pos-text-sec);
-      padding: 4px 0;
+      font-size: 0.75rem; padding: 3px 0;
     }
 
-    .co-item .co-item-name { flex: 1; color: var(--pos-text); font-weight: 500; }
-    .co-item .co-item-qty { color: var(--pos-text-dim); margin: 0 10px; font-size: 0.75rem; }
-    .co-item .co-item-price { color: var(--pos-gold); font-weight: 600; font-family: var(--pos-display); }
+    .co-item-name { flex: 1; color: #ddd; font-weight: 500; }
+    .co-item-qty { color: #666; margin: 0 8px; font-size: 0.7rem; }
+    .co-item-price { color: #d4a843; font-weight: 600; font-family: 'Playfair Display', serif; }
 
     .co-totals {
-      background: var(--pos-elevated);
-      border: 1px solid var(--pos-border);
-      border-radius: var(--pos-r);
-      padding: 16px; margin-bottom: 14px;
+      background: #25253e;
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 10px;
+      padding: 14px; margin-bottom: 12px;
     }
 
     .co-row {
       display: flex; justify-content: space-between;
-      padding: 4px 0; font-size: 0.8125rem; color: var(--pos-text-sec);
+      padding: 3px 0; font-size: 0.78rem; color: #888;
     }
 
     .co-row.grand {
-      font-size: 1.15rem; font-weight: 700;
-      color: var(--pos-text); padding-top: 10px;
-      margin-top: 8px; border-top: 1px solid var(--pos-border);
-      font-family: var(--pos-display);
+      font-size: 1.1rem; font-weight: 700;
+      color: #eee; padding-top: 8px;
+      margin-top: 6px; border-top: 1px solid rgba(255,255,255,0.08);
+      font-family: 'Playfair Display', serif;
     }
 
-    .co-row.grand span:last-child { color: var(--pos-gold); }
+    .co-row.grand span:last-child { color: #d4a843; }
 
-    /* Form fields */
     .co-label {
-      display: block; font-size: 0.75rem; font-weight: 500;
-      color: var(--pos-text-sec); margin-bottom: 6px;
+      display: block; font-size: 0.7rem; font-weight: 500;
+      color: #888; margin-bottom: 5px;
     }
 
     .co-input {
-      width: 100%; padding: 9px 14px;
-      background: var(--pos-bg); border: 1px solid var(--pos-border);
-      border-radius: var(--pos-r-sm); color: var(--pos-text);
-      font-size: 0.825rem; font-family: var(--pos-font); outline: none;
-      transition: border-color 0.2s;
+      width: 100%; padding: 8px 12px;
+      background: #1a1a2e; border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 7px; color: #eee;
+      font-size: 0.8rem; font-family: inherit; outline: none;
     }
 
-    .co-input:focus { border-color: var(--pos-gold); box-shadow: 0 0 0 2px var(--pos-gold-dim); }
-    .co-input::placeholder { color: var(--pos-text-dim); }
+    .co-input:focus { border-color: #d4a843; }
+    .co-input::placeholder { color: #444; }
+    .co-field { margin-bottom: 10px; }
 
-    .co-field { margin-bottom: 12px; }
-
-    /* Pay methods */
-    .pay-methods {
-      display: flex; gap: 8px; margin-bottom: 12px;
-    }
+    .pay-methods { display: flex; gap: 6px; margin-bottom: 10px; }
 
     .pay-method {
-      flex: 1; padding: 10px 8px;
-      background: var(--pos-bg); border: 2px solid var(--pos-border);
-      border-radius: var(--pos-r-sm); color: var(--pos-text-dim);
-      font-size: 0.75rem; font-weight: 500;
-      cursor: pointer; transition: all 0.15s;
-      text-align: center; font-family: var(--pos-font);
-      display: flex; flex-direction: column; align-items: center; gap: 5px;
+      flex: 1; padding: 9px 6px;
+      background: #1a1a2e; border: 2px solid rgba(255,255,255,0.06);
+      border-radius: 8px; color: #666;
+      font-size: 0.7rem; font-weight: 500;
+      cursor: pointer; text-align: center; font-family: inherit;
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+      transition: all 0.15s;
     }
 
-    .pay-method:hover { border-color: var(--pos-border-hover); color: var(--pos-text-sec); }
+    .pay-method:hover { border-color: rgba(255,255,255,0.12); color: #aaa; }
 
     .pay-method.active {
-      background: var(--pos-gold-dim); border-color: var(--pos-gold);
-      color: var(--pos-gold);
+      background: rgba(212,168,67,0.1); border-color: #d4a843; color: #d4a843;
     }
 
     .pay-panel {
-      padding: 12px; border: 1px solid var(--pos-border);
-      border-radius: var(--pos-r-sm); background: var(--pos-bg);
-      margin-top: 8px;
+      padding: 10px; border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 7px; background: #1a1a2e; margin-top: 6px;
     }
 
-    .pay-panel p {
-      font-size: 0.8rem; color: var(--pos-text-sec); text-align: center;
-    }
+    .pay-panel p { font-size: 0.75rem; color: #777; text-align: center; }
 
     .troco-display {
-      padding: 10px; border-radius: var(--pos-r-sm);
-      text-align: center; font-weight: 600; font-size: 0.9rem;
-      margin-top: 8px;
+      padding: 8px; border-radius: 7px;
+      text-align: center; font-weight: 600; font-size: 0.85rem; margin-top: 6px;
     }
 
-    .troco-display.ok { background: rgba(52,211,153,0.1); color: var(--pos-success); border: 1px solid rgba(52,211,153,0.2); }
-    .troco-display.bad { background: rgba(248,113,113,0.1); color: var(--pos-danger); border: 1px solid rgba(248,113,113,0.2); }
+    .troco-display.ok { background: rgba(52,211,153,0.1); color: #34d399; border: 1px solid rgba(52,211,153,0.2); }
+    .troco-display.bad { background: rgba(248,113,113,0.1); color: #f87171; border: 1px solid rgba(248,113,113,0.2); }
 
     /* Receipt */
     .receipt-box {
-      background: var(--pos-elevated);
-      border-radius: var(--pos-r);
-      padding: 24px;
-      font-family: 'Courier New', monospace;
+      background: #25253e; border-radius: 10px;
+      padding: 20px; font-family: 'Courier New', monospace;
+      font-size: 0.7rem; line-height: 1.8; color: #999;
+    }
+
+    .receipt-line { display: flex; justify-content: space-between; }
+    .receipt-divider { border-top: 1px dashed rgba(255,255,255,0.08); margin: 6px 0; }
+    .receipt-total-line { display: flex; justify-content: space-between; font-weight: 700; font-size: 0.85rem; color: #d4a843; }
+    .receipt-header { text-align: center; margin-bottom: 10px; }
+    .receipt-subtitle { text-align: center; margin-top: 12px; font-size: 0.7rem; color: #555; font-family: 'Inter', sans-serif; }
+
+    /* Devoluções modal extras */
+    .return-sale-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 8px 10px; background: #1a1a2e;
+      border-radius: 7px; margin-bottom: 6px;
       font-size: 0.75rem;
-      line-height: 1.8;
-      color: var(--pos-text-sec);
     }
 
-    .receipt-line {
-      display: flex; justify-content: space-between;
+    .return-sale-item .rsi-info { color: #ccc; flex: 1; }
+    .return-sale-item .rsi-code { color: #d4a843; font-weight: 600; margin-right: 10px; font-family: 'Playfair Display', serif; }
+    .return-sale-item .rsi-total { color: #aaa; font-family: 'Playfair Display', serif; font-weight: 600; }
+    .return-sale-item .rsi-date { color: #555; font-size: 0.65rem; }
+    .return-sale-btn {
+      padding: 5px 12px; border: 1px solid rgba(251,191,36,0.3);
+      background: rgba(251,191,36,0.08); color: #fbbf24;
+      font-size: 0.65rem; font-weight: 600; border-radius: 5px;
+      cursor: pointer; font-family: inherit;
+    }
+    .return-sale-btn:hover { background: rgba(251,191,36,0.15); }
+
+    .return-item-row {
+      display: flex; align-items: center; gap: 8px;
+      padding: 6px 0; font-size: 0.75rem;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
     }
 
-    .receipt-divider {
-      border-top: 1px dashed var(--pos-border);
-      margin: 8px 0;
-    }
-
-    .receipt-total-line {
-      display: flex; justify-content: space-between;
-      font-weight: 700; font-size: 0.9rem; color: var(--pos-gold);
-    }
-
-    .receipt-header {
-      text-align: center; margin-bottom: 12px;
-    }
-
-    .receipt-subtitle {
-      text-align: center; margin-top: 14px;
-      font-size: 0.75rem; color: var(--pos-text-dim);
-      font-family: var(--pos-font);
-    }
+    .return-item-row .ri-name { flex: 1; color: #ddd; }
+    .return-item-row .ri-qty { color: #888; }
+    .return-item-row .ri-price { color: #d4a843; font-weight: 600; }
 
     /* Toast */
     .toasts-container {
-      position: fixed; top: 16px; right: 16px;
+      position: fixed; top: 12px; right: 12px;
       z-index: 99999; display: flex; flex-direction: column;
-      gap: 8px; pointer-events: none;
+      gap: 6px; pointer-events: none;
     }
 
     /* Responsive */
     @media (max-width: 860px) {
-      .pos { grid-template-columns: 1fr; }
-      .pos-right {
-        height: 45vh; border-left: none;
-        border-top: 1px solid var(--pos-border);
-      }
-      .pos-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
-      .pos-brand h1 { display: none; }
-      .pos-brand small { display: none; }
+      .pos-app { grid-template-columns: 1fr; grid-template-rows: 60px 1fr 45vh; }
+      .cart-panel { border-left: none; border-top: 1px solid rgba(255,255,255,0.06); }
+      .product-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
     }
   </style>
 </head>
 <body>
   <div id="toasts" class="toasts-container"></div>
 
-  <div class="pos">
-    <!-- ═══ LEFT: PRODUCTS ═══ -->
-    <div class="pos-left">
-      <div class="pos-topbar">
-        <div class="pos-brand">
-          <div class="pos-brand-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#0c0c12" stroke-width="2" width="18" height="18">
-              <path d="M8 22h8M12 11v11M7 11c0 2.8 2.2 5 5 5s5-2.2 5-5V3H7v8z"/><path d="M7 8h10"/>
-            </svg>
-          </div>
-          <div>
-            <h1>Vinha D'Ouro</h1>
-            <small>Ponto de Venda</small>
-          </div>
-        </div>
+  <div class="pos-app">
+    <!-- ═══ TOP BAR ═══ -->
+    <div class="topbar">
+      <div class="topbar-brand">
+        <div class="topbar-brand-dot">🍷</div>
+        <h1>Vinha D'Ouro</h1>
+      </div>
 
-        <div class="pos-search">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-          </svg>
-          <input type="text" id="wine-search" placeholder="Pesquisar vinho..." onkeyup="searchWines(this.value)">
-        </div>
+      <div class="topbar-search">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input type="text" id="wine-search" placeholder="Pesquisar vinhos..." onkeyup="searchWines(this.value)">
+      </div>
 
-        <button class="pos-user-btn" onclick="logout()" title="Sair">
-          <div class="pos-avatar" id="user-avatar">U</div>
+      <div class="topbar-actions">
+        <button class="topbar-btn returns" onclick="openReturns()" title="Devoluções">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 105.64-11.36L1 10"/></svg>
+          Devoluções
+        </button>
+        <button class="topbar-btn" onclick="logout()" title="Sair">
+          <div class="topbar-avatar" id="user-avatar">U</div>
           <span id="user-name">Utilizador</span>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
         </button>
       </div>
+    </div>
 
-      <div class="pos-categories">
-        <button class="pos-tab active" data-filter="" onclick="filterByType('')">Todos</button>
-        <button class="pos-tab" data-filter="Tinto" onclick="filterByType('Tinto')">Tinto</button>
-        <button class="pos-tab" data-filter="Branco" onclick="filterByType('Branco')">Branco</button>
-        <button class="pos-tab" data-filter="Rosé" onclick="filterByType('Rosé')">Rosé</button>
-        <button class="pos-tab" data-filter="Espumante" onclick="filterByType('Espumante')">Espumante</button>
+    <!-- ═══ LEFT: PRODUCTS ═══ -->
+    <div class="products-panel">
+      <div class="cat-strip">
+        <button class="cat-btn pos-tab active" data-filter="" onclick="filterByType('')">Todos</button>
+        <button class="cat-btn pos-tab" data-filter="Tinto" onclick="filterByType('Tinto')">🔴 Tinto</button>
+        <button class="cat-btn pos-tab" data-filter="Branco" onclick="filterByType('Branco')">🟡 Branco</button>
+        <button class="cat-btn pos-tab" data-filter="Rosé" onclick="filterByType('Rosé')">🩷 Rosé</button>
+        <button class="cat-btn pos-tab" data-filter="Espumante" onclick="filterByType('Espumante')">✨ Espumante</button>
+        <button class="cat-btn pos-tab" data-filter="Porto" onclick="filterByType('Porto')">🟤 Porto</button>
       </div>
 
-      <div class="pos-products">
-        <div id="wine-grid" class="pos-grid">
+      <div class="products-scroll">
+        <div id="wine-grid" class="product-grid">
           <div class="pos-empty">A carregar catálogo...</div>
         </div>
       </div>
 
-      <div class="pos-statusbar">
+      <div class="statusbar">
         <div><span class="status-dot" id="api-dot"></span><span id="api-label">API</span></div>
         <div id="pos-clock"></div>
         <div id="pos-product-count"></div>
@@ -783,23 +680,22 @@
     </div>
 
     <!-- ═══ RIGHT: CART ═══ -->
-    <div class="pos-right">
-      <div class="cart-header">
+    <div class="cart-panel">
+      <div class="cart-head">
         <h2>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
           Carrinho
           <span class="cart-badge" id="cart-count">0</span>
         </h2>
-        <button class="cart-clear-btn" onclick="clearCart()" id="cart-clear-btn" style="display:none">Limpar</button>
+        <button class="cart-clear-btn" onclick="clearCart()" id="cart-clear-btn" style="display:none">Limpar tudo</button>
       </div>
 
       <div class="cart-body" id="cart-items">
         <div class="cart-empty-state" id="cart-empty">
-          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
             <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
             <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/>
           </svg>
-          <p>Clique num vinho<br>para adicionar ao carrinho</p>
+          <p>Toque num vinho para<br>adicionar ao carrinho</p>
         </div>
       </div>
 
@@ -810,7 +706,6 @@
           <div class="ct-row total"><span>Total</span><span class="ct-v" id="cart-total">€0,00</span></div>
         </div>
         <button class="btn-pay" id="checkout-btn" onclick="openCheckout()" disabled>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
           Finalizar Venda
         </button>
       </div>
@@ -820,89 +715,53 @@
   <!-- ═══ SIZE MODAL ═══ -->
   <div class="pos-overlay hidden" id="size-modal">
     <div class="pos-modal" onclick="event.stopPropagation()">
-      <div class="pos-modal-head">
-        <h2>Formato</h2>
-        <button class="pos-modal-close" onclick="closeSizeModal()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-      </div>
+      <div class="pos-modal-head"><h2>Formato</h2><button class="pos-modal-close" onclick="closeSizeModal()">✕</button></div>
       <div class="pos-modal-body">
-        <p style="color:var(--pos-text-sec);margin-bottom:14px;" id="size-wine-name"></p>
-        <div id="size-options" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:10px;"></div>
+        <p style="color:#888;margin-bottom:12px;" id="size-wine-name"></p>
+        <div id="size-options" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:8px;"></div>
       </div>
-      <div class="pos-modal-foot">
-        <button class="mbtn mbtn-ghost" onclick="closeSizeModal()">Cancelar</button>
-      </div>
+      <div class="pos-modal-foot"><button class="mbtn mbtn-ghost" onclick="closeSizeModal()">Cancelar</button></div>
     </div>
   </div>
 
   <!-- ═══ CHECKOUT MODAL ═══ -->
   <div class="pos-overlay hidden" id="checkout-modal" onclick="closeCheckout()">
     <div class="pos-modal" onclick="event.stopPropagation()" style="max-width:540px;">
-      <div class="pos-modal-head">
-        <h2>Finalizar Venda</h2>
-        <button class="pos-modal-close" onclick="closeCheckout()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-      </div>
+      <div class="pos-modal-head"><h2>Finalizar Venda</h2><button class="pos-modal-close" onclick="closeCheckout()">✕</button></div>
       <div class="pos-modal-body">
-        <!-- Items summary -->
-        <div class="co-section">
-          <h3>Resumo</h3>
-          <div class="co-items-list" id="co-items"></div>
-        </div>
-
-        <!-- Totals -->
+        <div class="co-section"><h3>Resumo</h3><div class="co-items-list" id="co-items"></div></div>
         <div class="co-totals">
           <div class="co-row"><span>Subtotal</span><span id="co-subtotal">€0,00</span></div>
           <div class="co-row"><span>IVA (23%)</span><span id="co-iva">€0,00</span></div>
           <div class="co-row" id="co-discount-line" style="display:none"><span>Desconto</span><span id="co-discount-val">-€0,00</span></div>
           <div class="co-row grand"><span>Total</span><span id="co-total">€0,00</span></div>
         </div>
-
-        <!-- Discount -->
         <div class="co-section">
-          <div class="co-field">
-            <label class="co-label">Desconto % (opcional)</label>
-            <input type="number" id="co-discount" class="co-input" placeholder="0" min="0" max="100" oninput="updateCheckoutTotals()">
-          </div>
-          <div class="co-field">
-            <label class="co-label">NIF (opcional)</label>
-            <input type="text" id="co-nif" class="co-input" placeholder="123456789" maxlength="9">
-          </div>
-          <div class="co-field" style="margin-bottom:0">
-            <label class="co-label">Notas (opcional)</label>
-            <textarea id="co-notes" class="co-input" placeholder="Observações..." rows="2" style="resize:vertical;"></textarea>
-          </div>
+          <div class="co-field"><label class="co-label">Desconto % (opcional)</label><input type="number" id="co-discount" class="co-input" placeholder="0" min="0" max="100" oninput="updateCheckoutTotals()"></div>
+          <div class="co-field"><label class="co-label">NIF (opcional)</label><input type="text" id="co-nif" class="co-input" placeholder="123456789" maxlength="9"></div>
+          <div class="co-field" style="margin-bottom:0"><label class="co-label">Notas (opcional)</label><textarea id="co-notes" class="co-input" placeholder="Observações..." rows="2" style="resize:vertical;"></textarea></div>
         </div>
-
-        <!-- Payment method -->
         <div class="co-section">
           <h3>Pagamento</h3>
           <div class="pay-methods">
             <button class="pay-method active" data-method="Cartão" onclick="selectPaymentMethod('Cartão')">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-              Cartão
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Cartão
             </button>
             <button class="pay-method" data-method="Numerário" onclick="selectPaymentMethod('Numerário')">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 100 4h4a2 2 0 110 4H8"/><path d="M12 18V6"/></svg>
-              Numerário
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 100 4h4a2 2 0 110 4H8"/><path d="M12 18V6"/></svg>Numerário
             </button>
             <button class="pay-method" data-method="MB Way" onclick="selectPaymentMethod('MB Way')">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
-              MB Way
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>MB Way
             </button>
           </div>
-
-          <div id="co-card-panel" class="pay-panel">
-            <p>Pagamento por cartão habilitado</p>
-          </div>
+          <div id="co-card-panel" class="pay-panel"><p>Pagamento por cartão habilitado</p></div>
           <div id="co-cash-panel" class="pay-panel" style="display:none">
-            <div class="co-field">
-              <label class="co-label">Valor Recebido (€)</label>
-              <input type="number" id="co-cash-received" class="co-input" placeholder="0.00" min="0" step="0.01" oninput="calculateChange()">
-            </div>
+            <div class="co-field"><label class="co-label">Valor Recebido (€)</label><input type="number" id="co-cash-received" class="co-input" placeholder="0.00" min="0" step="0.01" oninput="calculateChange()"></div>
             <div class="troco-display" id="co-troco" style="display:none">€0,00</div>
           </div>
           <div id="co-mbway-panel" class="pay-panel" style="display:none">
             <p>Pagamento MB Way</p>
-            <div style="text-align:center;margin-top:6px;font-family:var(--pos-display);font-size:1.1rem;font-weight:700;color:var(--pos-gold);" id="co-pay-display">€0,00</div>
+            <div style="text-align:center;margin-top:4px;font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:#d4a843;" id="co-pay-display">€0,00</div>
           </div>
         </div>
       </div>
@@ -915,28 +774,54 @@
 
   <!-- ═══ RECEIPT MODAL ═══ -->
   <div class="pos-overlay hidden" id="receipt-modal" onclick="closeReceipt()">
-    <div class="pos-modal" onclick="event.stopPropagation()" style="max-width:440px;">
-      <div class="pos-modal-head">
-        <h2>Recibo</h2>
-        <button class="pos-modal-close" onclick="closeReceipt()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-      </div>
+    <div class="pos-modal" onclick="event.stopPropagation()" style="max-width:420px;">
+      <div class="pos-modal-head"><h2>Recibo</h2><button class="pos-modal-close" onclick="closeReceipt()">✕</button></div>
       <div class="pos-modal-body">
         <div class="receipt-box" id="receipt-content"></div>
         <p class="receipt-subtitle" id="receipt-subtitle"></p>
       </div>
       <div class="pos-modal-foot">
-        <button class="mbtn mbtn-ghost" onclick="printReceipt()">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-          Imprimir
-        </button>
+        <button class="mbtn mbtn-ghost" onclick="printReceipt()">🖨️ Imprimir</button>
         <button class="mbtn mbtn-gold" onclick="newSale()">Nova Venda</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ RETURNS MODAL ═══ -->
+  <div class="pos-overlay hidden" id="returns-modal" onclick="closeReturns()">
+    <div class="pos-modal" onclick="event.stopPropagation()" style="max-width:560px;">
+      <div class="pos-modal-head">
+        <h2>Devoluções</h2>
+        <button class="pos-modal-close" onclick="closeReturns()">✕</button>
+      </div>
+      <div class="pos-modal-body">
+        <p style="color:#888;font-size:0.75rem;margin-bottom:12px;">Selecione uma venda recente para devolver:</p>
+        <div id="returns-list">
+          <p style="color:#555;text-align:center;padding:20px;">A carregar vendas...</p>
+        </div>
+        <!-- Confirm return sub-section (hidden by default) -->
+        <div id="return-confirm" style="display:none;margin-top:14px;">
+          <div class="co-section">
+            <h3 id="return-confirm-title">Devolver Venda</h3>
+            <div id="return-confirm-items"></div>
+            <div class="co-field" style="margin-top:10px;">
+              <label class="co-label">Motivo da devolução</label>
+              <textarea id="return-reason" class="co-input" placeholder="Ex: Cliente mudou de ideias..." rows="2" style="resize:vertical;"></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="pos-modal-foot">
+        <button class="mbtn mbtn-ghost" onclick="closeReturns()">Fechar</button>
+        <button class="mbtn mbtn-gold" id="confirm-return-btn" onclick="confirmReturn()" style="display:none;background:linear-gradient(135deg,#fbbf24,#d97706);border-color:#fbbf24;">
+          Confirmar Devolução
+        </button>
       </div>
     </div>
   </div>
 
   <script src="app.js"></script>
   <script>
-    // Clock
     function updateClock() {
       const el = document.getElementById('pos-clock');
       if (el) el.textContent = new Date().toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit'});

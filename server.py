@@ -1157,6 +1157,95 @@ def dashboard():
     except Exception as e:
         return jsonify({'error':str(e)}), 500
 
+# ── DEVOLUÇÕES (Returns) ─────────────────────────────────
+@app.route('/api/devolucoes', methods=['POST'])
+def criar_devolucao():
+    """Processar devolução de uma venda"""
+    try:
+        d = request.get_json()
+        venda_id = d.get('vendaId')
+        motivo = d.get('motivo', '')
+        itens = d.get('itens', [])  # [{vinhoId, quantidade}]
+
+        if not venda_id:
+            return jsonify({'error': 'vendaId é obrigatório'}), 400
+
+        conn, db_type = get_db()
+
+        # Verify venda exists
+        venda = db_fetchone(conn, db_type, "SELECT * FROM vendas WHERE id=?", (venda_id,))
+        if not venda:
+            conn.close()
+            return jsonify({'error': 'Venda não encontrada'}), 404
+
+        total_devolvido = 0.0
+
+        if itens:
+            # Partial return - only specified items
+            for item in itens:
+                vid = item.get('vinhoId')
+                qty = item.get('quantidade', 1)
+                # Get price from itens_venda
+                iv_row = db_fetchone(conn, db_type,
+                    "SELECT preco_unitario, quantidade FROM itens_venda WHERE venda_id=? AND vinho_id=?",
+                    (venda_id, vid))
+                if iv_row:
+                    preco = float(iv_row['preco_unitario'] or 0)
+                    total_devolvido += preco * qty
+                    # Restore stock
+                    db_exec(conn, db_type,
+                        "UPDATE vinhos SET quantidade = quantidade + ? WHERE id=?", (qty, vid))
+        else:
+            # Full return - return all items
+            all_items = db_fetchall(conn, db_type,
+                "SELECT vinho_id, quantidade, preco_unitario FROM itens_venda WHERE venda_id=?",
+                (venda_id,))
+            for item in all_items:
+                vid = item['vinho_id']
+                qty = item['quantidade']
+                preco = float(item['preco_unitario'] or 0)
+                total_devolvido += preco * qty
+                # Restore stock
+                db_exec(conn, db_type,
+                    "UPDATE vinhos SET quantidade = quantidade + ? WHERE id=?", (qty, vid))
+
+        # Update venda status
+        db_exec(conn, db_type, "UPDATE vendas SET status='DEVOLVIDA' WHERE id=?", (venda_id,))
+        conn.commit()
+        conn.close()
+
+        now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        return jsonify({
+            'ok': True,
+            'vendaId': venda_id,
+            'totalDevolvido': round(total_devolvido, 2),
+            'motivo': motivo,
+            'data': now
+        }), 201
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/vendas/<int:vid>/itens', methods=['GET'])
+def itens_venda(vid):
+    """Obter itens de uma venda específica"""
+    try:
+        conn, db_type = get_db()
+        rows = db_fetchall(conn, db_type, """
+            SELECT iv.vinho_id, iv.quantidade, iv.preco_unitario, v.nome as vinho_nome
+            FROM itens_venda iv
+            LEFT JOIN vinhos v ON iv.vinho_id = v.id
+            WHERE iv.venda_id = ?
+        """, (vid,))
+        conn.close()
+        return jsonify([{
+            'vinhoId': r['vinho_id'],
+            'nome': r.get('vinho_nome', ''),
+            'quantidade': r['quantidade'],
+            'precoUnitario': float(r['preco_unitario'] or 0)
+        } for r in rows])
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 # ── MAIN ──────────────────────────────────────────────────
 if __name__ == '__main__':
     """Iniciar servidor"""

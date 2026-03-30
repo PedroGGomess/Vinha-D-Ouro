@@ -1090,7 +1090,7 @@ async function loadPOS() {
   }));
 
   document.getElementById('wine-search')?.addEventListener('input', () =>
-    renderCatalog(document.querySelector('.filter-btn.active')?.dataset.filter || 'todos'));
+    renderCatalog(document.querySelector('.pos-tab.active, .cat-btn.active, .filter-btn.active')?.dataset?.filter || 'todos'));
 
   document.querySelectorAll('.pay-method').forEach(btn => btn.addEventListener('click', () => {
     document.querySelectorAll('.pay-method').forEach(b => b.classList.remove('active'));
@@ -1098,6 +1098,8 @@ async function loadPOS() {
     payMethod = btn.dataset.method;
   }));
 }
+
+const wineEmojis = { Tinto: '🍷', Branco: '🥂', 'Rosé': '🌸', Espumante: '✨', Porto: '🍇' };
 
 function renderCatalog(filter = 'todos') {
   const grid = document.getElementById('wine-grid'); if (!grid) return;
@@ -1107,7 +1109,6 @@ function renderCatalog(filter = 'todos') {
     (!filter || filter === 'todos' || filter === '' || v.tipo === filter)
   );
 
-  // Update product count
   const countEl = document.getElementById('pos-product-count');
   if (countEl) countEl.textContent = `${list.length} produto${list.length !== 1 ? 's' : ''}`;
 
@@ -1119,18 +1120,25 @@ function renderCatalog(filter = 'todos') {
     const oos = (v.quantidade || 0) === 0;
     const tc = wineTypeClass[v.tipo] || 'tinto';
     const qty = v.quantidade || 0;
-    const stockClass = oos ? 'oos' : qty < 5 ? 'low' : '';
-    return `<div class="p-card${oos ? ' oos' : ''}" onclick="${oos ? 'void(0)' : `addToCart(${v.id})`}">
-      <div class="p-badge ${tc}">${v.tipo || ''}</div>
-      <div class="p-visual">${wineBottleSVG(v.tipo)}</div>
-      <div class="p-name">${v.nome}</div>
-      <div class="p-region">${v.regiao || ''}${v.anoColheita ? ' · ' + v.anoColheita : ''}</div>
-      <div class="p-bottom">
-        <span class="p-price">${fmt.eur(v.preco)}</span>
-        <span class="p-stock ${stockClass}">${oos ? 'Esgotado' : qty + ' un.'}</span>
+    const stockClass = oos ? 'oos-label' : qty < 5 ? 'low' : '';
+    const emoji = wineEmojis[v.tipo] || '🍷';
+    return `<div class="wine-tile t-${tc}${oos ? ' oos' : ''}" onclick="${oos ? 'void(0)' : `addToCart(${v.id})`}">
+      <div class="tile-type">${v.tipo || ''}</div>
+      <div class="tile-icon">${emoji}</div>
+      <div class="tile-name">${v.nome}</div>
+      <div class="tile-bottom">
+        <span class="tile-price">${fmt.eur(v.preco)}</span>
+        <span class="tile-stock ${stockClass}">${oos ? 'Esgotado' : qty + ' un.'}</span>
       </div>
     </div>`;
   }).join('');
+}
+
+/* Refresh catalog from API (called after sale/return) */
+async function refreshCatalog() {
+  try { catalog = await apiFetch('/vinhos'); } catch { /* keep current */ }
+  const activeFilter = document.querySelector('.pos-tab.active, .cat-btn.active')?.dataset?.filter || '';
+  renderCatalog(activeFilter || 'todos');
 }
 
 /* ══════════════════════════════════════════════
@@ -1330,15 +1338,16 @@ async function processPayment() {
   const code = 'VD-' + Date.now().toString(36).toUpperCase().slice(-6);
   const now = new Date();
 
+  let saleResult = null;
   try {
     const user = Session.get();
-    await apiFetch('/vendas', { method: 'POST', body: JSON.stringify({ itens, metodoPagamento: payMethod, funcionarioId: user?.id || 1, desconto: discPct, nif, notas }) });
-    // API success — update local catalog stock
-    itens.forEach(item => { const v = catalog.find(x => x.id === item.vinhoId); if (v) v.quantidade = Math.max(0, (v.quantidade || 0) - item.quantidade); });
+    saleResult = await apiFetch('/vendas', { method: 'POST', body: JSON.stringify({ itens, metodoPagamento: payMethod, funcionarioId: user?.id || 1, desconto: discPct, nif, notas }) });
   } catch {
     // API offline — update local catalog stock for demo mode
     itens.forEach(item => { const v = catalog.find(x => x.id === item.vinhoId); if (v) v.quantidade = Math.max(0, (v.quantidade || 0) - item.quantidade); });
   }
+
+  const saleCode = saleResult?.codigo || code;
 
   // Build receipt
   const receiptEl = document.getElementById('receipt-content');
@@ -1346,24 +1355,25 @@ async function processPayment() {
     const lines = cart.map(item => `<div class="receipt-line"><span>${item.nome}${item.vol ? ' (' + item.vol + ')' : ''} ×${item.qty}</span><span>${fmt.eur(item.preco * item.qty)}</span></div>`).join('');
     receiptEl.innerHTML = `
       <div class="receipt-header">
-        <div style="font-family:var(--font-display);font-size:16px;font-weight:700;color:var(--text-gold);">Vinha D'Ouro</div>
-        <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">${now.toLocaleString('pt-PT')}</div>
-        <div style="font-size:11px;color:var(--text-muted);">Ref: ${code}${nif ? ' · NIF: ' + nif : ''}</div>
+        <div style="font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:#d4a843;">Vinha D'Ouro</div>
+        <div style="font-size:11px;color:#777;margin-top:2px;">${now.toLocaleString('pt-PT')}</div>
+        <div style="font-size:11px;color:#777;">Ref: ${saleCode}${nif ? ' · NIF: ' + nif : ''}</div>
       </div>
       ${lines}
       <div class="receipt-divider"></div>
-      ${discPct > 0 ? `<div class="receipt-line"><span style="color:var(--success);">Desconto (${discPct}%)</span><span style="color:var(--success);">−${fmt.eur(discAmt)}</span></div>` : ''}
+      ${discPct > 0 ? `<div class="receipt-line"><span style="color:#34d399;">Desconto (${discPct}%)</span><span style="color:#34d399;">−${fmt.eur(discAmt)}</span></div>` : ''}
       <div class="receipt-line"><span>IVA 23%</span><span>${fmt.eur(iva)}</span></div>
       <div class="receipt-divider"></div>
       <div class="receipt-total-line"><span>TOTAL</span><span>${fmt.eur(tot)}</span></div>
-      <div style="text-align:center;margin-top:8px;font-size:11px;color:var(--text-muted);">Pagamento: ${payMethod}</div>`;
+      <div style="text-align:center;margin-top:8px;font-size:11px;color:#555;">Pagamento: ${payMethod}</div>`;
   }
   const sub2 = document.getElementById('receipt-subtitle');
   if (sub2) sub2.textContent = `${cart.length} artigo(s) · IVA incluído · ${payMethod}`;
 
   closeCheckoutModal();
   clearCart();
-  renderCatalog(document.querySelector('.pos-tab.active, .filter-btn.active')?.dataset?.filter || 'todos');
+  // Refresh catalog from API to get real stock values
+  await refreshCatalog();
   document.getElementById('receipt-modal')?.classList.remove('hidden');
   if (btn) { btn.disabled = false; btn.textContent = 'Confirmar Pagamento'; }
 }
@@ -1413,6 +1423,105 @@ function printReceipt() {
 
 function newSale() {
   closeReceiptAndReset();
+}
+
+/* ══════════════════════════════════════════════
+   16C. DEVOLUÇÕES (Returns)
+   ══════════════════════════════════════════════ */
+let returnVendaId = null;
+
+async function openReturns() {
+  document.getElementById('returns-modal')?.classList.remove('hidden');
+  document.getElementById('return-confirm').style.display = 'none';
+  document.getElementById('confirm-return-btn').style.display = 'none';
+  returnVendaId = null;
+
+  const list = document.getElementById('returns-list');
+  if (!list) return;
+  list.innerHTML = '<p style="color:#555;text-align:center;padding:20px;">A carregar...</p>';
+
+  let vendas;
+  try { vendas = await apiFetch('/vendas'); } catch { vendas = FALLBACK.vendas; }
+
+  // Only show completed sales (not already returned)
+  const completadas = vendas.filter(v => v.status === 'CONCLUIDA').slice(0, 15);
+
+  if (!completadas.length) {
+    list.innerHTML = '<p style="color:#555;text-align:center;padding:20px;">Sem vendas para devolver</p>';
+    return;
+  }
+
+  list.innerHTML = completadas.map(v => `
+    <div class="return-sale-item">
+      <span class="rsi-code">${v.codigo}</span>
+      <div class="rsi-info">
+        <div>${v.produto || '—'}</div>
+        <div class="rsi-date">${v.dataVenda || ''}</div>
+      </div>
+      <span class="rsi-total">${fmt.eur(v.total)}</span>
+      <button class="return-sale-btn" onclick="selectReturn(${v.id}, '${v.codigo}')">Devolver</button>
+    </div>
+  `).join('');
+}
+
+async function selectReturn(vendaId, codigo) {
+  returnVendaId = vendaId;
+  const confirmDiv = document.getElementById('return-confirm');
+  const confirmBtn = document.getElementById('confirm-return-btn');
+  const titleEl = document.getElementById('return-confirm-title');
+  const itemsEl = document.getElementById('return-confirm-items');
+
+  if (titleEl) titleEl.textContent = `Devolver ${codigo}`;
+  if (confirmDiv) confirmDiv.style.display = 'block';
+  if (confirmBtn) confirmBtn.style.display = 'inline-flex';
+
+  // Load sale items
+  if (itemsEl) {
+    itemsEl.innerHTML = '<p style="color:#555;font-size:0.7rem;">A carregar itens...</p>';
+    try {
+      const itens = await apiFetch(`/vendas/${vendaId}/itens`);
+      itemsEl.innerHTML = itens.map(item => `
+        <div class="return-item-row">
+          <span class="ri-name">${item.nome || 'Vinho #' + item.vinhoId}</span>
+          <span class="ri-qty">×${item.quantidade}</span>
+          <span class="ri-price">${fmt.eur(item.precoUnitario * item.quantidade)}</span>
+        </div>
+      `).join('');
+    } catch {
+      itemsEl.innerHTML = '<p style="color:#888;font-size:0.7rem;">Devolução total será processada</p>';
+    }
+  }
+
+  // Scroll to confirm section
+  confirmDiv?.scrollIntoView({ behavior: 'smooth' });
+}
+
+async function confirmReturn() {
+  if (!returnVendaId) return;
+  const btn = document.getElementById('confirm-return-btn');
+  if (btn) { btn.disabled = true; btn.textContent = 'A processar...'; }
+
+  const motivo = document.getElementById('return-reason')?.value || '';
+
+  try {
+    await apiFetch('/devolucoes', {
+      method: 'POST',
+      body: JSON.stringify({ vendaId: returnVendaId, motivo })
+    });
+    toast('Devolução processada com sucesso! Stock atualizado.', 'success', 3000);
+    // Refresh catalog to reflect stock changes
+    await refreshCatalog();
+  } catch (e) {
+    toast('Erro ao processar devolução: ' + (e.message || 'erro'), 'error');
+  }
+
+  if (btn) { btn.disabled = false; btn.textContent = 'Confirmar Devolução'; }
+  returnVendaId = null;
+  closeReturns();
+}
+
+function closeReturns() {
+  document.getElementById('returns-modal')?.classList.add('hidden');
 }
 
 /* ══════════════════════════════════════════════
