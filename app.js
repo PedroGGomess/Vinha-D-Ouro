@@ -364,9 +364,13 @@ async function checkApi() {
 function updateApiBadge() {
   const badge = document.getElementById('api-badge');
   const label = document.getElementById('api-label');
-  if (!badge) return;
-  badge.className = apiOnline ? 'api-badge online' : 'api-badge offline';
+  if (badge) {
+    badge.className = apiOnline ? 'api-badge online' : 'api-badge offline';
+  }
   if (label) label.textContent = apiOnline ? 'BD Ligada' : 'Offline (Demo)';
+  // POS status dot
+  const dot = document.getElementById('api-dot');
+  if (dot) dot.className = apiOnline ? 'pos-status-dot' : 'pos-status-dot offline';
 }
 
 async function apiFetch(path, opts = {}) {
@@ -1082,8 +1086,8 @@ async function loadPOS() {
   try { catalog = await apiFetch('/vinhos'); } catch { catalog = FALLBACK.vinhos; }
   renderCatalog();
 
-  document.querySelectorAll('.filter-btn').forEach(btn => btn.addEventListener('click', () => {
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.filter-btn, .pos-cat-btn').forEach(btn => btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn, .pos-cat-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     renderCatalog(btn.dataset.filter);
   }));
@@ -1105,28 +1109,28 @@ function renderCatalog(filter = 'todos') {
     (`${v.nome || ''} ${v.regiao || ''} ${v.produtor || ''}`.toLowerCase()).includes(q) &&
     (!filter || filter === 'todos' || filter === '' || v.tipo === filter)
   );
+
+  // Update product count
+  const countEl = document.getElementById('pos-product-count');
+  if (countEl) countEl.textContent = `${list.length} produto${list.length !== 1 ? 's' : ''}`;
+
   if (!list.length) {
-    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--text-muted);">Nenhum vinho encontrado</div>`;
+    grid.innerHTML = `<div class="pos-empty-grid">Nenhum vinho encontrado</div>`;
     return;
   }
   grid.innerHTML = list.map(v => {
     const oos = (v.quantidade || 0) === 0;
     const tc = wineTypeClass[v.tipo] || 'tinto';
-    const producer = (v.produtor || '').length > 20 ? (v.produtor || '').slice(0, 18) + '…' : (v.produtor || '');
-    return `<div class="wine-card wine-card-${tc}${oos ? ' out-of-stock' : ''}" onclick="${oos ? 'void(0)' : `addToCart(${v.id})`}">
-      <div class="wine-card-visual">
-        <img src="${getWineBottleImage(v.tipo)}" alt="${v.nome}" class="wine-bottle-image" loading="lazy">
-        ${wineBottleSVG(v.tipo)}
-        ${v.anoColheita ? `<div class="wine-vintage-badge">${v.anoColheita}</div>` : ''}
-        <div class="wine-type-pill">${v.tipo || ''}</div>
-      </div>
-      <div class="wine-card-body">
-        <div class="wine-card-name">${v.nome}</div>
-        <div class="wine-card-meta">${v.regiao || ''}${producer ? ` · ${producer}` : ''}</div>
-        <div class="wine-card-footer">
-          <span class="wine-card-price">${fmt.eur(v.preco)}</span>
-          <span class="wine-card-stock${oos ? ' oos' : ''}">${oos ? 'Esgotado' : `${v.quantidade} un.`}</span>
-        </div>
+    const qty = v.quantidade || 0;
+    const stockClass = oos ? 'oos' : qty < 5 ? 'low' : '';
+    return `<div class="pos-product${oos ? ' out-of-stock' : ''}" onclick="${oos ? 'void(0)' : `addToCart(${v.id})`}">
+      <div class="pos-product-type ${tc}">${v.tipo || ''}</div>
+      <div class="pos-product-visual">${wineBottleSVG(v.tipo)}</div>
+      <div class="pos-product-name">${v.nome}</div>
+      <div class="pos-product-region">${v.regiao || ''}${v.anoColheita ? ' · ' + v.anoColheita : ''}</div>
+      <div class="pos-product-bottom">
+        <span class="pos-product-price">${fmt.eur(v.preco)}</span>
+        <span class="pos-product-stock ${stockClass}">${oos ? 'Esgotado' : qty + ' un.'}</span>
       </div>
     </div>`;
   }).join('');
@@ -1183,23 +1187,51 @@ function renderCart() {
   const empty = document.getElementById('cart-empty');
   const btn = document.getElementById('checkout-btn');
   const cnt = document.getElementById('cart-count');
+  const clearBtn = document.getElementById('cart-clear-btn');
+  const totalItems = cart.reduce((s, x) => s + x.qty, 0);
+
   if (!cart.length) {
     if (empty) empty.style.display = 'flex';
     if (btn) btn.disabled = true;
     if (cnt) cnt.textContent = '0';
+    if (clearBtn) clearBtn.style.display = 'none';
     Array.from(c.children).forEach(el => { if (el.id !== 'cart-empty') el.remove(); });
     updateTotals(0); return;
   }
+
   if (empty) empty.style.display = 'none';
   if (btn) btn.disabled = false;
-  if (cnt) cnt.textContent = cart.reduce((s, x) => s + x.qty, 0);
+  if (cnt) cnt.textContent = totalItems;
+  if (clearBtn) clearBtn.style.display = 'block';
+
+  // Clear non-empty items
   Array.from(c.children).forEach(el => { if (el.id !== 'cart-empty') el.remove(); });
+
   cart.forEach((item, i) => {
-    const div = document.createElement('div'); div.className = 'cart-item';
-    const sizeTag = item.vol ? `<span style="font-size:10px;background:var(--bg-elevated);color:var(--text-muted);padding:1px 6px;border-radius:10px;margin-left:4px;">${item.vol}</span>` : '';
-    div.innerHTML = `<div class="cart-item-info"><div class="cart-item-name">${item.nome}${sizeTag}</div><div class="cart-item-price">${fmt.eur(item.preco * item.qty)}</div></div><div class="cart-item-qty"><button class="qty-btn" onclick="updateQty(${i},-1)">−</button><span class="qty-num">${item.qty}</span><button class="qty-btn" onclick="updateQty(${i},1)">+</button></div><button class="cart-item-remove" onclick="removeFromCart(${i})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>`;
+    const v = catalog.find(x => x.id === item.id);
+    const tc = v ? (wineTypeClass[v.tipo] || 'tinto') : 'tinto';
+    const div = document.createElement('div');
+    div.className = 'pos-ci';
+    div.innerHTML = `
+      <div class="pos-ci-color ${tc}"></div>
+      <div class="pos-ci-info">
+        <div class="pos-ci-name">${item.nome}</div>
+        <div class="pos-ci-detail">${item.vol || '0.75L'} · ${fmt.eur(item.preco)}/un.</div>
+      </div>
+      <div class="pos-ci-qty">
+        <button onclick="updateQty(${i},-1)">−</button>
+        <span>${item.qty}</span>
+        <button onclick="updateQty(${i},1)">+</button>
+      </div>
+      <div class="pos-ci-price">${fmt.eur(item.preco * item.qty)}</div>
+      <button class="pos-ci-remove" onclick="removeFromCart(${i})" title="Remover">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>`;
     c.appendChild(div);
   });
+
   updateTotals(cart.reduce((s, x) => s + x.preco * x.qty, 0));
 }
 
@@ -1345,8 +1377,8 @@ function updateCheckoutTotals() { updateCoTotals(); }
 function calculateChange() { calcTroco(); }
 
 function filterByType(type) {
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  const target = document.querySelector(`.filter-btn[data-filter="${type}"]`);
+  document.querySelectorAll('.filter-btn, .pos-cat-btn').forEach(b => b.classList.remove('active'));
+  const target = document.querySelector(`.filter-btn[data-filter="${type}"], .pos-cat-btn[data-filter="${type}"]`);
   if (target) target.classList.add('active');
   renderCatalog(type || 'todos');
 }
