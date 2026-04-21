@@ -292,6 +292,46 @@
     </div>
   </div>
 
+  <!-- GUIA DE TRANSPORTE MODAL -->
+  <div class="modal hidden" id="guia-modal">
+    <div class="modal-backdrop" onclick="closeGuiaModal()"></div>
+    <div class="modal-content modal-small">
+      <div class="modal-header">
+        <h2 class="modal-title">Guia de Transporte</h2>
+        <button class="modal-close" onclick="closeGuiaModal()" aria-label="Fechar">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="stock-info-box">
+          <p class="stock-info-label">Produto</p>
+          <p class="stock-info-name" id="guia-wine-name">-</p>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Quantidade (garrafas) *</label>
+          <input type="number" id="guia-quantity" class="form-input" placeholder="12" min="1" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Destino *</label>
+          <input type="text" id="guia-destino" class="form-input" placeholder="ex: Loja Porto Centro" required>
+        </div>
+
+        <p class="stock-info-hint">Será gerada uma guia de transporte oficial para impressão.</p>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeGuiaModal()">Cancelar</button>
+        <button class="btn btn-primary" onclick="generateGuia()">Gerar Guia</button>
+      </div>
+    </div>
+  </div>
+
   <script src="app.js"></script>
 </body>
 </html>

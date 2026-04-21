@@ -34,7 +34,7 @@
             position: fixed;
             top: 0; left: 0; right: 0;
             height: 2px;
-            background: linear-gradient(90deg, transparent, #C9A227, transparent);
+            background: linear-gradient(90deg, transparent, #C9A96E, transparent);
             z-index: 100;
             box-shadow: 0 0 20px rgba(201, 162, 39, 0.3);
         }
@@ -47,7 +47,7 @@
         .particle {
             position: fixed;
             width: 2px; height: 2px;
-            background: #C9A227;
+            background: #C9A96E;
             border-radius: 50%;
             pointer-events: none;
         }
@@ -94,7 +94,7 @@
         .brand-top .gold-line {
             width: 48px;
             height: 2px;
-            background: #C9A227;
+            background: #C9A96E;
             margin: 16px auto;
             box-shadow: 0 0 12px rgba(201, 162, 39, 0.4);
         }
@@ -103,7 +103,7 @@
             font-family: 'Cormorant Garamond', serif;
             font-size: 20px;
             font-style: italic;
-            color: #C9A227;
+            color: #C9A96E;
             letter-spacing: 0.3px;
         }
 
@@ -158,8 +158,8 @@
             opacity: 1;
         }
 
-        .role-card[data-role="gerente"] { --card-accent: #C9A227; --card-glow: rgba(201, 162, 39, 0.15); }
-        .role-card[data-role="loja"]    { --card-accent: #9B2335; --card-glow: rgba(155, 35, 53, 0.15); }
+        .role-card[data-role="gerente"] { --card-accent: #C9A96E; --card-glow: rgba(201, 162, 39, 0.15); }
+        .role-card[data-role="loja"]    { --card-accent: #8B3A44; --card-glow: rgba(155, 35, 53, 0.15); }
         .role-card[data-role="stock"]   { --card-accent: #5B8A72; --card-glow: rgba(91, 138, 114, 0.15); }
         .role-card[data-role="admin"]   { --card-accent: #7B6BAE; --card-glow: rgba(123, 107, 174, 0.15); }
 
@@ -243,7 +243,7 @@
         }
 
         .back-btn:hover {
-            color: #C9A227;
+            color: #C9A96E;
         }
 
         .back-btn svg {
@@ -269,7 +269,7 @@
             position: absolute;
             top: 0; left: 0; right: 0;
             height: 3px;
-            background: linear-gradient(90deg, transparent, var(--login-accent, #C9A227), transparent);
+            background: linear-gradient(90deg, transparent, var(--login-accent, #C9A96E), transparent);
             border-radius: 24px 24px 0 0;
         }
 
@@ -293,7 +293,7 @@
         .login-role-icon svg {
             width: 24px;
             height: 24px;
-            stroke: var(--login-accent, #C9A227);
+            stroke: var(--login-accent, #C9A96E);
         }
 
         .login-header h2 {
@@ -344,7 +344,7 @@
 
         .form-group input:focus {
             background: rgba(201, 162, 39, 0.04);
-            border-color: var(--login-accent, #C9A227);
+            border-color: var(--login-accent, #C9A96E);
             box-shadow: 0 0 0 3px rgba(201, 162, 39, 0.08);
         }
 
@@ -365,7 +365,7 @@
         .btn-login {
             width: 100%;
             padding: 14px 20px;
-            background: linear-gradient(135deg, var(--login-accent, #9B2335) 0%, color-mix(in srgb, var(--login-accent, #9B2335) 70%, #000) 100%);
+            background: linear-gradient(135deg, var(--login-accent, #8B3A44) 0%, color-mix(in srgb, var(--login-accent, #8B3A44) 70%, #000) 100%);
             border: none;
             border-radius: 12px;
             font-family: 'Inter', sans-serif;
@@ -465,7 +465,7 @@
 
             <div class="role-grid">
                 <!-- Gerente -->
-                <div class="role-card" data-role="gerente" onclick="selectRole('gerente', '1234', 'Gerente', '#C9A227')">
+                <div class="role-card" data-role="gerente" onclick="selectRole('gerente', '1234', 'Gerente', '#C9A96E')">
                     <div class="role-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                             <polyline points="12 3 20 7.5 20 16.5 12 21 4 16.5 4 7.5 12 3"/>
@@ -480,7 +480,7 @@
                 </div>
 
                 <!-- Funcionário / Loja -->
-                <div class="role-card" data-role="loja" onclick="selectRole('loja', '1234', 'Loja', '#9B2335')">
+                <div class="role-card" data-role="loja" onclick="selectRole('loja', '1234', 'Loja', '#8B3A44')">
                     <div class="role-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                             <circle cx="9" cy="21" r="1"/>
@@ -581,8 +581,8 @@
         };
 
         const roleColors = {
-            gerente: '#C9A227',
-            loja: '#9B2335',
+            gerente: '#C9A96E',
+            loja: '#8B3A44',
             stock: '#5B8A72',
             admin: '#7B6BAE'
         };

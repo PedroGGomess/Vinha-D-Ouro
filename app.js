@@ -435,7 +435,7 @@ function statusBadge(s) {
 /* ══════════════════════════════════════════════
    6. SVG CHARTS
    ══════════════════════════════════════════════ */
-function drawBarChart(svgId, labels, values, color = '#C9A227') {
+function drawBarChart(svgId, labels, values, color = '#C9A96E') {
   const svg = document.getElementById(svgId); if (!svg) return;
   svg.innerHTML = '';
   const W = 500, H = 200, padL = 40, padR = 16, padT = 16, padB = 36;
@@ -781,7 +781,7 @@ async function loadDashboard() {
   set('kpi-critico', data.stockCritico);
   set('kpi-stock', fmt.eur(data.valorStock));
 
-  drawBarChart('chart-vendas', data.vendasLabels || ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Hj'], data.vendasSemanais || [0, 0, 0, 0, 0, 0, 0], '#C9A227');
+  drawBarChart('chart-vendas', data.vendasLabels || ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Hj'], data.vendasSemanais || [0, 0, 0, 0, 0, 0, 0], '#C9A96E');
   drawLineChart('chart-receita', ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'], [120, 185, 240, 180, 310, 420], '#A83D4A');
 
   // Recent sales
@@ -864,19 +864,26 @@ function filterVendas() {
 function renderVendasTable(tbody, vendas) {
   if (!tbody) return;
   if (!vendas || !vendas.length) {
-    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:50px;color:var(--text-muted);">Nenhuma venda encontrada</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:50px;color:var(--text-muted);">Nenhuma venda encontrada</td></tr>`;
     return;
   }
-  tbody.innerHTML = vendas.map(v => `
-    <tr>
+  tbody.innerHTML = vendas.map(v => {
+    const status = v.status || v.estado || '';
+    const isPaid = status === 'CONCLUIDA' || status === 'PAGA';
+    return `<tr>
       <td><span style="font-family:var(--font-display);font-size:13px;color:var(--text-gold);font-weight:600;">${v.codigo || `VD-${String(v.id).padStart(4, '0')}`}</span></td>
-      <td>${v.cliente || '—'}</td>
+      <td>${v.cliente || v.clienteNome || '—'}</td>
       <td class="muted" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${v.produto || '—'}</td>
       <td class="muted">${v.metodoPagamento || '—'}</td>
       <td><span style="font-family:var(--font-display);font-weight:700;">${fmt.eur(v.total)}</span></td>
-      <td>${statusBadge(v.status || v.estado)}</td>
+      <td>${statusBadge(status)}</td>
       <td class="muted">${fmt.dt(v.dataVenda)}</td>
-    </tr>`).join('');
+      <td><div style="display:flex;gap:5px;">
+        <button class="btn btn-secondary btn-sm btn-icon" onclick="printVendaReceipt(${v.id})" title="Imprimir Fatura"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></button>
+        ${isPaid ? '<span class="badge badge-success" style="font-size:9px;">Paga</span>' : ''}
+      </div></td>
+    </tr>`;
+  }).join('');
 }
 
 /* ══════════════════════════════════════════════
@@ -938,6 +945,7 @@ function renderStock() {
       <td><div style="display:flex;gap:5px;">
         <button class="btn btn-secondary btn-sm btn-icon" onclick="openEditModal(${v.id})" title="Editar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
         <button class="btn btn-secondary btn-sm btn-icon" onclick="openStockModal(${v.id})" title="Stock"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg></button>
+        <button class="btn btn-secondary btn-sm btn-icon" onclick="openGuiaModal(${v.id})" title="Guia de Transporte"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></button>
       </div></td>
     </tr>`;
   }).join('');
@@ -1406,14 +1414,27 @@ function calculateChange() { calcTroco(); }
 
 function filterByType(type) {
   document.querySelectorAll('.filter-btn, .pos-cat-btn, .pos-tab').forEach(b => b.classList.remove('active'));
-  const target = document.querySelector(`.filter-btn[data-filter="${type}"], .pos-cat-btn[data-filter="${type}"], .pos-tab[data-filter="${type}"]`);
+  // Handle both empty string and 'todos' as "all wines"
+  const filterValue = type === '' ? '' : type;
+  const target = document.querySelector(`.filter-btn[data-filter="${filterValue}"], .pos-cat-btn[data-filter="${filterValue}"], .pos-tab[data-filter="${filterValue}"]`);
   if (target) target.classList.add('active');
-  renderCatalog(type || 'todos');
+  renderCatalog(filterValue === '' ? 'todos' : filterValue);
 }
 
 function searchWines(query) {
   const active = document.querySelector('.pos-tab.active, .filter-btn.active');
   renderCatalog(active?.dataset?.filter || 'todos');
+}
+
+/* ══════════════════════════════════════════════
+   Stock search and filter (from HTML onkeyup/onchange)
+   ══════════════════════════════════════════════ */
+function searchStock(query) {
+  renderStock();
+}
+
+function filterStockByType(type) {
+  renderStock();
 }
 
 function selectPaymentMethod(method) {
@@ -1432,6 +1453,410 @@ function selectPaymentMethod(method) {
 
 function printReceipt() {
   window.print();
+}
+
+/* ══════════════════════════════════════════════
+   Enhanced print functions for Gerente
+   ══════════════════════════════════════════════ */
+
+async function printVendaReceipt(vendaId) {
+  try {
+    const venda = await apiFetch(`/vendas/${vendaId}`).catch(() => null);
+    const itens = await apiFetch(`/vendas/${vendaId}/itens`).catch(() => []);
+
+    if (!venda) { toast('Venda não encontrada', 'error'); return; }
+
+    const subtotal = itens.reduce((sum, item) => sum + (item.precoUnitario * item.quantidade), 0);
+    const baseIVA = subtotal / 1.23;
+    const iva = subtotal - baseIVA;
+    const total = subtotal;
+    const dataVenda = venda.dataVenda ? new Date(venda.dataVenda) : new Date();
+    const dataFmt = dataVenda.toLocaleDateString('pt-PT');
+    const horaFmt = dataVenda.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' });
+    const docNum = venda.codigo || `FT ${new Date().getFullYear()}/${String(vendaId).padStart(5, '0')}`;
+
+    const win = window.open('', '', 'width=820,height=1000');
+    const html = `<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8">
+  <title>Fatura ${docNum} — Vinha D'Ouro</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap');
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', -apple-system, sans-serif; font-size: 11px; color: #1a1a1a; background: #fff; }
+    .invoice { max-width: 780px; margin: 0 auto; padding: 40px; }
+
+    /* Header */
+    .inv-header { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 28px; border-bottom: 3px solid #8B3A44; margin-bottom: 28px; }
+    .inv-brand h1 { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 700; color: #8B3A44; letter-spacing: 1px; margin-bottom: 4px; }
+    .inv-brand .tagline { font-size: 10px; color: #C9A96E; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; }
+    .inv-brand .company-info { margin-top: 12px; font-size: 10px; color: #666; line-height: 1.6; }
+    .inv-doc { text-align: right; }
+    .inv-doc .doc-type { font-size: 20px; font-weight: 700; color: #1a1a1a; letter-spacing: 1px; }
+    .inv-doc .doc-number { font-size: 13px; font-weight: 600; color: #8B3A44; margin-top: 2px; }
+    .inv-doc .doc-meta { margin-top: 10px; font-size: 10px; color: #666; line-height: 1.8; }
+    .inv-doc .doc-meta strong { color: #333; }
+
+    /* Client & Payment info */
+    .inv-parties { display: flex; gap: 40px; margin-bottom: 28px; }
+    .inv-party { flex: 1; }
+    .inv-party-label { font-size: 9px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #C9A96E; margin-bottom: 8px; border-bottom: 1px solid #eee; padding-bottom: 4px; }
+    .inv-party p { font-size: 11px; line-height: 1.7; color: #333; }
+    .inv-party .name { font-weight: 600; font-size: 12px; color: #1a1a1a; }
+
+    /* Items table */
+    .inv-table { width: 100%; border-collapse: collapse; margin-bottom: 24px; }
+    .inv-table thead th { background: #8B3A44; color: #fff; padding: 10px 12px; font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; text-align: left; }
+    .inv-table thead th:nth-child(n+3) { text-align: right; }
+    .inv-table tbody td { padding: 10px 12px; border-bottom: 1px solid #f0ebe6; font-size: 11px; }
+    .inv-table tbody td:nth-child(n+3) { text-align: right; font-variant-numeric: tabular-nums; }
+    .inv-table tbody tr:nth-child(even) { background: #faf8f5; }
+    .inv-table tbody .item-name { font-weight: 500; }
+    .inv-table tbody .item-desc { font-size: 9px; color: #888; margin-top: 2px; }
+
+    /* Totals */
+    .inv-totals { display: flex; justify-content: flex-end; margin-bottom: 28px; }
+    .inv-totals-box { width: 300px; }
+    .inv-totals-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 11px; color: #555; }
+    .inv-totals-row.subtotal { border-top: 1px solid #ddd; padding-top: 10px; }
+    .inv-totals-row.total { border-top: 2px solid #8B3A44; padding-top: 12px; margin-top: 6px; font-size: 16px; font-weight: 700; color: #1a1a1a; }
+    .inv-totals-row.total .val { color: #8B3A44; }
+
+    /* Footer */
+    .inv-footer { border-top: 2px solid #f0ebe6; padding-top: 20px; text-align: center; }
+    .inv-footer .thanks { font-family: 'Playfair Display', serif; font-size: 14px; color: #8B3A44; margin-bottom: 8px; }
+    .inv-footer .legal { font-size: 9px; color: #999; line-height: 1.6; max-width: 500px; margin: 0 auto; }
+    .inv-footer .gold-line { width: 60px; height: 2px; background: #C9A96E; margin: 12px auto; }
+
+    /* Payment badge */
+    .payment-badge { display: inline-block; background: #f0ebe6; color: #8B3A44; font-size: 10px; font-weight: 600; padding: 3px 10px; border-radius: 4px; letter-spacing: 0.5px; }
+    .status-paid { background: #d4edda; color: #155724; }
+
+    @media print {
+      body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .invoice { padding: 20px; }
+      .no-print { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="invoice">
+    <div class="inv-header">
+      <div class="inv-brand">
+        <h1>VINHA D'OURO</h1>
+        <div class="tagline">Premium Wine Management</div>
+        <div class="company-info">
+          Vinha D'Ouro, Lda.<br>
+          NIF: 517 234 891<br>
+          Rua das Vindimas, 42 — 4050-612 Porto<br>
+          Tel: +351 220 145 678 · info@vinhadouro.pt
+        </div>
+      </div>
+      <div class="inv-doc">
+        <div class="doc-type">FATURA</div>
+        <div class="doc-number">${docNum}</div>
+        <div class="doc-meta">
+          <strong>Data:</strong> ${dataFmt}<br>
+          <strong>Hora:</strong> ${horaFmt}<br>
+          <strong>Original</strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="inv-parties">
+      <div class="inv-party">
+        <div class="inv-party-label">Cliente</div>
+        <p class="name">${venda.clienteNome || 'Consumidor Final'}</p>
+        <p>${venda.clienteNif ? 'NIF: ' + venda.clienteNif : 'Consumidor Final — sem NIF'}</p>
+        <p>${venda.clienteMorada || ''}</p>
+      </div>
+      <div class="inv-party">
+        <div class="inv-party-label">Pagamento</div>
+        <p><span class="payment-badge">${venda.metodoPagamento || 'Numerário'}</span></p>
+        <p style="margin-top:6px;"><span class="payment-badge status-paid">PAGO</span></p>
+        <p style="margin-top:6px;font-size:10px;color:#888;">Operador: ${venda.funcionarioNome || 'Sistema'}</p>
+      </div>
+    </div>
+
+    <table class="inv-table">
+      <thead>
+        <tr>
+          <th style="width:40%;">Descrição</th>
+          <th style="width:12%;">Qtd.</th>
+          <th style="width:16%;">Preço Unit.</th>
+          <th style="width:12%;">IVA</th>
+          <th style="width:20%;">Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${itens.map((item, i) => {
+          const lineTotal = item.precoUnitario * item.quantidade;
+          return `<tr>
+            <td><div class="item-name">${item.nome || 'Vinho #' + item.vinhoId}</div><div class="item-desc">${item.tipo || ''} ${item.regiao ? '· ' + item.regiao : ''} ${item.anoColheita ? '· ' + item.anoColheita : ''}</div></td>
+            <td style="text-align:center;">${item.quantidade}</td>
+            <td>${fmt.eur(item.precoUnitario)}</td>
+            <td>23%</td>
+            <td><strong>${fmt.eur(lineTotal)}</strong></td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+
+    <div class="inv-totals">
+      <div class="inv-totals-box">
+        <div class="inv-totals-row subtotal">
+          <span>Base Tributável:</span>
+          <span>${fmt.eur(baseIVA)}</span>
+        </div>
+        <div class="inv-totals-row">
+          <span>IVA (23%):</span>
+          <span>${fmt.eur(iva)}</span>
+        </div>
+        <div class="inv-totals-row total">
+          <span>TOTAL</span>
+          <span class="val">${fmt.eur(total)}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="inv-footer">
+      <div class="thanks">Obrigado pela sua preferência</div>
+      <div class="gold-line"></div>
+      <div class="legal">
+        Documento processado por programa certificado n.º 0000/AT.<br>
+        Vinha D'Ouro, Lda. · Capital Social: €50.000 · NIPC: 517 234 891<br>
+        Conservatória do Registo Comercial do Porto<br>
+        Os bens/serviços foram colocados à disposição do cliente na data do documento.
+      </div>
+    </div>
+
+    <div class="no-print" style="text-align:center;margin-top:30px;">
+      <button onclick="window.print()" style="background:#8B3A44;color:#fff;border:none;padding:12px 32px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;letter-spacing:0.5px;">Imprimir Fatura</button>
+    </div>
+  </div>
+</body>
+</html>`;
+    win.document.write(html);
+    win.document.close();
+    setTimeout(() => { win.print(); }, 600);
+  } catch (err) {
+    console.error('Erro ao imprimir fatura:', err);
+    toast('Erro ao gerar fatura', 'error');
+  }
+}
+
+async function printGuiaTransporte(vinhoId, quantidade, destino) {
+  try {
+    const vinho = await apiFetch(`/vinhos/${vinhoId}`).catch(() => null);
+    if (!vinho) { toast('Vinho não encontrado', 'error'); return; }
+
+    const win = window.open('', '', 'width=820,height=1000');
+    const hoje = new Date();
+    const dataFmt = hoje.toLocaleDateString('pt-PT');
+    const horaFmt = hoje.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' });
+    const guiaNum = `GT ${hoje.getFullYear()}/${String(Math.floor(Math.random() * 99999)).padStart(5, '0')}`;
+    const user = Session.get();
+    const valorUnit = vinho.preco || 0;
+    const valorTotal = valorUnit * quantidade;
+
+    const html = `<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8">
+  <title>Guia de Transporte ${guiaNum} — Vinha D'Ouro</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap');
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; font-size: 11px; color: #1a1a1a; background: #fff; }
+    .guia { max-width: 780px; margin: 0 auto; padding: 40px; }
+
+    .guia-header { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 24px; border-bottom: 3px solid #8B3A44; margin-bottom: 24px; }
+    .guia-brand h1 { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 700; color: #8B3A44; }
+    .guia-brand .tagline { font-size: 10px; color: #C9A96E; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; }
+    .guia-brand .co-info { margin-top: 10px; font-size: 10px; color: #666; line-height: 1.6; }
+    .guia-doc { text-align: right; }
+    .guia-doc .doc-type { font-size: 18px; font-weight: 700; color: #1a1a1a; letter-spacing: 2px; }
+    .guia-doc .doc-num { font-size: 13px; font-weight: 600; color: #8B3A44; margin-top: 2px; }
+    .guia-doc .doc-meta { margin-top: 8px; font-size: 10px; color: #666; line-height: 1.8; }
+
+    .guia-parties { display: flex; gap: 30px; margin-bottom: 24px; }
+    .guia-party { flex: 1; background: #faf8f5; padding: 16px; border-radius: 6px; border-left: 3px solid #C9A96E; }
+    .guia-party-label { font-size: 9px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #C9A96E; margin-bottom: 8px; }
+    .guia-party p { font-size: 11px; line-height: 1.7; color: #333; }
+    .guia-party .name { font-weight: 600; font-size: 12px; color: #1a1a1a; }
+
+    .guia-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+    .guia-table thead th { background: #8B3A44; color: #fff; padding: 10px 12px; font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; text-align: left; }
+    .guia-table thead th.right { text-align: right; }
+    .guia-table tbody td { padding: 12px; border-bottom: 1px solid #f0ebe6; font-size: 11px; }
+    .guia-table tbody td.right { text-align: right; font-variant-numeric: tabular-nums; }
+    .guia-table tfoot td { padding: 10px 12px; font-size: 12px; font-weight: 700; border-top: 2px solid #8B3A44; }
+
+    .guia-obs { background: #faf8f5; border-left: 3px solid #C9A96E; padding: 14px 16px; margin-bottom: 24px; border-radius: 4px; }
+    .guia-obs-title { font-size: 9px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #C9A96E; margin-bottom: 6px; }
+
+    .signatures { display: flex; gap: 40px; margin-top: 40px; margin-bottom: 30px; }
+    .sig-box { flex: 1; text-align: center; }
+    .sig-line { border-top: 1px solid #333; margin-top: 60px; padding-top: 8px; font-size: 10px; color: #666; }
+
+    .guia-footer { border-top: 2px solid #f0ebe6; padding-top: 16px; text-align: center; font-size: 9px; color: #999; line-height: 1.6; }
+    .guia-footer .gold-line { width: 50px; height: 2px; background: #C9A96E; margin: 10px auto; }
+
+    .legal-box { background: #fff9f0; border: 1px solid #f0ebe6; border-radius: 4px; padding: 10px 14px; margin-bottom: 20px; font-size: 9px; color: #888; line-height: 1.6; }
+
+    @media print {
+      body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .guia { padding: 20px; }
+      .no-print { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="guia">
+    <div class="guia-header">
+      <div class="guia-brand">
+        <h1>VINHA D'OURO</h1>
+        <div class="tagline">Premium Wine Management</div>
+        <div class="co-info">
+          Vinha D'Ouro, Lda. · NIF: 517 234 891<br>
+          Rua das Vindimas, 42 — 4050-612 Porto<br>
+          Tel: +351 220 145 678
+        </div>
+      </div>
+      <div class="guia-doc">
+        <div class="doc-type">GUIA DE TRANSPORTE</div>
+        <div class="doc-num">${guiaNum}</div>
+        <div class="doc-meta">
+          <strong>Data:</strong> ${dataFmt}<br>
+          <strong>Hora Carga:</strong> ${horaFmt}<br>
+          <strong>Emitente:</strong> ${user?.nome || 'Armazenista'}
+        </div>
+      </div>
+    </div>
+
+    <div class="guia-parties">
+      <div class="guia-party">
+        <div class="guia-party-label">Remetente (Origem)</div>
+        <p class="name">Armazém Central — Vinha D'Ouro</p>
+        <p>Rua das Vindimas, 42<br>4050-612 Porto</p>
+        <p>NIF: 517 234 891</p>
+      </div>
+      <div class="guia-party">
+        <div class="guia-party-label">Destinatário (Destino)</div>
+        <p class="name">${destino}</p>
+      </div>
+    </div>
+
+    <table class="guia-table">
+      <thead>
+        <tr>
+          <th style="width:35%;">Designação</th>
+          <th style="width:15%;">Tipo</th>
+          <th style="width:15%;">Região / Colheita</th>
+          <th class="right" style="width:10%;">Qtd.</th>
+          <th class="right" style="width:12%;">Valor Unit.</th>
+          <th class="right" style="width:13%;">Valor Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>${vinho.nome}</strong><br><span style="font-size:9px;color:#888;">${vinho.produtor || ''}</span></td>
+          <td>${vinho.tipo || '—'}</td>
+          <td>${vinho.regiao || '—'} ${vinho.anoColheita ? '· ' + vinho.anoColheita : ''}</td>
+          <td class="right">${quantidade} un.</td>
+          <td class="right">${fmt.eur(valorUnit)}</td>
+          <td class="right"><strong>${fmt.eur(valorTotal)}</strong></td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="3" style="text-align:right;">Total de Mercadorias:</td>
+          <td class="right"><strong>${quantidade} un.</strong></td>
+          <td></td>
+          <td class="right"><strong>${fmt.eur(valorTotal)}</strong></td>
+        </tr>
+      </tfoot>
+    </table>
+
+    <div class="legal-box">
+      <strong>Enquadramento Legal:</strong> Documento emitido nos termos do artigo 201.º do CIEC e Decreto-Lei n.º 147/2003.
+      Os bens circulam em território nacional acompanhados do presente documento.
+    </div>
+
+    <div class="signatures">
+      <div class="sig-box">
+        <div class="sig-line">Expedição (Carimbo e Assinatura)</div>
+      </div>
+      <div class="sig-box">
+        <div class="sig-line">Transporte (Assinatura)</div>
+      </div>
+      <div class="sig-box">
+        <div class="sig-line">Receção (Carimbo e Assinatura)</div>
+      </div>
+    </div>
+
+    <div class="guia-footer">
+      <div class="gold-line"></div>
+      Documento processado por programa certificado n.º 0000/AT.<br>
+      Vinha D'Ouro, Lda. · NIPC: 517 234 891 · Conservatória do Registo Comercial do Porto
+    </div>
+
+    <div class="no-print" style="text-align:center;margin-top:30px;">
+      <button onclick="window.print()" style="background:#8B3A44;color:#fff;border:none;padding:12px 32px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;">Imprimir Guia</button>
+    </div>
+  </div>
+</body>
+</html>`;
+    win.document.write(html);
+    win.document.close();
+    setTimeout(() => { win.print(); }, 600);
+  } catch (err) {
+    console.error('Erro ao imprimir guia:', err);
+    toast('Erro ao gerar guia de transporte', 'error');
+  }
+}
+
+/* ══════════════════════════════════════════════
+   Guia de Transporte Modal Management
+   ══════════════════════════════════════════════ */
+
+let guiaModalVinhoId = null;
+
+function openGuiaModal(vinhoId) {
+  guiaModalVinhoId = vinhoId;
+  const vinho = allVinhos.find(v => v.id === vinhoId);
+  const nameEl = document.getElementById('guia-wine-name');
+  if (nameEl) nameEl.textContent = vinho ? vinho.nome : 'Vinho #' + vinhoId;
+  const qtyEl = document.getElementById('guia-quantity');
+  const destEl = document.getElementById('guia-destino');
+  if (qtyEl) qtyEl.value = '1';
+  if (destEl) destEl.value = '';
+  document.getElementById('guia-modal')?.classList.remove('hidden');
+}
+
+function closeGuiaModal() {
+  const modal = document.getElementById('guia-modal');
+  if (modal) modal.classList.add('hidden');
+  guiaModalVinhoId = null;
+}
+
+function generateGuia() {
+  const quantidade = +document.getElementById('guia-quantity')?.value || 1;
+  const destino = document.getElementById('guia-destino')?.value?.trim() || 'Não especificado';
+
+  if (quantidade < 1) {
+    toast('Quantidade deve ser maior que 0', 'error');
+    return;
+  }
+
+  if (!guiaModalVinhoId) {
+    toast('Erro: Vinho não selecionado', 'error');
+    return;
+  }
+
+  closeGuiaModal();
+  printGuiaTransporte(guiaModalVinhoId, quantidade, destino);
 }
 
 function newSale() {
@@ -1634,7 +2059,7 @@ async function loadRelatorios() {
   set('r-ticket', fmt.eur(dash.ticketMedio));
   set('r-vendas', dash.vendas);
 
-  drawBarChart('chart-vendas', dash.vendasLabels || ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Hj'], dash.vendasSemanais || [0, 0, 0, 0, 0, 0, 0], '#C9A227');
+  drawBarChart('chart-vendas', dash.vendasLabels || ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Hj'], dash.vendasSemanais || [0, 0, 0, 0, 0, 0, 0], '#C9A96E');
   drawLineChart('chart-receita', ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'], [120, 185, 240, 180, 310, 420], '#A83D4A');
 
   let vinhos;
