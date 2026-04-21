@@ -17,8 +17,8 @@
 
         body {
             font-family: 'Inter', sans-serif;
-            background: radial-gradient(ellipse at 30% 20%, #1a0f12 0%, #050203 60%, #000 100%);
-            color: #f5f5f5;
+            background: linear-gradient(135deg, #2C2C2C 0%, #3A322A 50%, #2C2C2C 100%);
+            color: #F5F0E8;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -33,16 +33,16 @@
             content: '';
             position: fixed;
             top: 0; left: 0; right: 0;
-            height: 2px;
+            height: 1px;
             background: linear-gradient(90deg, transparent, #C9A96E, transparent);
             z-index: 100;
-            box-shadow: 0 0 20px rgba(201, 162, 39, 0.3);
+            box-shadow: 0 0 16px rgba(201, 169, 110, 0.2);
         }
 
-        /* Floating particles */
+        /* Subtle floating particles */
         @keyframes float-p {
-            0%, 100% { transform: translate(0, 0); opacity: 0.25; }
-            50% { transform: translate(var(--tx), var(--ty)); opacity: 0.08; }
+            0%, 100% { transform: translate(0, 0); opacity: 0.12; }
+            50% { transform: translate(var(--tx), var(--ty)); opacity: 0.04; }
         }
         .particle {
             position: fixed;
@@ -51,18 +51,18 @@
             border-radius: 50%;
             pointer-events: none;
         }
-        .particle:nth-child(1) { --tx: 80px; --ty: -100px; animation: float-p 12s ease-in-out infinite; left: 8%; top: 12%; }
-        .particle:nth-child(2) { --tx: -60px; --ty: 120px; animation: float-p 14s ease-in-out infinite 1s; left: 22%; top: 65%; }
-        .particle:nth-child(3) { --tx: 100px; --ty: 80px; animation: float-p 16s ease-in-out infinite 2s; left: 88%; top: 20%; }
-        .particle:nth-child(4) { --tx: -90px; --ty: -60px; animation: float-p 18s ease-in-out infinite 0.5s; left: 78%; top: 78%; }
-        .particle:nth-child(5) { --tx: 70px; --ty: 110px; animation: float-p 15s ease-in-out infinite 1.5s; left: 4%; top: 45%; }
-        .particle:nth-child(6) { --tx: -100px; --ty: 70px; animation: float-p 17s ease-in-out infinite 2.5s; left: 92%; top: 38%; }
+        .particle:nth-child(1) { --tx: 60px; --ty: -80px; animation: float-p 16s ease-in-out infinite; left: 8%; top: 12%; }
+        .particle:nth-child(2) { --tx: -50px; --ty: 100px; animation: float-p 18s ease-in-out infinite 1s; left: 22%; top: 65%; }
+        .particle:nth-child(3) { --tx: 80px; --ty: 60px; animation: float-p 20s ease-in-out infinite 2s; left: 88%; top: 20%; }
+        .particle:nth-child(4) { --tx: -70px; --ty: -50px; animation: float-p 22s ease-in-out infinite 0.5s; left: 78%; top: 78%; }
+        .particle:nth-child(5) { --tx: 50px; --ty: 90px; animation: float-p 19s ease-in-out infinite 1.5s; left: 4%; top: 45%; }
+        .particle:nth-child(6) { --tx: -80px; --ty: 60px; animation: float-p 21s ease-in-out infinite 2.5s; left: 92%; top: 38%; }
 
         /* Container */
         .page-wrap {
             width: 100%;
             max-width: 900px;
-            padding: 40px 24px;
+            padding: 56px 24px;
             position: relative;
             z-index: 10;
         }
@@ -79,61 +79,61 @@
 
         .brand-top {
             text-align: center;
-            margin-bottom: 48px;
+            margin-bottom: 64px;
         }
 
         .brand-top h1 {
             font-family: 'Playfair Display', serif;
-            font-size: 52px;
+            font-size: 56px;
             font-weight: 700;
-            color: #f5f5f5;
+            color: #F5F0E8;
             letter-spacing: -1px;
-            margin-bottom: 6px;
+            margin-bottom: 12px;
+            font-weight: 600;
         }
 
         .brand-top .gold-line {
-            width: 48px;
-            height: 2px;
+            width: 56px;
+            height: 1.5px;
             background: #C9A96E;
-            margin: 16px auto;
-            box-shadow: 0 0 12px rgba(201, 162, 39, 0.4);
+            margin: 20px auto;
+            box-shadow: 0 0 16px rgba(201, 169, 110, 0.15);
         }
 
         .brand-top .tagline {
             font-family: 'Cormorant Garamond', serif;
-            font-size: 20px;
+            font-size: 18px;
             font-style: italic;
             color: #C9A96E;
-            letter-spacing: 0.3px;
+            letter-spacing: 0.5px;
+            font-weight: 300;
         }
 
         .select-label {
             text-align: center;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 600;
-            letter-spacing: 1.5px;
+            letter-spacing: 2px;
             text-transform: uppercase;
-            color: #666;
-            margin-bottom: 28px;
+            color: #A07D4A;
+            margin-bottom: 40px;
         }
 
         /* Role cards grid */
         .role-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
+            gap: 24px;
         }
 
         .role-card {
-            background: rgba(12, 8, 10, 0.6);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1.5px solid rgba(201, 162, 39, 0.12);
-            border-radius: 20px;
-            padding: 36px 20px 32px;
+            background: #3A322A;
+            border: 1px solid rgba(201, 169, 110, 0.12);
+            border-radius: 12px;
+            padding: 40px 24px 36px;
             text-align: center;
             cursor: pointer;
-            transition: all 0.35s ease;
+            transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
         }
@@ -142,51 +142,51 @@
             content: '';
             position: absolute;
             top: 0; left: 0; right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, transparent, var(--card-accent), transparent);
+            height: 2px;
+            background: var(--card-accent);
             opacity: 0;
-            transition: opacity 0.35s ease;
+            transition: opacity 0.3s ease;
         }
 
         .role-card:hover {
             border-color: var(--card-accent);
-            transform: translateY(-6px);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4), 0 0 30px var(--card-glow);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2), 0 0 20px var(--card-glow);
         }
 
         .role-card:hover::before {
             opacity: 1;
         }
 
-        .role-card[data-role="gerente"] { --card-accent: #C9A96E; --card-glow: rgba(201, 162, 39, 0.15); }
-        .role-card[data-role="loja"]    { --card-accent: #8B3A44; --card-glow: rgba(155, 35, 53, 0.15); }
-        .role-card[data-role="stock"]   { --card-accent: #5B8A72; --card-glow: rgba(91, 138, 114, 0.15); }
-        .role-card[data-role="admin"]   { --card-accent: #7B6BAE; --card-glow: rgba(123, 107, 174, 0.15); }
+        .role-card[data-role="gerente"] { --card-accent: #C9A96E; --card-glow: rgba(201, 169, 110, 0.1); }
+        .role-card[data-role="loja"]    { --card-accent: #6B2D3E; --card-glow: rgba(107, 45, 62, 0.1); }
+        .role-card[data-role="stock"]   { --card-accent: #A07D4A; --card-glow: rgba(160, 125, 74, 0.1); }
+        .role-card[data-role="admin"]   { --card-accent: #E0C992; --card-glow: rgba(224, 201, 146, 0.1); }
 
         .role-icon {
-            width: 56px;
-            height: 56px;
-            margin: 0 auto 20px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1.5px solid rgba(255, 255, 255, 0.06);
-            border-radius: 16px;
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 24px;
+            background: rgba(201, 169, 110, 0.08);
+            border: 1px solid rgba(201, 169, 110, 0.2);
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.35s ease;
+            transition: all 0.3s ease;
         }
 
         .role-card:hover .role-icon {
             border-color: var(--card-accent);
-            background: rgba(255, 255, 255, 0.05);
-            box-shadow: 0 0 20px var(--card-glow);
+            background: rgba(201, 169, 110, 0.12);
+            box-shadow: 0 0 16px var(--card-glow);
         }
 
         .role-icon svg {
-            width: 26px;
-            height: 26px;
-            stroke: #888;
-            transition: stroke 0.35s ease;
+            width: 24px;
+            height: 24px;
+            stroke: #A07D4A;
+            transition: stroke 0.3s ease;
         }
 
         .role-card:hover .role-icon svg {
@@ -195,27 +195,27 @@
 
         .role-title {
             font-family: 'Playfair Display', serif;
-            font-size: 18px;
+            font-size: 17px;
             font-weight: 600;
-            color: #e8e0d4;
-            margin-bottom: 6px;
-            letter-spacing: 0.2px;
+            color: #F5F0E8;
+            margin-bottom: 8px;
+            letter-spacing: 0.3px;
         }
 
         .role-desc {
-            font-size: 11px;
-            color: #777;
-            line-height: 1.5;
+            font-size: 12px;
+            color: #A07D4A;
+            line-height: 1.6;
             letter-spacing: 0.2px;
         }
 
         .role-cred {
-            margin-top: 14px;
-            padding-top: 12px;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            margin-top: 16px;
+            padding-top: 14px;
+            border-top: 1px solid rgba(201, 169, 110, 0.08);
             font-size: 10px;
-            color: #555;
-            letter-spacing: 0.3px;
+            color: #8B7355;
+            letter-spacing: 0.2px;
             font-family: 'Inter', sans-serif;
         }
 
@@ -231,13 +231,13 @@
             gap: 6px;
             background: none;
             border: none;
-            color: #777;
+            color: #A07D4A;
             font-size: 12px;
             font-weight: 500;
             letter-spacing: 0.5px;
             cursor: pointer;
             padding: 8px 0;
-            margin-bottom: 24px;
+            margin-bottom: 28px;
             transition: color 0.2s;
             font-family: 'Inter', sans-serif;
         }
@@ -252,15 +252,13 @@
         }
 
         .login-card {
-            max-width: 400px;
+            max-width: 420px;
             margin: 0 auto;
-            background: rgba(12, 8, 10, 0.7);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            border: 1.5px solid rgba(201, 162, 39, 0.15);
-            border-radius: 24px;
-            padding: 48px 40px;
-            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.4), 0 0 1px rgba(201, 162, 39, 0.2);
+            background: #3A322A;
+            border: 1px solid rgba(201, 169, 110, 0.12);
+            border-radius: 12px;
+            padding: 52px 44px;
+            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.15);
             position: relative;
         }
 
@@ -268,31 +266,31 @@
             content: '';
             position: absolute;
             top: 0; left: 0; right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, transparent, var(--login-accent, #C9A96E), transparent);
-            border-radius: 24px 24px 0 0;
+            height: 2px;
+            background: var(--login-accent, #C9A96E);
+            border-radius: 12px 12px 0 0;
         }
 
         .login-header {
             text-align: center;
-            margin-bottom: 36px;
+            margin-bottom: 40px;
         }
 
         .login-role-icon {
-            width: 52px;
-            height: 52px;
-            margin: 0 auto 16px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1.5px solid rgba(255, 255, 255, 0.08);
-            border-radius: 14px;
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 18px;
+            background: rgba(201, 169, 110, 0.08);
+            border: 1px solid rgba(201, 169, 110, 0.2);
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
         .login-role-icon svg {
-            width: 24px;
-            height: 24px;
+            width: 22px;
+            height: 22px;
             stroke: var(--login-accent, #C9A96E);
         }
 
@@ -300,89 +298,89 @@
             font-family: 'Playfair Display', serif;
             font-size: 28px;
             font-weight: 600;
-            color: #f5f5f5;
-            margin-bottom: 4px;
+            color: #F5F0E8;
+            margin-bottom: 6px;
         }
 
         .login-header p {
             font-size: 12px;
-            color: #888;
+            color: #A07D4A;
             letter-spacing: 0.3px;
         }
 
         /* Form */
         .login-form { margin-bottom: 0; }
 
-        .form-group { margin-bottom: 20px; }
+        .form-group { margin-bottom: 24px; }
 
         .form-group label {
             display: block;
             font-size: 10px;
             font-weight: 600;
-            letter-spacing: 1px;
+            letter-spacing: 1.2px;
             text-transform: uppercase;
-            color: #888;
+            color: #A07D4A;
             margin-bottom: 8px;
         }
 
         .form-group input {
             width: 100%;
-            padding: 13px 16px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1.5px solid rgba(201, 162, 39, 0.15);
-            border-radius: 12px;
+            padding: 12px 14px;
+            background: rgba(245, 240, 232, 0.04);
+            border: 1px solid rgba(201, 169, 110, 0.12);
+            border-radius: 8px;
             font-family: 'Inter', sans-serif;
             font-size: 14px;
-            color: #f5f5f5;
+            color: #F5F0E8;
             transition: all 0.3s ease;
             outline: none;
         }
 
         .form-group input::placeholder {
-            color: #555;
+            color: #8B7355;
         }
 
         .form-group input:focus {
-            background: rgba(201, 162, 39, 0.04);
+            background: rgba(201, 169, 110, 0.06);
             border-color: var(--login-accent, #C9A96E);
-            box-shadow: 0 0 0 3px rgba(201, 162, 39, 0.08);
+            box-shadow: 0 0 0 2px rgba(201, 169, 110, 0.08);
         }
 
         /* Error */
         .login-error {
             display: none;
-            background: rgba(155, 35, 53, 0.1);
-            border: 1px solid rgba(155, 35, 53, 0.3);
-            border-radius: 12px;
+            background: rgba(107, 45, 62, 0.12);
+            border: 1px solid rgba(107, 45, 62, 0.25);
+            border-radius: 8px;
             padding: 12px 14px;
-            margin-bottom: 18px;
+            margin-bottom: 20px;
             font-size: 12px;
-            color: #ff9a9a;
+            color: #E0A8B8;
         }
         .login-error.show { display: block; }
 
         /* Submit */
         .btn-login {
             width: 100%;
-            padding: 14px 20px;
-            background: linear-gradient(135deg, var(--login-accent, #8B3A44) 0%, color-mix(in srgb, var(--login-accent, #8B3A44) 70%, #000) 100%);
+            padding: 13px 20px;
+            background: var(--login-accent, #C9A96E);
             border: none;
-            border-radius: 12px;
+            border-radius: 8px;
             font-family: 'Inter', sans-serif;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
-            letter-spacing: 0.8px;
+            letter-spacing: 1px;
             text-transform: uppercase;
-            color: #f5f5f5;
+            color: #2C2C2C;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 4px 16px rgba(201, 169, 110, 0.15);
         }
 
         .btn-login:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 28px rgba(0, 0, 0, 0.4);
-            filter: brightness(1.1);
+            box-shadow: 0 6px 20px rgba(201, 169, 110, 0.25);
+            filter: brightness(1.08);
         }
 
         .btn-login:active { transform: translateY(0); }
@@ -392,12 +390,12 @@
             text-align: center;
             margin-top: 20px;
             font-size: 11px;
-            color: #555;
+            color: #8B7355;
             letter-spacing: 0.3px;
         }
 
         .login-hint strong {
-            color: #888;
+            color: #A07D4A;
             font-weight: 600;
         }
 
@@ -407,12 +405,12 @@
             bottom: 0; left: 0; right: 0;
             padding: 16px;
             text-align: center;
-            font-size: 9px;
-            letter-spacing: 1px;
-            color: #444;
+            font-size: 8px;
+            letter-spacing: 1.5px;
+            color: #8B7355;
             text-transform: uppercase;
             font-weight: 500;
-            background: linear-gradient(to top, rgba(5, 2, 3, 0.9), transparent);
+            background: linear-gradient(to top, rgba(44, 44, 44, 0.95), transparent);
             pointer-events: none;
             z-index: 5;
         }
@@ -421,12 +419,14 @@
         @media (max-width: 768px) {
             .role-grid {
                 grid-template-columns: repeat(2, 1fr);
-                gap: 16px;
+                gap: 18px;
             }
-            .brand-top h1 { font-size: 40px; }
-            .brand-top .tagline { font-size: 17px; }
-            .role-card { padding: 28px 16px 24px; }
-            .login-card { padding: 40px 28px; }
+            .brand-top h1 { font-size: 44px; }
+            .brand-top { margin-bottom: 48px; }
+            .brand-top .tagline { font-size: 16px; }
+            .role-card { padding: 32px 18px 28px; }
+            .login-card { padding: 44px 32px; }
+            .select-label { margin-bottom: 32px; }
         }
 
         @media (max-width: 480px) {
@@ -434,11 +434,13 @@
                 grid-template-columns: 1fr 1fr;
                 gap: 12px;
             }
-            .brand-top h1 { font-size: 32px; }
-            .role-title { font-size: 15px; }
-            .role-desc { font-size: 10px; }
-            .login-card { padding: 32px 20px; }
-            .page-wrap { padding: 24px 16px; }
+            .brand-top h1 { font-size: 36px; }
+            .brand-top { margin-bottom: 40px; }
+            .role-title { font-size: 14px; }
+            .role-desc { font-size: 11px; }
+            .login-card { padding: 36px 24px; }
+            .page-wrap { padding: 40px 16px; }
+            .select-label { font-size: 10px; }
         }
     </style>
 </head>

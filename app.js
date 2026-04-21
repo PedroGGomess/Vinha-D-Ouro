@@ -1376,7 +1376,7 @@ async function processPayment() {
     const lines = cart.map(item => `<div class="receipt-line"><span>${item.nome}${item.vol ? ' (' + item.vol + ')' : ''} ×${item.qty}</span><span>${fmt.eur(item.preco * item.qty)}</span></div>`).join('');
     receiptEl.innerHTML = `
       <div class="receipt-header">
-        <div style="font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:#d4a843;">Vinha D'Ouro</div>
+        <div style="font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:#C9A96E;">Vinha D'Ouro</div>
         <div style="font-size:11px;color:#777;margin-top:2px;">${now.toLocaleString('pt-PT')}</div>
         <div style="font-size:11px;color:#777;">Ref: ${saleCode}${nif ? ' · NIF: ' + nif : ''}</div>
       </div>
