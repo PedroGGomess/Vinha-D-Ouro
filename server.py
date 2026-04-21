@@ -134,9 +134,9 @@ def _init_mysql(conn):
             pessoa_id INT REFERENCES pessoas(id),
             cargo VARCHAR(100),
             salario DECIMAL(10,2) DEFAULT 0,
-            data_admissao DATE,
             ativo TINYINT(1) DEFAULT 1,
-            nivel_acesso VARCHAR(30) DEFAULT 'FUNCIONARIO'
+            nivel VARCHAR(30) DEFAULT 'FUNCIONARIO',
+            criado_em DATETIME DEFAULT CURRENT_TIMESTAMP
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
         """)
 
@@ -158,11 +158,15 @@ def _init_mysql(conn):
         c.execute("""
         CREATE TABLE IF NOT EXISTS vendas (
             id INT AUTO_INCREMENT PRIMARY KEY,
+            codigo VARCHAR(50),
+            pessoa_id INT,
+            cliente_id INT,
             funcionario_id INT,
-            data_venda DATETIME DEFAULT CURRENT_TIMESTAMP,
-            metodo_pagamento VARCHAR(50),
-            status VARCHAR(30) DEFAULT 'CONCLUIDA',
-            total DECIMAL(10,2) DEFAULT 0
+            total DECIMAL(10,2) DEFAULT 0,
+            metodo_pagamento ENUM('DINHEIRO','CARTAO','MB_WAY','TRANSFERENCIA'),
+            estado ENUM('PENDENTE','CONCLUIDA','CANCELADA') DEFAULT 'CONCLUIDA',
+            notas TEXT,
+            criado_em DATETIME DEFAULT CURRENT_TIMESTAMP
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
         """)
 
@@ -172,7 +176,8 @@ def _init_mysql(conn):
             venda_id INT REFERENCES vendas(id),
             vinho_id INT REFERENCES vinhos(id),
             quantidade INT DEFAULT 1,
-            preco_unitario DECIMAL(10,2) DEFAULT 0
+            preco_unit DECIMAL(10,2) DEFAULT 0,
+            subtotal DECIMAL(10,2) DEFAULT 0
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
         """)
 
@@ -287,24 +292,24 @@ def _seed_mysql(conn, c):
         ids.append(c.lastrowid)
 
     funcionarios = [
-        (ids[0],"Gerente",2800.00,"2022-01-15",1,"GERENTE"),
-        (ids[1],"Operador POS",1200.00,"2023-03-01",1,"FUNCIONARIO"),
-        (ids[2],"Armazenista",1150.00,"2023-06-15",1,"ARMAZENISTA"),
-        (ids[3],"Operador POS",1200.00,"2024-01-10",1,"FUNCIONARIO"),
+        (ids[0],"Gerente",2800.00,1,"GERENTE"),
+        (ids[1],"Operador POS",1200.00,1,"FUNCIONARIO"),
+        (ids[2],"Armazenista",1150.00,1,"ARMAZENISTA"),
+        (ids[3],"Operador POS",1200.00,1,"FUNCIONARIO"),
     ]
     for f in funcionarios:
-        c.execute("INSERT IGNORE INTO funcionarios (pessoa_id,cargo,salario,data_admissao,ativo,nivel_acesso) VALUES (%s,%s,%s,%s,%s,%s)", f)
+        c.execute("INSERT IGNORE INTO funcionarios (pessoa_id,cargo,salario,ativo,nivel) VALUES (%s,%s,%s,%s,%s)", f)
 
-    metodos = ["Cartão","MB Way","Numerário","Cartão"]
+    metodos = ["CARTAO","MB_WAY","DINHEIRO","CARTAO"]
     for i in range(8):
         dias = random.randint(0,30)
         dt = (datetime.datetime.now() - datetime.timedelta(days=dias)).strftime("%Y-%m-%d %H:%M:%S")
         total = round(random.uniform(15,200),2)
-        c.execute("INSERT INTO vendas (funcionario_id,data_venda,metodo_pagamento,status,total) VALUES (%s,%s,%s,%s,%s)",
+        c.execute("INSERT INTO vendas (funcionario_id,criado_em,metodo_pagamento,estado,total) VALUES (%s,%s,%s,%s,%s)",
                   (1, dt, metodos[i%4], "CONCLUIDA", total))
         vid = c.lastrowid
-        c.execute("INSERT INTO itens_venda (venda_id,vinho_id,quantidade,preco_unitario) VALUES (%s,%s,%s,%s)",
-                  (vid, (i%12)+1, 1, total))
+        c.execute("INSERT INTO itens_venda (venda_id,vinho_id,quantidade,preco_unit,subtotal) VALUES (%s,%s,%s,%s,%s)",
+                  (vid, (i%12)+1, 1, total, total))
 
     conn.commit()
 
@@ -330,7 +335,8 @@ def _init_sqlite(conn):
     CREATE TABLE IF NOT EXISTS funcionarios (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         pessoa_id INTEGER, cargo TEXT, salario REAL DEFAULT 0,
-        data_admissao TEXT, ativo INTEGER DEFAULT 1, nivel_acesso TEXT DEFAULT 'FUNCIONARIO'
+        ativo INTEGER DEFAULT 1, nivel TEXT DEFAULT 'FUNCIONARIO',
+        criado_em TEXT DEFAULT CURRENT_TIMESTAMP
     );
     CREATE TABLE IF NOT EXISTS vinhos (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -340,13 +346,21 @@ def _init_sqlite(conn):
     );
     CREATE TABLE IF NOT EXISTS vendas (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        funcionario_id INTEGER, data_venda TEXT, metodo_pagamento TEXT,
-        status TEXT DEFAULT 'CONCLUIDA', total REAL DEFAULT 0
+        codigo TEXT,
+        pessoa_id INTEGER,
+        cliente_id INTEGER,
+        funcionario_id INTEGER,
+        total REAL DEFAULT 0,
+        metodo_pagamento TEXT,
+        estado TEXT DEFAULT 'CONCLUIDA',
+        notas TEXT,
+        criado_em TEXT DEFAULT CURRENT_TIMESTAMP
     );
     CREATE TABLE IF NOT EXISTS itens_venda (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         venda_id INTEGER, vinho_id INTEGER,
-        quantidade INTEGER DEFAULT 1, preco_unitario REAL DEFAULT 0
+        quantidade INTEGER DEFAULT 1, preco_unit REAL DEFAULT 0,
+        subtotal REAL DEFAULT 0
     );
     CREATE TABLE IF NOT EXISTS provas (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -432,21 +446,21 @@ def _seed_sqlite(conn):
     for p in pessoas:
         c = conn.execute("INSERT INTO pessoas (nome,email,telefone) VALUES (?,?,?)", p)
         ids.append(c.lastrowid)
-    conn.executemany("INSERT INTO funcionarios (pessoa_id,cargo,salario,data_admissao,ativo,nivel_acesso) VALUES (?,?,?,?,?,?)", [
-        (ids[0],"Gerente",2800.00,"2022-01-15",1,"GERENTE"),
-        (ids[1],"Operador POS",1200.00,"2023-03-01",1,"FUNCIONARIO"),
-        (ids[2],"Armazenista",1150.00,"2023-06-15",1,"ARMAZENISTA"),
-        (ids[3],"Operador POS",1200.00,"2024-01-10",1,"FUNCIONARIO"),
+    conn.executemany("INSERT INTO funcionarios (pessoa_id,cargo,salario,ativo,nivel) VALUES (?,?,?,?,?)", [
+        (ids[0],"Gerente",2800.00,1,"GERENTE"),
+        (ids[1],"Operador POS",1200.00,1,"FUNCIONARIO"),
+        (ids[2],"Armazenista",1150.00,1,"ARMAZENISTA"),
+        (ids[3],"Operador POS",1200.00,1,"FUNCIONARIO"),
     ])
-    metodos = ["Cartão","MB Way","Numerário","Cartão"]
+    metodos = ["CARTAO","MB_WAY","DINHEIRO","CARTAO"]
     for i in range(8):
         dias = random.randint(0,30)
         dt = (datetime.datetime.now()-datetime.timedelta(days=dias)).strftime("%Y-%m-%d %H:%M:%S")
         total = round(random.uniform(15,200),2)
-        c2 = conn.execute("INSERT INTO vendas (funcionario_id,data_venda,metodo_pagamento,status,total) VALUES (?,?,?,?,?)",
+        c2 = conn.execute("INSERT INTO vendas (funcionario_id,criado_em,metodo_pagamento,estado,total) VALUES (?,?,?,?,?)",
                            (1,dt,metodos[i%4],"CONCLUIDA",total))
-        conn.execute("INSERT INTO itens_venda (venda_id,vinho_id,quantidade,preco_unitario) VALUES (?,?,?,?)",
-                     (c2.lastrowid,(i%12)+1,1,total))
+        conn.execute("INSERT INTO itens_venda (venda_id,vinho_id,quantidade,preco_unit,subtotal) VALUES (?,?,?,?,?)",
+                     (c2.lastrowid,(i%12)+1,1,total,total))
     conn.commit()
 
 # ── Static Files ──────────────────────────────────────────
@@ -658,9 +672,9 @@ def listar_funcionarios():
                 'telefone':    r.get('telefone',''),
                 'cargo':       r['cargo'],
                 'salario':     float(r['salario'] or 0),
-                'dataAdmissao':str(r['data_admissao']) if r.get('data_admissao') else '',
+                'dataAdmissao':str(r.get('criado_em')) if r.get('criado_em') else '',
                 'ativo':       r['ativo'],
-                'nivelAcesso': r['nivel_acesso'],
+                'nivelAcesso': r['nivel'],
             })
         return jsonify(result)
     except Exception as e:
@@ -678,15 +692,15 @@ def criar_funcionario():
             with conn.cursor() as c:
                 c.execute("INSERT INTO pessoas (nome,email) VALUES (%s,%s)", (d.get('nome'),d.get('email','')))
                 pid = c.lastrowid
-                c.execute("INSERT INTO funcionarios (pessoa_id,cargo,salario,data_admissao,ativo,nivel_acesso) VALUES (%s,%s,%s,%s,%s,%s)",
-                          (pid,d.get('cargo'),d.get('salario',0),datetime.date.today().isoformat(),1,d.get('nivelAcesso','FUNCIONARIO')))
+                c.execute("INSERT INTO funcionarios (pessoa_id,cargo,salario,ativo,nivel) VALUES (%s,%s,%s,%s,%s)",
+                          (pid,d.get('cargo'),d.get('salario',0),1,d.get('nivelAcesso','FUNCIONARIO')))
                 new_id = c.lastrowid
             conn.commit()
         else:
             c = conn.execute("INSERT INTO pessoas (nome,email) VALUES (?,?)", (d.get('nome'),d.get('email','')))
             pid = c.lastrowid
-            c2 = conn.execute("INSERT INTO funcionarios (pessoa_id,cargo,salario,data_admissao,ativo,nivel_acesso) VALUES (?,?,?,?,?,?)",
-                              (pid,d.get('cargo'),d.get('salario',0),datetime.date.today().isoformat(),1,d.get('nivelAcesso','FUNCIONARIO')))
+            c2 = conn.execute("INSERT INTO funcionarios (pessoa_id,cargo,salario,ativo,nivel) VALUES (?,?,?,?,?)",
+                              (pid,d.get('cargo'),d.get('salario',0),1,d.get('nivelAcesso','FUNCIONARIO')))
             new_id = c2.lastrowid
             conn.commit()
         conn.close()
@@ -704,7 +718,7 @@ def atualizar_funcionario(fid):
         if row:
             pid = row['pessoa_id']
             db_exec(conn, db_type, "UPDATE pessoas SET nome=?,email=? WHERE id=?", (d.get('nome'),d.get('email',''),pid))
-            db_exec(conn, db_type, "UPDATE funcionarios SET cargo=?,salario=?,ativo=?,nivel_acesso=? WHERE id=?",
+            db_exec(conn, db_type, "UPDATE funcionarios SET cargo=?,salario=?,ativo=?,nivel=? WHERE id=?",
                     (d.get('cargo'),d.get('salario',0),d.get('ativo',1),d.get('nivelAcesso','FUNCIONARIO'),fid))
         conn.commit()
         conn.close()
@@ -720,7 +734,7 @@ def listar_vendas():
         conn, db_type = get_db()
         if db_type == 'mysql':
             rows = db_fetchall(conn, db_type, """
-                SELECT v.id, v.data_venda, v.metodo_pagamento, v.status, v.total,
+                SELECT v.id, v.criado_em, v.metodo_pagamento, v.estado, v.total,
                        p.nome as cliente_nome,
                        GROUP_CONCAT(vi.nome SEPARATOR ', ') as produtos_nomes
                 FROM vendas v
@@ -728,11 +742,11 @@ def listar_vendas():
                 LEFT JOIN pessoas p ON f.pessoa_id=p.id
                 LEFT JOIN itens_venda iv ON iv.venda_id=v.id
                 LEFT JOIN vinhos vi ON iv.vinho_id=vi.id
-                GROUP BY v.id ORDER BY v.data_venda DESC LIMIT 100
+                GROUP BY v.id ORDER BY v.criado_em DESC LIMIT 100
             """)
         else:
             rows = db_fetchall(conn, db_type, """
-                SELECT v.id, v.data_venda, v.metodo_pagamento, v.status, v.total,
+                SELECT v.id, v.criado_em, v.metodo_pagamento, v.estado, v.total,
                        p.nome as cliente_nome,
                        GROUP_CONCAT(vi.nome, ', ') as produtos_nomes
                 FROM vendas v
@@ -740,7 +754,7 @@ def listar_vendas():
                 LEFT JOIN pessoas p ON f.pessoa_id=p.id
                 LEFT JOIN itens_venda iv ON iv.venda_id=v.id
                 LEFT JOIN vinhos vi ON iv.vinho_id=vi.id
-                GROUP BY v.id ORDER BY v.data_venda DESC LIMIT 100
+                GROUP BY v.id ORDER BY v.criado_em DESC LIMIT 100
             """)
         conn.close()
         result = []
@@ -752,8 +766,8 @@ def listar_vendas():
                 'produto':          r.get('produtos_nomes') or '—',
                 'metodoPagamento':  r['metodo_pagamento'],
                 'total':            float(r['total'] or 0),
-                'status':           r['status'],
-                'dataVenda':        str(r['data_venda']) if r.get('data_venda') else '',
+                'status':           r['estado'],
+                'dataVenda':        str(r['criado_em']) if r.get('criado_em') else '',
             })
         return jsonify(result)
     except Exception as e:
@@ -765,7 +779,15 @@ def criar_venda():
     try:
         d = request.get_json()
         itens    = d.get('itens', [])
-        metodo   = d.get('metodoPagamento','Cartão')
+        metodo_raw = d.get('metodoPagamento','DINHEIRO')
+        # Mapear valores do frontend para ENUM do MySQL
+        metodo_map = {
+            'cartão': 'CARTAO', 'cartao': 'CARTAO', 'CARTAO': 'CARTAO',
+            'numerário': 'DINHEIRO', 'numerario': 'DINHEIRO', 'dinheiro': 'DINHEIRO', 'DINHEIRO': 'DINHEIRO',
+            'mb way': 'MB_WAY', 'mb_way': 'MB_WAY', 'mbway': 'MB_WAY', 'MB_WAY': 'MB_WAY',
+            'transferência': 'TRANSFERENCIA', 'transferencia': 'TRANSFERENCIA', 'TRANSFERENCIA': 'TRANSFERENCIA',
+        }
+        metodo = metodo_map.get(metodo_raw.lower() if metodo_raw else '', 'DINHEIRO')
         func_id  = d.get('funcionarioId',1)
 
         if d.get('vinhoId') and not itens:
@@ -800,20 +822,22 @@ def criar_venda():
         now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         if db_type == 'mysql':
             with conn.cursor() as c:
-                c.execute("INSERT INTO vendas (funcionario_id,data_venda,metodo_pagamento,status,total) VALUES (%s,%s,%s,%s,%s)",
+                c.execute("INSERT INTO vendas (funcionario_id,criado_em,metodo_pagamento,estado,total) VALUES (%s,%s,%s,%s,%s)",
                           (func_id,now,metodo,'CONCLUIDA',round(total,2)))
                 venda_id = c.lastrowid
                 for (vid,qty,preco) in item_data:
-                    c.execute("INSERT INTO itens_venda (venda_id,vinho_id,quantidade,preco_unitario) VALUES (%s,%s,%s,%s)",
-                              (venda_id,vid,qty,preco))
+                    subtotal = round(preco * qty, 2)
+                    c.execute("INSERT INTO itens_venda (venda_id,vinho_id,quantidade,preco_unit,subtotal) VALUES (%s,%s,%s,%s,%s)",
+                              (venda_id,vid,qty,preco,subtotal))
             conn.commit()
         else:
-            c = conn.execute("INSERT INTO vendas (funcionario_id,data_venda,metodo_pagamento,status,total) VALUES (?,?,?,?,?)",
+            c = conn.execute("INSERT INTO vendas (funcionario_id,criado_em,metodo_pagamento,estado,total) VALUES (?,?,?,?,?)",
                              (func_id,now,metodo,'CONCLUIDA',round(total,2)))
             venda_id = c.lastrowid
             for (vid,qty,preco) in item_data:
-                conn.execute("INSERT INTO itens_venda (venda_id,vinho_id,quantidade,preco_unitario) VALUES (?,?,?,?)",
-                             (venda_id,vid,qty,preco))
+                subtotal = round(preco * qty, 2)
+                conn.execute("INSERT INTO itens_venda (venda_id,vinho_id,quantidade,preco_unit,subtotal) VALUES (?,?,?,?,?)",
+                             (venda_id,vid,qty,preco,subtotal))
             conn.commit()
         conn.close()
         return jsonify({'id':venda_id,'codigo':f"VD-{venda_id:04d}",'total':round(total,2),'status':'CONCLUIDA','metodoPagamento':metodo,'dataVenda':now}), 201
@@ -1077,26 +1101,26 @@ def relatorio_vendas_mensal():
         if db_type == 'mysql':
             rows = db_fetchall(conn, db_type, """
                 SELECT
-                    DATE_FORMAT(v.data_venda, '%Y-%m') as mes,
+                    DATE_FORMAT(v.criado_em, '%Y-%m') as mes,
                     COUNT(*) as num_vendas,
                     SUM(v.total) as total_vendas,
                     AVG(v.total) as ticket_medio
                 FROM vendas v
-                WHERE v.status = 'CONCLUIDA'
-                GROUP BY DATE_FORMAT(v.data_venda, '%Y-%m')
+                WHERE v.estado = 'CONCLUIDA'
+                GROUP BY DATE_FORMAT(v.criado_em, '%Y-%m')
                 ORDER BY mes DESC
                 LIMIT 12
             """)
         else:
             rows = db_fetchall(conn, db_type, """
                 SELECT
-                    strftime('%Y-%m', v.data_venda) as mes,
+                    strftime('%Y-%m', v.criado_em) as mes,
                     COUNT(*) as num_vendas,
                     SUM(v.total) as total_vendas,
                     AVG(v.total) as ticket_medio
                 FROM vendas v
-                WHERE v.status = 'CONCLUIDA'
-                GROUP BY strftime('%Y-%m', v.data_venda)
+                WHERE v.estado = 'CONCLUIDA'
+                GROUP BY strftime('%Y-%m', v.criado_em)
                 ORDER BY mes DESC
                 LIMIT 12
             """)
@@ -1124,7 +1148,7 @@ def relatorio_top_vinhos():
                 v.id, v.nome, v.tipo, v.regiao, v.produtor,
                 COUNT(iv.id) as num_vendas,
                 SUM(iv.quantidade) as quantidade_vendida,
-                SUM(iv.quantidade * iv.preco_unitario) as receita_total,
+                SUM(iv.quantidade * iv.preco_unit) as receita_total,
                 v.preco
             FROM vinhos v
             LEFT JOIN itens_venda iv ON v.id = iv.vinho_id
@@ -1156,8 +1180,8 @@ def dashboard():
     """Dashboard com estatísticas principais"""
     try:
         conn, db_type = get_db()
-        receita     = (db_fetchone(conn,db_type,"SELECT COALESCE(SUM(total),0) as v FROM vendas WHERE status='CONCLUIDA'") or {}).get('v',0)
-        num_vendas  = (db_fetchone(conn,db_type,"SELECT COUNT(*) as v FROM vendas WHERE status='CONCLUIDA'") or {}).get('v',0)
+        receita     = (db_fetchone(conn,db_type,"SELECT COALESCE(SUM(total),0) as v FROM vendas WHERE estado='CONCLUIDA'") or {}).get('v',0)
+        num_vendas  = (db_fetchone(conn,db_type,"SELECT COUNT(*) as v FROM vendas WHERE estado='CONCLUIDA'") or {}).get('v',0)
         ticket      = round(float(receita)/num_vendas,2) if num_vendas else 0
         lucro       = round(float(receita)*0.34,2)
         stock_crit  = (db_fetchone(conn,db_type,"SELECT COUNT(*) as v FROM vinhos WHERE quantidade < 10") or {}).get('v',0)
@@ -1170,9 +1194,9 @@ def dashboard():
             d = datetime.date.today() - datetime.timedelta(days=i)
             lbl = ["Seg","Ter","Qua","Qui","Sex","Sáb","Dom"][d.weekday()] if i>0 else "Hj"
             if db_type == 'mysql':
-                total_day = (db_fetchone(conn,db_type,"SELECT COALESCE(SUM(total),0) as v FROM vendas WHERE DATE(data_venda)=%s",(d.isoformat(),)) or {}).get('v',0)
+                total_day = (db_fetchone(conn,db_type,"SELECT COALESCE(SUM(total),0) as v FROM vendas WHERE DATE(criado_em)=%s",(d.isoformat(),)) or {}).get('v',0)
             else:
-                total_day = (db_fetchone(conn,db_type,"SELECT COALESCE(SUM(total),0) as v FROM vendas WHERE date(data_venda)=?",(d.isoformat(),)) or {}).get('v',0)
+                total_day = (db_fetchone(conn,db_type,"SELECT COALESCE(SUM(total),0) as v FROM vendas WHERE date(criado_em)=?",(d.isoformat(),)) or {}).get('v',0)
             weekly.append(round(float(total_day),2))
             labels.append(lbl)
 
@@ -1225,10 +1249,10 @@ def criar_devolucao():
                 qty = item.get('quantidade', 1)
                 # Get price from itens_venda
                 iv_row = db_fetchone(conn, db_type,
-                    "SELECT preco_unitario, quantidade FROM itens_venda WHERE venda_id=? AND vinho_id=?",
+                    "SELECT preco_unit, quantidade FROM itens_venda WHERE venda_id=? AND vinho_id=?",
                     (venda_id, vid))
                 if iv_row:
-                    preco = float(iv_row['preco_unitario'] or 0)
+                    preco = float(iv_row['preco_unit'] or 0)
                     total_devolvido += preco * qty
                     # Restore stock
                     db_exec(conn, db_type,
@@ -1236,19 +1260,19 @@ def criar_devolucao():
         else:
             # Full return - return all items
             all_items = db_fetchall(conn, db_type,
-                "SELECT vinho_id, quantidade, preco_unitario FROM itens_venda WHERE venda_id=?",
+                "SELECT vinho_id, quantidade, preco_unit FROM itens_venda WHERE venda_id=?",
                 (venda_id,))
             for item in all_items:
                 vid = item['vinho_id']
                 qty = item['quantidade']
-                preco = float(item['preco_unitario'] or 0)
+                preco = float(item['preco_unit'] or 0)
                 total_devolvido += preco * qty
                 # Restore stock
                 db_exec(conn, db_type,
                     "UPDATE vinhos SET quantidade = quantidade + ? WHERE id=?", (qty, vid))
 
         # Update venda status
-        db_exec(conn, db_type, "UPDATE vendas SET status='DEVOLVIDA' WHERE id=?", (venda_id,))
+        db_exec(conn, db_type, "UPDATE vendas SET estado='CANCELADA' WHERE id=?", (venda_id,))
         conn.commit()
         conn.close()
 
@@ -1269,7 +1293,7 @@ def itens_venda(vid):
     try:
         conn, db_type = get_db()
         rows = db_fetchall(conn, db_type, """
-            SELECT iv.vinho_id, iv.quantidade, iv.preco_unitario, v.nome as vinho_nome
+            SELECT iv.vinho_id, iv.quantidade, iv.preco_unit, v.nome as vinho_nome
             FROM itens_venda iv
             LEFT JOIN vinhos v ON iv.vinho_id = v.id
             WHERE iv.venda_id = ?
@@ -1279,7 +1303,7 @@ def itens_venda(vid):
             'vinhoId': r['vinho_id'],
             'nome': r.get('vinho_nome', ''),
             'quantidade': r['quantidade'],
-            'precoUnitario': float(r['preco_unitario'] or 0)
+            'precoUnitario': float(r['preco_unit'] or 0)
         } for r in rows])
     except Exception as e:
         return jsonify({'error': str(e)}), 500
