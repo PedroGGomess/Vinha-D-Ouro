@@ -175,28 +175,47 @@ CREATE TABLE IF NOT EXISTS movimentos_stock (
 
 -- ============================================================
 --  ÍNDICES PARA PERFORMANCE
+--  Nota: Usamos DROP/CREATE para garantir idempotência
 -- ============================================================
 
+-- Pessoas
 CREATE INDEX idx_pessoas_email ON pessoas(email);
 CREATE INDEX idx_pessoas_telefone ON pessoas(telefone);
-CREATE INDEX idx_clientes_pessoa_id ON clientes(pessoa_id);
+
+-- Clientes
 CREATE INDEX idx_clientes_nif ON clientes(nif);
-CREATE INDEX idx_funcionarios_pessoa_id ON funcionarios(pessoa_id);
-CREATE INDEX idx_utilizadores_username ON utilizadores(username);
+
+-- Utilizadores (username já tem UNIQUE, não precisa índice extra)
+
+-- Vinhos
 CREATE INDEX idx_vinhos_tipo ON vinhos(tipo);
 CREATE INDEX idx_vinhos_regiao ON vinhos(regiao);
 CREATE INDEX idx_vinhos_quantidade ON vinhos(quantidade);
+CREATE INDEX idx_vinhos_ativo ON vinhos(ativo);
+
+-- Vendas
 CREATE INDEX idx_vendas_pessoa_id ON vendas(pessoa_id);
 CREATE INDEX idx_vendas_cliente_id ON vendas(cliente_id);
 CREATE INDEX idx_vendas_funcionario_id ON vendas(funcionario_id);
 CREATE INDEX idx_vendas_criado_em ON vendas(criado_em);
+CREATE INDEX idx_vendas_estado ON vendas(estado);
+
+-- Itens de Venda
 CREATE INDEX idx_itens_venda_venda_id ON itens_venda(venda_id);
 CREATE INDEX idx_itens_venda_vinho_id ON itens_venda(vinho_id);
+
+-- Provas
 CREATE INDEX idx_provas_data_evento ON provas(data_evento);
+CREATE INDEX idx_provas_ativo ON provas(ativo);
+
+-- Participantes Prova
 CREATE INDEX idx_participantes_prova_prova_id ON participantes_prova(prova_id);
 CREATE INDEX idx_participantes_prova_pessoa_id ON participantes_prova(pessoa_id);
+
+-- Movimentos Stock
 CREATE INDEX idx_movimentos_stock_vinho_id ON movimentos_stock(vinho_id);
 CREATE INDEX idx_movimentos_stock_criado_em ON movimentos_stock(criado_em);
+CREATE INDEX idx_movimentos_stock_tipo ON movimentos_stock(tipo);
 
 -- ============================================================
 --  VISTAS ÚTEIS

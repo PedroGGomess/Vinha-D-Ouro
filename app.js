@@ -6,7 +6,7 @@
    Universidade Lusófona — Grupo 13
    ============================================================================ */
 
-const API = 'http://localhost:8080/api';
+const API = window.location.origin + '/api';
 
 /* ══════════════════════════════════════════════
    1. SESSION / AUTH
@@ -271,7 +271,7 @@ function toggleSidebar() {
 }
 
 function logout() {
-  Screensaver.stop();
+  try { Screensaver.stop(); } catch(e) { /* screensaver may not be initialized */ }
   Session.clear();
   window.location.href = 'index.html';
 }
@@ -374,8 +374,9 @@ async function apiFetch(path, opts = {}) {
   const r = await fetch(`${API}${path}`, {
     headers: { 'Content-Type': 'application/json' }, ...opts
   });
-  if (!r.ok) throw new Error(`HTTP ${r.status}`);
-  return r.json();
+  const data = await r.json();
+  if (!r.ok) throw new Error(data.error || `HTTP ${r.status}`);
+  return data;
 }
 
 /* ══════════════════════════════════════════════
@@ -1178,11 +1179,14 @@ function closeSizeModal() { document.getElementById('size-modal')?.classList.add
 
 function addToCartWithSize(id, vol, nomeTamanho, mult) {
   const v = catalog.find(x => x.id === id); if (!v) return;
+  if ((v.quantidade || 0) <= 0) { toast('Produto esgotado', 'error'); return; }
   const cartKey = `${id}_${vol}`;
   const ex = cart.find(c => c.cartKey === cartKey);
   const preco = +(v.preco * mult).toFixed(2);
+  // Calcular total no carrinho para este vinho (todas as variantes)
+  const totalInCart = cart.filter(c => c.id === id).reduce((s, c) => s + c.qty, 0);
+  if (totalInCart >= (v.quantidade || 0)) { toast('Stock insuficiente', 'warning'); return; }
   if (ex) {
-    if (ex.qty >= (v.quantidade || 0)) { toast('Stock insuficiente', 'warning'); return; }
     ex.qty++;
   } else {
     cart.push({ cartKey, id, nome: v.nome, vol, nomeTamanho, preco, qty: 1 });
@@ -1341,8 +1345,17 @@ async function processPayment() {
   let saleResult = null;
   try {
     const user = Session.get();
-    saleResult = await apiFetch('/vendas', { method: 'POST', body: JSON.stringify({ itens, metodoPagamento: payMethod, funcionarioId: user?.id || 1, desconto: discPct, nif, notas }) });
-  } catch {
+    saleResult = await apiFetch('/vendas', {
+      method: 'POST',
+      body: JSON.stringify({ itens, metodoPagamento: payMethod, funcionarioId: user?.id || 1, desconto: discPct, nif, notas })
+    });
+  } catch(err) {
+    if (err.message && !err.message.startsWith('HTTP') && !err.message.includes('fetch')) {
+      // Server returned a specific error (e.g., stock insuficiente)
+      toast(err.message, 'error', 5000);
+      if (btn) { btn.disabled = false; btn.innerHTML = '<span>Confirmar Pagamento</span>'; }
+      return;
+    }
     // API offline — update local catalog stock for demo mode
     itens.forEach(item => { const v = catalog.find(x => x.id === item.vinhoId); if (v) v.quantidade = Math.max(0, (v.quantidade || 0) - item.quantidade); });
   }
@@ -1644,7 +1657,7 @@ async function loadRelatorios() {
 /* ══════════════════════════════════════════════
    19. PROVAS DE VINHO
    ══════════════════════════════════════════════ */
-let allProvas = [], provaFilter = 'todas';
+let allProvas = [], provaFilter = 'todas', provaWineCache = [];
 
 const FALLBACK_PROVAS = [
   { id: 1, titulo: "Grandes Vinhos do Douro", descricao: "Uma viagem pelos melhores vinhos da região do Douro.", dataHora: "2026-04-05T19:00", capacidade: 16, inscritos: 11, precoPorPessoa: 35, estado: "AGENDADA", vinhos: "Barca Velha, Quinta do Crasto, Niepoort Redoma" },
@@ -1761,7 +1774,7 @@ function openEditProvaModal(id) {
 
 function populateProvaWines(selected) {
   const container = document.getElementById('prova-wine-checks'); if (!container) return;
-  const wines = allProvas._wineCache || FALLBACK.vinhos;
+  const wines = provaWineCache.length ? provaWineCache : FALLBACK.vinhos;
   container.innerHTML = wines.map(v => `
     <label style="display:flex;align-items:center;gap:8px;font-size:12.5px;cursor:pointer;padding:4px;">
       <input type="checkbox" value="${v.nome}" ${selected.includes(v.nome) ? 'checked' : ''} style="accent-color:var(--accent-gold);">
@@ -1980,10 +1993,10 @@ document.addEventListener('DOMContentLoaded', () => {
       initLogin(); checkApi(); break;
 
     case 'gerente.html':
-      loadDashboard(); setInterval(() => checkApi().then(updateApiBadge), 30000); break;
+      loadDashboard(); setInterval(checkApi, 30000); break;
 
     case 'loja.html':
-      loadPOS(); setInterval(() => checkApi().then(updateApiBadge), 30000); break;
+      loadPOS(); setInterval(checkApi, 30000); break;
 
     case 'stock.html':
       loadStock();
@@ -2005,7 +2018,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     case 'provas.html':
       (async () => {
-        try { allProvas._wineCache = await apiFetch('/vinhos'); } catch { allProvas._wineCache = FALLBACK.vinhos; }
+        try { provaWineCache = await apiFetch('/vinhos'); } catch { provaWineCache = FALLBACK.vinhos; }
         loadProvas();
       })();
       break;

@@ -1,15 +1,28 @@
 #!/usr/bin/env python3
 """
-Vinha D'Ouro — Servidor Python + MySQL Melhorado
-Versão com endpoints adicionais para caves, provas, stock e relatórios
-Usa MySQL local — liga ao teu MySQL Workbench!
-Corre: python3 server_improved.py
+Vinha D'Ouro — Servidor Python + MySQL
+Sistema de Gestão de Loja de Vinhos Premium
+Universidade Lusófona — Grupo 13
+
+Corre: python3 server.py
 Site:  http://localhost:8080
 """
 
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
-import datetime, json, os
+import datetime
+import json
+import logging
+import os
+import random
+
+# ── Logging ───────────────────────────────────────────────
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s [%(levelname)s] %(message)s',
+    datefmt='%H:%M:%S'
+)
+log = logging.getLogger('vinhadouro')
 
 # ── MySQL connection ──────────────────────────────────────
 try:
@@ -39,14 +52,14 @@ MYSQL_CFG = {
 }
 
 def get_db():
-    """Obter conexão com a base de dados (MySQL ou SQLite)"""
+    """Obter conexão com a base de dados (MySQL ou SQLite)."""
     if DB_TYPE == 'mysql' and MYSQL_AVAILABLE:
         try:
             cfg = {**MYSQL_CFG, 'cursorclass': pymysql.cursors.DictCursor}
             conn = pymysql.connect(**cfg)
             return conn, 'mysql'
         except Exception as e:
-            print(f"  ⚠️  MySQL falhou ({e}), a usar SQLite como fallback")
+            log.warning("MySQL falhou (%s), a usar SQLite como fallback", e)
     path = os.path.join(BASE_DIR, 'vinhadouro.db')
     conn = sqlite3.connect(path)
     conn.row_factory = sqlite3.Row
@@ -54,7 +67,7 @@ def get_db():
     return conn, 'sqlite'
 
 def db_exec(conn, db_type, sql, params=()):
-    """Executar uma query, tratando diferenças MySQL vs SQLite"""
+    """Executar uma query, tratando diferenças MySQL vs SQLite."""
     if db_type == 'mysql':
         sql = sql.replace('?', '%s')
         with conn.cursor() as cur:
@@ -64,25 +77,19 @@ def db_exec(conn, db_type, sql, params=()):
         return conn.execute(sql, params)
 
 def db_fetchall(conn, db_type, sql, params=()):
-    """Buscar todos os registos"""
+    """Buscar todos os registos."""
     cur = db_exec(conn, db_type, sql, params)
     if db_type == 'mysql':
         return cur.fetchall()
     return [dict(r) for r in cur.fetchall()]
 
 def db_fetchone(conn, db_type, sql, params=()):
-    """Buscar um único registo"""
+    """Buscar um único registo."""
     cur = db_exec(conn, db_type, sql, params)
     if db_type == 'mysql':
         return cur.fetchone()
     r = cur.fetchone()
     return dict(r) if r else None
-
-def db_lastrowid(conn, db_type, cur):
-    """Obter ID da última linha inserida"""
-    if db_type == 'mysql':
-        return cur.lastrowid
-    return cur.lastrowid
 
 # ── Init DB ───────────────────────────────────────────────
 def init_db():
@@ -95,7 +102,7 @@ def init_db():
         _init_sqlite(conn)
 
     conn.close()
-    print(f"  ✅  Base de dados inicializada ({db_type.upper()})")
+    log.info("Base de dados inicializada (%s)", db_type.upper())
 
 def _init_mysql(conn):
     """Inicializar tabelas MySQL básicas (compatibilidade)"""
@@ -288,7 +295,6 @@ def _seed_mysql(conn, c):
     for f in funcionarios:
         c.execute("INSERT IGNORE INTO funcionarios (pessoa_id,cargo,salario,data_admissao,ativo,nivel_acesso) VALUES (%s,%s,%s,%s,%s,%s)", f)
 
-    import random
     metodos = ["Cartão","MB Way","Numerário","Cartão"]
     for i in range(8):
         dias = random.randint(0,30)
@@ -320,10 +326,6 @@ def _init_sqlite(conn):
         ativo INTEGER DEFAULT 1,
         criado_em TEXT DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (pessoa_id) REFERENCES pessoas(id)
-    );
-    CREATE TABLE IF NOT EXISTS pessoas (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        nome TEXT NOT NULL, email TEXT, telefone TEXT
     );
     CREATE TABLE IF NOT EXISTS funcionarios (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -436,7 +438,6 @@ def _seed_sqlite(conn):
         (ids[2],"Armazenista",1150.00,"2023-06-15",1,"ARMAZENISTA"),
         (ids[3],"Operador POS",1200.00,"2024-01-10",1,"FUNCIONARIO"),
     ])
-    import random
     metodos = ["Cartão","MB Way","Numerário","Cartão"]
     for i in range(8):
         dias = random.randint(0,30)
@@ -456,20 +457,32 @@ def index():
 
 @app.route('/<path:filename>')
 def serve_static(filename):
-    """Servir ficheiros estáticos"""
-    if not filename.startswith('api/'):
-        return send_from_directory(BASE_DIR, filename)
+    """Servir ficheiros estáticos (ignora rotas da API)."""
+    if filename.startswith('api/'):
+        return jsonify({'error': 'Endpoint não encontrado'}), 404
+    return send_from_directory(BASE_DIR, filename)
 
 # ── Health ────────────────────────────────────────────────
 @app.route('/api/health')
 def health():
-    """Verificar saúde da API"""
+    """Verificar saúde da API."""
     try:
         conn, db_type = get_db()
         conn.close()
-        return jsonify({'status':'ok','db':db_type,'version':'3.0'})
+        return jsonify({'status': 'ok', 'db': db_type, 'version': '3.1'})
     except Exception as e:
-        return jsonify({'status':'error','message':str(e)}), 500
+        log.error("Health check falhou: %s", e)
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+
+@app.errorhandler(404)
+def not_found(e):
+    """Handler para rotas não encontradas."""
+    return jsonify({'error': 'Endpoint não encontrado'}), 404
+
+@app.errorhandler(405)
+def method_not_allowed(e):
+    """Handler para métodos HTTP não permitidos."""
+    return jsonify({'error': 'Método não permitido'}), 405
 
 # ── AUTH ──────────────────────────────────────────────────
 @app.route('/api/login', methods=['POST'])
@@ -477,24 +490,40 @@ def login():
     """Autenticar utilizador"""
     try:
         d = request.get_json() or {}
-        username = d.get('username','').strip().lower()
-        password = d.get('password','')
+        username = (d.get('username') or '').strip().lower()
+        password = d.get('password') or ''
         if not username or not password:
-            return jsonify({'error':'Credenciais em falta'}), 400
+            return jsonify({'error': 'Credenciais em falta'}), 400
+        if len(username) > 100:
+            return jsonify({'error': 'Username demasiado longo'}), 400
         conn, db_type = get_db()
         u = db_fetchone(conn, db_type,
-            "SELECT u.id, u.username, u.password_hash, u.role, p.nome "
+            "SELECT u.id, u.username, u.password_hash, u.role, u.ativo, p.nome "
             "FROM utilizadores u LEFT JOIN pessoas p ON u.pessoa_id = p.id "
             "WHERE LOWER(u.username)=? AND u.password_hash=?",
             (username, password))
         conn.close()
         if not u:
-            return jsonify({'error':'Utilizador ou senha incorretos'}), 401
-        # Map role to redirect page
-        role_redirects = {'GERENTE':'gerente.html','FUNCIONARIO':'loja.html','ARMAZENISTA':'stock.html','ADMIN':'gerente.html'}
-        return jsonify({'id':u['id'],'username':u['username'],'nome':u.get('nome') or u['username'],'role':u['role'],'redirect':role_redirects.get(u['role'],'loja.html')})
+            return jsonify({'error': 'Utilizador ou senha incorretos'}), 401
+        if not u.get('ativo', 1):
+            return jsonify({'error': 'Conta desativada. Contacte o gerente.'}), 403
+        role_redirects = {
+            'GERENTE': 'gerente.html',
+            'FUNCIONARIO': 'loja.html',
+            'ARMAZENISTA': 'stock.html',
+            'ADMIN': 'gerente.html'
+        }
+        log.info("Login: %s (%s)", username, u['role'])
+        return jsonify({
+            'id': u['id'],
+            'username': u['username'],
+            'nome': u.get('nome') or u['username'],
+            'role': u['role'],
+            'redirect': role_redirects.get(u['role'], 'loja.html')
+        })
     except Exception as e:
-        return jsonify({'error':str(e)}), 500
+        log.error("Erro no login: %s", e)
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/api/logout', methods=['POST'])
 def logout():
@@ -750,14 +779,23 @@ def criar_venda():
         item_data = []
         for item in itens:
             vid = item.get('vinhoId') or item.get('vinho_id')
-            qty = item.get('quantidade',1)
-            row = db_fetchone(conn, db_type, "SELECT preco,quantidade FROM vinhos WHERE id=?", (vid,))
-            if row:
-                preco = float(row['preco'] or 0)
-                total += preco * qty
-                item_data.append((vid, qty, preco))
-                new_stock = max(0, (row['quantidade'] or 0) - qty)
-                db_exec(conn, db_type, "UPDATE vinhos SET quantidade=? WHERE id=?", (new_stock, vid))
+            qty = item.get('quantidade', 1)
+            if not vid or qty < 1:
+                conn.close()
+                return jsonify({'error': 'Item inválido: vinhoId e quantidade são obrigatórios'}), 400
+            row = db_fetchone(conn, db_type, "SELECT preco, quantidade FROM vinhos WHERE id=?", (vid,))
+            if not row:
+                conn.close()
+                return jsonify({'error': f'Vinho #{vid} não encontrado'}), 404
+            stock_atual = row['quantidade'] or 0
+            if qty > stock_atual:
+                conn.close()
+                return jsonify({'error': f'Stock insuficiente para vinho #{vid} (disponível: {stock_atual})'}), 400
+            preco = float(row['preco'] or 0)
+            total += preco * qty
+            item_data.append((vid, qty, preco))
+            new_stock = stock_atual - qty
+            db_exec(conn, db_type, "UPDATE vinhos SET quantidade=? WHERE id=?", (new_stock, vid))
 
         now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         if db_type == 'mysql':
@@ -1130,7 +1168,7 @@ def dashboard():
         weekly, labels = [], []
         for i in range(6,-1,-1):
             d = datetime.date.today() - datetime.timedelta(days=i)
-            lbl = ["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"][d.weekday()] if i>0 else "Hj"
+            lbl = ["Seg","Ter","Qua","Qui","Sex","Sáb","Dom"][d.weekday()] if i>0 else "Hj"
             if db_type == 'mysql':
                 total_day = (db_fetchone(conn,db_type,"SELECT COALESCE(SUM(total),0) as v FROM vendas WHERE DATE(data_venda)=%s",(d.isoformat(),)) or {}).get('v',0)
             else:
@@ -1248,8 +1286,7 @@ def itens_venda(vid):
 
 # ── MAIN ──────────────────────────────────────────────────
 if __name__ == '__main__':
-    """Iniciar servidor"""
-    # Test MySQL connection first
+    # Testar conexão MySQL
     if MYSQL_AVAILABLE:
         try:
             cfg = {**MYSQL_CFG}
@@ -1257,31 +1294,34 @@ if __name__ == '__main__':
             cfg['cursorclass'] = pymysql.cursors.DictCursor
             test = pymysql.connect(**cfg)
             test.close()
-            print("\n  ✅  MySQL ligado com sucesso!")
+            log.info("MySQL ligado com sucesso")
         except Exception as e:
-            print(f"\n  ⚠️  MySQL não disponível: {e}")
-            print("  ℹ️  A usar SQLite como fallback")
-            globals()['DB_TYPE'] = 'sqlite'
+            log.warning("MySQL não disponível: %s", e)
+            log.info("A usar SQLite como fallback")
+            DB_TYPE = 'sqlite'
     else:
-        print("\n  ℹ️  PyMySQL não instalado, a usar SQLite")
+        log.info("PyMySQL não instalado, a usar SQLite")
 
     init_db()
 
     db_label = "MySQL (vinhadouro)" if DB_TYPE == 'mysql' else "SQLite (vinhadouro.db)"
-    print("\n" + "═"*55)
-    print("  🍷  Vinha D'Ouro — Sistema Premium v3.0")
-    print("═"*55)
-    print(f"  🌐  Site:     http://localhost:8080")
-    print(f"  🔌  API:      http://localhost:8080/api/")
-    print(f"  💾  BD:       {db_label}")
-    print("═"*55)
+    print("\n" + "="*55)
+    print("  Vinha D'Ouro — Sistema Premium v3.1")
+    print("="*55)
+    print(f"  Site:     http://localhost:8080")
+    print(f"  API:      http://localhost:8080/api/")
+    print(f"  BD:       {db_label}")
+    print("="*55)
     print("  Endpoints:")
-    print("    • /api/vinhos            → Gestão de vinhos")
-    print("    • /api/provas            → Provas de vinho")
-    print("    • /api/caves             → Caves de armazenamento")
-    print("    • /api/movimentos-stock  → Histórico de stock")
-    print("    • /api/clientes          → Clientes da loja")
-    print("    • /api/relatorios/*      → Relatórios")
-    print("═"*55)
-    print("  Abre → http://localhost:8080 ← no browser!\n")
+    print("    /api/vinhos            - Gestao de vinhos")
+    print("    /api/vendas            - Vendas e devoluções")
+    print("    /api/provas            - Provas de vinho")
+    print("    /api/caves             - Caves de armazenamento")
+    print("    /api/movimentos-stock  - Historico de stock")
+    print("    /api/funcionarios      - Gestao de equipa")
+    print("    /api/clientes          - Clientes da loja")
+    print("    /api/relatorios/*      - Relatorios")
+    print("    /api/dashboard         - Dashboard do gerente")
+    print("="*55)
+    print("  Abre http://localhost:8080 no browser!\n")
     app.run(host='0.0.0.0', port=8080, debug=False)
