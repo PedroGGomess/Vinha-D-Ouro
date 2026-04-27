@@ -140,6 +140,10 @@ CREATE TABLE IF NOT EXISTS provas (
   preco_pessoa    DECIMAL(10,2) DEFAULT 0,
   vinho_ids       JSON COMMENT 'Array de IDs de vinhos: [1,2,3]',
   ativo           TINYINT(1) DEFAULT 1,
+  estado          VARCHAR(20) DEFAULT 'AGENDADA',
+  inscritos       INT DEFAULT 0,
+  notas           TEXT,
+  vinhos_nomes    TEXT,
   criado_em       DATETIME DEFAULT CURRENT_TIMESTAMP,
   COMMENT = 'Eventos de prova de vinho'
 ) ENGINE=InnoDB;
@@ -339,11 +343,11 @@ INSERT IGNORE INTO vinhos (id, nome, tipo, regiao, produtor, ano_colheita, preco
 (22, 'Adega de Borba Garrafeira',       'Tinto',     'Alentejo',     'Adega de Borba',           2015, 25.00,  22,  6,  'Vinho de guarda com 8 anos. Terciários complexos, estrutura fina e final sedoso e persistente.', 1);
 
 -- Provas (eventos de prova)
-INSERT IGNORE INTO provas (id, nome, data_evento, descricao, max_participantes, preco_pessoa, vinho_ids, ativo) VALUES
-(1, 'Prova Douro Premium',           '2026-04-15 18:00:00', 'Seleção de 5 tintos do Douro de excelência, acompanhados de queijos da região.', 15, 45.00, '[1, 2, 7, 13, 18]', 1),
-(2, 'Brancos Portugueses de Qualidade','2026-04-22 19:00:00', 'Descoberta dos melhores brancos: Vinho Verde, Dão, Bairrada e Douro.',         20, 35.00, '[4, 5, 9, 15, 20]', 1),
-(3, 'Explorando Alentejo',           '2026-05-10 18:30:00', 'Os vinhos mais importantes da região: Espumantes, Tintos e Moscatéis.',        25, 50.00, '[3, 10, 11, 14, 21]', 1),
-(4, 'Espumantes Lusitanos',          '2026-05-20 18:00:00', 'Masterclass sobre espumantes portugueses com expert internacional.',          12, 55.00, '[19, 6]', 1);
+INSERT IGNORE INTO provas (id, nome, data_evento, descricao, max_participantes, preco_pessoa, vinho_ids, ativo, estado, inscritos, vinhos_nomes) VALUES
+(1, 'Prova Douro Premium',           '2026-04-15 18:00:00', 'Seleção de 5 tintos do Douro de excelência, acompanhados de queijos da região.', 15, 45.00, '[1, 2, 7, 13, 18]', 1, 'AGENDADA', 8, 'Barca Velha, Quinta do Crasto Reserva, Graham''s Late Bottled Vintage, Dirk Niepoort Charme, Quinta do Vale Meão'),
+(2, 'Brancos Portugueses de Qualidade','2026-04-22 19:00:00', 'Descoberta dos melhores brancos: Vinho Verde, Dão, Bairrada e Douro.',         20, 35.00, '[4, 5, 9, 15, 20]', 1, 'AGENDADA', 12, 'Anselmo Mendes Alvarinho, Casa de Santar Reserva, Niepoort Redoma Branco, Luis Pato Vinhas Velhas Branco, Casal Mendes Vinho Verde'),
+(3, 'Explorando Alentejo',           '2026-05-10 18:30:00', 'Os vinhos mais importantes da região: Espumantes, Tintos e Moscatéis.',        25, 50.00, '[3, 10, 11, 14, 21]', 1, 'AGENDADA', 18, 'Herdade do Esporão Reserva, Mouchão Tonel 3-4, Bacalhôa Moscatel de Setúbal, Esporão Branco Grande Escolha, Herdade do Rocim Trincadeira'),
+(4, 'Espumantes Lusitanos',          '2026-05-20 18:00:00', 'Masterclass sobre espumantes portugueses com expert internacional.',          12, 55.00, '[19, 6]', 1, 'AGENDADA', 4, 'Raposeira Superior Brut, Quinta dos Murças Rosé');
 
 -- Vendas de exemplo
 INSERT IGNORE INTO vendas (id, codigo, pessoa_id, cliente_id, funcionario_id, total, metodo_pagamento, estado, criado_em) VALUES

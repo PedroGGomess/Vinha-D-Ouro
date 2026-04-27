@@ -191,6 +191,10 @@ def _init_mysql(conn):
             preco_pessoa DECIMAL(10,2),
             vinho_ids JSON,
             ativo TINYINT DEFAULT 1,
+            estado VARCHAR(20) DEFAULT 'AGENDADA',
+            inscritos INT DEFAULT 0,
+            notas TEXT,
+            vinhos_nomes TEXT,
             criado_em DATETIME DEFAULT CURRENT_TIMESTAMP
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
         """)
@@ -371,6 +375,10 @@ def _init_sqlite(conn):
         preco_pessoa REAL,
         vinho_ids TEXT,
         ativo INTEGER DEFAULT 1,
+        estado TEXT DEFAULT 'AGENDADA',
+        inscritos INTEGER DEFAULT 0,
+        notas TEXT,
+        vinhos_nomes TEXT,
         criado_em TEXT DEFAULT CURRENT_TIMESTAMP
     );
     CREATE TABLE IF NOT EXISTS caves (
@@ -652,6 +660,25 @@ def stock_critico():
     except Exception as e:
         return jsonify({'error':str(e)}), 500
 
+@app.route('/api/vinhos/<int:vid>', methods=['GET'])
+def obter_vinho(vid):
+    """Obter detalhes de um vinho"""
+    try:
+        conn, db_type = get_db()
+        r = db_fetchone(conn, db_type, "SELECT * FROM vinhos WHERE id=?", (vid,))
+        conn.close()
+        if not r:
+            return jsonify({'error': 'Vinho não encontrado'}), 404
+        return jsonify({
+            'id': r['id'], 'nome': r['nome'], 'tipo': r['tipo'],
+            'regiao': r['regiao'], 'produtor': r['produtor'],
+            'anoColheita': r['ano_colheita'], 'preco': float(r['preco'] or 0),
+            'quantidade': r['quantidade'] or 0,
+            'descricao': r.get('descricao') or '', 'imagemUrl': r.get('imagem_url') or '',
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 # ── FUNCIONÁRIOS ──────────────────────────────────────────
 @app.route('/api/funcionarios', methods=['GET'])
 def listar_funcionarios():
@@ -844,6 +871,21 @@ def criar_venda():
     except Exception as e:
         return jsonify({'error':str(e)}), 500
 
+def _ensure_provas_columns(conn, db_type):
+    """Ensure extra columns exist in provas table for frontend compatibility"""
+    extras = [
+        ("estado", "VARCHAR(20) DEFAULT 'AGENDADA'" if db_type == 'mysql' else "TEXT DEFAULT 'AGENDADA'"),
+        ("inscritos", "INT DEFAULT 0" if db_type == 'mysql' else "INTEGER DEFAULT 0"),
+        ("notas", "TEXT" if db_type == 'mysql' else "TEXT"),
+        ("vinhos_nomes", "TEXT" if db_type == 'mysql' else "TEXT"),
+    ]
+    for col, typedef in extras:
+        try:
+            db_exec(conn, db_type, f"ALTER TABLE provas ADD COLUMN {col} {typedef}")
+            conn.commit()
+        except:
+            pass  # Column already exists
+
 # ── PROVAS (Wine Tastings) ────────────────────────────────
 @app.route('/api/provas', methods=['GET'])
 def listar_provas():
@@ -854,15 +896,34 @@ def listar_provas():
         conn.close()
         result = []
         for r in rows:
+            # Count participants
+            vinhos_str = ''
+            vids = r.get('vinho_ids')
+            if vids:
+                try:
+                    ids = json.loads(vids) if isinstance(vids, str) else vids
+                except: ids = []
+            else:
+                ids = []
+            vinhos_str = r.get('vinhos_nomes') or ''
+
             result.append({
                 'id':              r['id'],
+                'titulo':          r['nome'],
                 'nome':            r['nome'],
-                'dataEvento':      str(r['data_evento']) if r.get('data_evento') else None,
                 'descricao':       r.get('descricao',''),
-                'maxParticipantes': r['max_participantes'],
+                'dataHora':        str(r['data_evento']) if r.get('data_evento') else None,
+                'dataEvento':      str(r['data_evento']) if r.get('data_evento') else None,
+                'capacidade':      r['max_participantes'] or 20,
+                'maxParticipantes': r['max_participantes'] or 20,
+                'inscritos':       r.get('inscritos') or 0,
+                'precoPorPessoa':  float(r['preco_pessoa'] or 0),
                 'precoPessoa':     float(r['preco_pessoa'] or 0),
-                'vinhoIds':        json.loads(r['vinho_ids']) if r.get('vinho_ids') else [],
-                'ativo':           r['ativo'],
+                'estado':          r.get('estado') or ('AGENDADA' if r.get('ativo') else 'CANCELADA'),
+                'vinhos':          vinhos_str,
+                'vinhoIds':        ids,
+                'notas':           r.get('notas') or '',
+                'ativo':           r.get('ativo', 1),
             })
         return jsonify(result)
     except Exception as e:
@@ -873,15 +934,26 @@ def criar_prova():
     """Criar nova prova de vinho"""
     try:
         d = request.get_json()
-        if not d.get('nome') or not d.get('dataEvento'):
-            return jsonify({'error':'Nome e data são obrigatórios'}), 400
+        titulo = d.get('titulo') or d.get('nome')
+        if not titulo:
+            return jsonify({'error':'Título é obrigatório'}), 400
 
         conn, db_type = get_db()
-        vinho_ids = json.dumps(d.get('vinhoIds',[]))
+
+        # Ensure extra columns exist
+        _ensure_provas_columns(conn, db_type)
+
+        vinhos_str = d.get('vinhos', '')
+        estado = d.get('estado', 'AGENDADA')
+        inscritos = d.get('inscritos', 0)
+        notas = d.get('notas', '')
+
         db_exec(conn, db_type,
-                "INSERT INTO provas (nome,data_evento,descricao,max_participantes,preco_pessoa,vinho_ids,ativo) VALUES (?,?,?,?,?,?,?)",
-                (d.get('nome'), d.get('dataEvento'), d.get('descricao',''), d.get('maxParticipantes',20),
-                 d.get('precoPessoa',0), vinho_ids, 1))
+                "INSERT INTO provas (nome,data_evento,descricao,max_participantes,preco_pessoa,vinho_ids,ativo,estado,inscritos,notas,vinhos_nomes) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+                (titulo, d.get('dataHora') or d.get('dataEvento'), d.get('descricao',''),
+                 d.get('capacidade') or d.get('maxParticipantes', 20),
+                 d.get('precoPorPessoa') or d.get('precoPessoa', 0),
+                 json.dumps(d.get('vinhoIds',[])), 1, estado, inscritos, notas, vinhos_str))
         conn.commit()
         conn.close()
         return jsonify({'ok':True}), 201
@@ -895,12 +967,26 @@ def atualizar_prova(pid):
         d = request.get_json()
         conn, db_type = get_db()
 
-        fields, vals = [], []
-        for key, col in [('nome','nome'),('dataEvento','data_evento'),('descricao','descricao'),
-                         ('maxParticipantes','max_participantes'),('precoPessoa','preco_pessoa'),('ativo','ativo')]:
-            if key in d:
-                fields.append(f"{col}=?")
-                vals.append(d[key])
+        _ensure_provas_columns(conn, db_type)
+
+        field_map = {
+            'titulo': 'nome', 'nome': 'nome',
+            'dataHora': 'data_evento', 'dataEvento': 'data_evento',
+            'descricao': 'descricao',
+            'capacidade': 'max_participantes', 'maxParticipantes': 'max_participantes',
+            'precoPorPessoa': 'preco_pessoa', 'precoPessoa': 'preco_pessoa',
+            'ativo': 'ativo', 'estado': 'estado',
+            'inscritos': 'inscritos', 'notas': 'notas',
+            'vinhos': 'vinhos_nomes',
+        }
+
+        seen_cols = {}
+        for js_key, db_col in field_map.items():
+            if js_key in d and db_col not in seen_cols:
+                seen_cols[db_col] = d[js_key]
+
+        fields = [f"{col}=?" for col in seen_cols]
+        vals = list(seen_cols.values())
 
         if 'vinhoIds' in d:
             fields.append("vinho_ids=?")
@@ -1305,6 +1391,33 @@ def itens_venda(vid):
             'quantidade': r['quantidade'],
             'precoUnitario': float(r['preco_unit'] or 0)
         } for r in rows])
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/vendas/<int:vid>', methods=['GET'])
+def obter_venda(vid):
+    """Obter detalhes de uma venda"""
+    try:
+        conn, db_type = get_db()
+        r = db_fetchone(conn, db_type, """
+            SELECT v.*, p.nome as cliente_nome
+            FROM vendas v
+            LEFT JOIN funcionarios f ON v.funcionario_id=f.id
+            LEFT JOIN pessoas p ON f.pessoa_id=p.id
+            WHERE v.id=?
+        """, (vid,))
+        conn.close()
+        if not r:
+            return jsonify({'error': 'Venda não encontrada'}), 404
+        return jsonify({
+            'id': r['id'],
+            'codigo': r.get('codigo') or f"VD-{r['id']:04d}",
+            'cliente': r.get('cliente_nome') or 'Cliente Geral',
+            'metodoPagamento': r['metodo_pagamento'],
+            'total': float(r['total'] or 0),
+            'status': r['estado'],
+            'dataVenda': str(r['criado_em']) if r.get('criado_em') else '',
+        })
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
