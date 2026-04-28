@@ -1,12 +1,12 @@
-# Vinha D'Ouro — Instruções do Projeto
+# the 100's — Instruções do Projeto
 
 ## Sobre o Projeto
 Sistema de gestão para loja de vinhos premium. Projeto de faculdade (Análise e Desenho de Sistemas — Universidade Lusófona, Grupo 13).
 
 ## Tecnologias
 - **Frontend**: HTML5, CSS3 (design system dark luxury), JavaScript vanilla
-- **Backend opção 1**: Python Flask + MySQL/SQLite (server.py)
-- **Backend opção 2**: Java Spring Boot 3.2 + MySQL (pasta backend/)
+- **Backend principal (em uso)**: Python Flask + MySQL/SQLite (`server.py`)
+- **Backend alternativo (referência arquitetural)**: Java Spring Boot 3.2 + MySQL (pasta `backend/`) — não usado em runtime, mantido como documentação de design para entrega ADS
 - **Base de Dados**: MySQL 8.0 (vinhadouro)
 - **Fontes**: Playfair Display, Inter, Cormorant Garamond
 - **Design**: Dark theme, gold + wine red accents, glassmorphism
@@ -18,7 +18,6 @@ vinha-douro-site/
 ├── loja.html               # Ponto de Venda (PDV)
 ├── stock.html              # Gestão de Inventário
 ├── caves.html              # Gestão de Caves
-├── provas.html             # Provas de Vinhos
 ├── gerente.html            # Dashboard do Gerente
 ├── gerente-vendas.html     # Histórico de Vendas
 ├── gerente-relatorios.html # Relatórios e Análises
@@ -67,7 +66,7 @@ vinha-douro-site/
 ### Base de Dados
 - Nome: vinhadouro
 - Charset: utf8mb4
-- Tabelas: pessoas, funcionarios, utilizadores, vinhos, vendas, itens_venda, clientes, provas, participantes_prova, caves, movimentos_stock
+- Tabelas: pessoas, funcionarios, utilizadores, vinhos, vendas, itens_venda, clientes, caves, movimentos_stock
 - Views: v_stock_baixo, v_vendas_hoje, v_top_vinhos
 
 ## Regras de Design (UI/UX)
@@ -82,7 +81,7 @@ vinha-douro-site/
 
 ## Roles de Utilizador
 - GERENTE: acesso total (dashboard, vendas, relatórios, equipa)
-- FUNCIONARIO: acesso à loja (PDV) e provas
+- FUNCIONARIO: acesso à loja (PDV)
 - ARMAZENISTA: acesso a stock e caves
 - ADMIN: acesso total
 
@@ -100,7 +99,7 @@ vinha-douro-site/
 - Condição redundante no stockBar: simplificada a lógica qty===0/qty<10
 
 ### server.py
-- Tabelas em falta no init: adicionadas provas, caves, movimentos_stock, clientes à inicialização MySQL e SQLite
+- Tabelas em falta no init: adicionadas caves, movimentos_stock, clientes à inicialização MySQL e SQLite
 - Query vendas-mensal: corrigido DATE_TRUNC → DATE_FORMAT e v.estado → v.status
 - Query top-vinhos: corrigido SUM(iv.subtotal) → SUM(iv.quantidade * iv.preco_unitario)
 

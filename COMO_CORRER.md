@@ -1,4 +1,4 @@
-# Vinha D'Ouro — Como Correr o Sistema
+# the 100's — Como Correr o Sistema
 **Grupo 13 | Análise e Desenho de Sistemas | Universidade Lusófona**
 
 ---
@@ -75,8 +75,6 @@ O servidor arranca em **http://localhost:8080**
 | GET | /api/vendas | Histórico de vendas |
 | POST | /api/vendas | Registar venda |
 | GET | /api/funcionarios | Lista de funcionários |
-| GET | /api/provas | Eventos de prova de vinhos |
-| POST | /api/provas | Criar prova |
 | GET | /api/caves | Lista de caves |
 | POST | /api/caves | Criar cave |
 | GET | /api/movimentos-stock | Movimentos de stock |

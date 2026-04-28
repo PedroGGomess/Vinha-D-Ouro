@@ -1,8 +1,8 @@
-# 🍷 Vinha D'Ouro — Sistema de Gestão de Loja de Vinhos Premium
+# 🍷 the 100's — Sistema de Gestão de Loja de Vinhos Premium
 
 **Grupo 13 | Análise e Desenho de Sistemas | Universidade Lusófona**
 
-> Sistema completo de gestão para loja de vinhos premium com ponto de venda, gestão de inventário, caves, provas de vinhos e painel de gerente.
+> Sistema completo de gestão para loja de vinhos premium com ponto de venda, gestão de inventário, caves e painel de gerente.
 
 ---
 
@@ -13,7 +13,6 @@
 ├── loja.html               → Ponto de Venda (PDV)
 ├── stock.html              → Gestão de Inventário
 ├── caves.html              → Gestão de Caves
-├── provas.html             → Provas de Vinhos
 ├── gerente.html            → Dashboard do Gerente
 ├── gerente-vendas.html     → Histórico de Vendas
 ├── gerente-relatorios.html → Relatórios e Análises
@@ -86,7 +85,7 @@ http://localhost:8080
 | Utilizador | Password | Role | Acesso |
 |------------|----------|------|--------|
 | `gerente` | `1234` | GERENTE | Dashboard, vendas, relatórios, equipa |
-| `loja` | `1234` | FUNCIONARIO | Ponto de Venda, provas |
+| `loja` | `1234` | FUNCIONARIO | Ponto de Venda |
 | `stock` | `1234` | ARMAZENISTA | Inventário, caves |
 | `admin` | `1234` | ADMIN | Acesso total |
 
@@ -104,7 +103,6 @@ http://localhost:8080
 | `GET` | `/api/vendas` | Histórico de vendas |
 | `POST` | `/api/vendas` | Registar venda |
 | `GET` | `/api/funcionarios` | Lista de funcionários |
-| `GET/POST` | `/api/provas` | Provas de vinhos |
 | `GET/POST` | `/api/caves` | Gestão de caves |
 | `GET/POST` | `/api/movimentos-stock` | Movimentos de stock |
 | `GET` | `/api/clientes` | Lista de clientes |
@@ -125,7 +123,8 @@ http://localhost:8080
 ## 🛠 Tecnologias
 
 - **Frontend:** HTML5, CSS3 (custom properties), JavaScript vanilla
-- **Backend:** Python 3.8+ / Flask / Flask-CORS
+- **Backend principal (em uso):** Python 3.8+ / Flask / Flask-CORS
+- **Backend alternativo (referência ADS):** Java 17 / Spring Boot 3.2 (pasta `backend/`) — implementação paralela mantida como documentação de design, sem ligação ao frontend em runtime
 - **Base de Dados:** MySQL 8.0 (com fallback SQLite)
 - **Fontes:** Google Fonts (Playfair Display, Inter, Cormorant Garamond)
 

@@ -1,5 +1,5 @@
 /* ============================================================================
-   VINHA D'OURO — Premium Wine Management System
+   the 100's — Premium Wine Management System
    app.js · Unified Frontend Logic v3.0
    ============================================================================
    Autores: Pedro Gomes, Eduardo Lourenço, Kollan Intacua
@@ -22,7 +22,6 @@ const Session = {
     'gerente-vendas.html':     ['GERENTE','ADMIN'],
     'gerente-relatorios.html': ['GERENTE','ADMIN'],
     'gerente-equipa.html':     ['GERENTE','ADMIN'],
-    // provas removidas do sistema
     'caves.html':              ['ARMAZENISTA','GERENTE','ADMIN'],
     'loja.html':               ['FUNCIONARIO','GERENTE','ADMIN'],
     'stock.html':              ['ARMAZENISTA','GERENTE','ADMIN'],
@@ -34,6 +33,12 @@ const Session = {
     if (!allowed) return;
     const user = this.get();
     if (!user || !allowed.includes(user.role)) {
+      window.location.href = 'index.html';
+      return;
+    }
+    // Sessão antiga (criada antes de termos tokens). Força re-login para ter token.
+    if (!user.token) {
+      this.clear();
       window.location.href = 'index.html';
       return;
     }
@@ -139,8 +144,7 @@ function buildSidebar() {
     equipa: '<svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 00-3-3.87"></path><path d="M16 3.13a4 4 0 010 7.75"></path></svg>',
     loja: '<svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"></path></svg>',
     stock: '<svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"></path></svg>',
-    caves: '<svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2v20M2 12h20M7 7h10a2 2 0 012 2v6a2 2 0 01-2 2H7a2 2 0 01-2-2V9a2 2 0 012-2z"></path></svg>',
-    provas: '<svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 10c0 1.104.896 2 2 2s2-.896 2-2c0-1.105-.896-2-2-2s-2 .895-2 2z"></path><path d="M17 10c0 1.104.896 2 2 2s2-.896 2-2c0-1.105-.896-2-2-2s-2 .895-2 2z"></path><path d="M12 20v-8M7 12v8M17 12v8M7 20h10M4 8h16M6 3h12a3 3 0 013 3v2H3V6a3 3 0 013-3z"></path></svg>'
+    caves: '<svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2v20M2 12h20M7 7h10a2 2 0 012 2v6a2 2 0 01-2 2H7a2 2 0 01-2-2V9a2 2 0 012-2z"></path></svg>'
   };
 
   const display = roleDisplay[role];
@@ -158,22 +162,23 @@ function buildSidebar() {
     userRole.textContent = display.subtitle;
   }
 
-  // Determine if we're on a gerente page (has <aside> with sidebar-nav)
+  // Determine layout: gerente pages use <ul class="sidebar-nav-list"> wrappers;
+  // stock/caves use direct <a class="nav-link"> children. Detect by presence
+  // of a sidebar-nav-list (or by URL prefix as fallback).
   const sidebar = document.querySelector('.sidebar');
   if (!sidebar) return;
 
-  const isGerentePage = sidebar.tagName === 'ASIDE';
+  const sidebarNavEl = sidebar.querySelector('.sidebar-nav');
+  const isGerentePage = path.startsWith('gerente') ||
+                        !!sidebarNavEl?.querySelector('.sidebar-nav-list');
 
   if (isGerentePage) {
     // Rebuild the sidebar-nav for gerente pages (uses <ul><li> structure)
-    const sidebarNav = sidebar.querySelector('.sidebar-nav');
+    const sidebarNav = sidebarNavEl;
     if (!sidebarNav) return;
 
-    // Clear existing nav items but keep section labels we'll rebuild them
-    const existingItems = sidebarNav.querySelectorAll('.sidebar-nav-item');
-    const existingLabels = sidebarNav.querySelectorAll('.nav-section-label');
-    existingItems.forEach(item => item.remove());
-    existingLabels.forEach(label => label.remove());
+    // Limpar TUDO o conteúdo dinâmico para evitar duplicação em re-renderizações
+    sidebarNav.querySelectorAll('.sidebar-nav-item, .sidebar-nav-list, .nav-section-label, .nav-link').forEach(n => n.remove());
 
     // Get the nav structure for this role
     const structure = navStructure[role];
@@ -212,14 +217,11 @@ function buildSidebar() {
     });
   } else {
     // Rebuild sidebar for non-gerente pages (uses direct <a> links)
-    const sidebarNav = sidebar.querySelector('.sidebar-nav');
+    const sidebarNav = sidebarNavEl;
     if (!sidebarNav) return;
 
-    // Clear existing nav items
-    const existingLinks = sidebarNav.querySelectorAll('.nav-link');
-    const existingLabels = sidebarNav.querySelectorAll('.nav-section-label');
-    existingLinks.forEach(link => link.remove());
-    existingLabels.forEach(label => label.remove());
+    // Limpar TUDO o conteúdo dinâmico para evitar duplicação
+    sidebarNav.querySelectorAll('.nav-link, .nav-section-label, .sidebar-nav-list, .sidebar-nav-item').forEach(n => n.remove());
 
     // Get the nav structure for this role
     const structure = navStructure[role];
@@ -248,8 +250,6 @@ function buildSidebar() {
           ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>'
           : item.icon === 'caves'
           ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H7a2 2 0 0 1-2-2V9.414a1 1 0 0 1 .293-.707l5.414-5.414a1 1 0 0 1 1.414 0l5.414 5.414a1 1 0 0 1 .293.707V19a2 2 0 0 1-2 2h-2"></path><rect x="9" y="9" width="6" height="12"></rect></svg>'
-          : item.icon === 'provas'
-          ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4h12v5c0 1-1 2-2 2H8c-1 0-2-1-2-2V4z"></path><path d="M9 9v11M15 9v11"></path><circle cx="12" cy="20" r="1"></circle></svg>'
           : '';
 
         a.innerHTML = `${iconHtml}<span>${item.label}</span>`;
@@ -272,6 +272,14 @@ function toggleSidebar() {
 
 function logout() {
   try { Screensaver.stop(); } catch(e) { /* screensaver may not be initialized */ }
+  const sess = Session.get();
+  if (sess && sess.token) {
+    fetch(`${API}/logout`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${sess.token}` },
+      keepalive: true,
+    }).catch(() => {});
+  }
   Session.clear();
   window.location.href = 'index.html';
 }
@@ -302,7 +310,7 @@ async function handleLogin(e) {
     window.location.href = data.redirect;
   } catch(err) {
     showLoginError(err.message || 'Erro de ligação ao servidor');
-    if (btn) { btn.disabled = false; btn.textContent = 'ENTRAR'; }
+    if (btn) { btn.disabled = false; btn.textContent = 'Entrar'; }
   }
 }
 
@@ -328,18 +336,21 @@ function fillLogin(user, pass) {
 /* ══════════════════════════════════════════════
    2b. LOGIN PAGE INIT
    ══════════════════════════════════════════════ */
-function initLogin() {
-  // If already logged in, redirect
-  const session = Session.get();
-  if (session && session.redirect) { window.location.href = session.redirect; return; }
+let _loginFormBound = false;
 
-  // Hook into existing form (supports both old and new HTML IDs)
+function initLogin() {
+  const session = Session.get();
+  if (session && session.token && session.redirect) {
+    window.location.href = session.redirect;
+    return;
+  }
+
   const form = document.getElementById('loginForm') || document.getElementById('login-form');
-  if (form) {
+  if (form && !_loginFormBound) {
+    _loginFormBound = true;
     form.addEventListener('submit', handleLogin);
   }
 
-  // Show demo credentials hint if role cards exist
   const roleSection = document.getElementById('roleSection');
   if (roleSection) roleSection.classList.remove('show');
 }
@@ -349,32 +360,54 @@ function initLogin() {
    ══════════════════════════════════════════════ */
 let apiOnline = false;
 
+/** AbortSignal com timeout (compatível com browsers sem AbortSignal.timeout). */
+function fetchAbortAfter(ms) {
+  if (typeof AbortSignal !== 'undefined' && typeof AbortSignal.timeout === 'function') {
+    return { signal: AbortSignal.timeout(ms), cleanup: null };
+  }
+  const c = new AbortController();
+  const t = setTimeout(() => c.abort(), ms);
+  return { signal: c.signal, cleanup: () => clearTimeout(t) };
+}
+
 async function checkApi() {
+  const { signal, cleanup } = fetchAbortAfter(2500);
   try {
-    const r = await fetch(`${API}/health`, { signal: AbortSignal.timeout(2500) });
+    const r = await fetch(`${API}/health`, { signal });
     apiOnline = r.ok;
   } catch { apiOnline = false; }
+  finally { cleanup?.(); }
   updateApiBadge();
   return apiOnline;
 }
 
 function updateApiBadge() {
-  const badge = document.getElementById('api-badge');
+  const badge = document.getElementById('api-badge')
+    || document.querySelector('nav.sidebar .api-badge, .sidebar .api-badge');
   const label = document.getElementById('api-label');
   if (badge) {
     badge.className = apiOnline ? 'api-badge online' : 'api-badge offline';
   }
   if (label) label.textContent = apiOnline ? 'BD Ligada' : 'Offline (Demo)';
-  // POS status dot
   const dot = document.getElementById('api-dot');
   if (dot) dot.className = apiOnline ? 'status-dot' : 'status-dot off';
 }
 
 async function apiFetch(path, opts = {}) {
-  const r = await fetch(`${API}${path}`, {
-    headers: { 'Content-Type': 'application/json' }, ...opts
-  });
-  const data = await r.json();
+  const sess = Session.get();
+  const headers = { 'Content-Type': 'application/json', ...(opts.headers || {}) };
+  if (sess && sess.token) headers['Authorization'] = `Bearer ${sess.token}`;
+  const r = await fetch(`${API}${path}`, { ...opts, headers });
+  let data;
+  try { data = await r.json(); } catch { data = {}; }
+  if (r.status === 401) {
+    // Token inválido/expirado — limpa sessão e redireciona para login
+    Session.clear();
+    if (window.location.pathname.split('/').pop() !== 'index.html') {
+      window.location.href = 'index.html';
+    }
+    throw new Error(data.error || 'Sessão expirada');
+  }
   if (!r.ok) throw new Error(data.error || `HTTP ${r.status}`);
   return data;
 }
@@ -392,14 +425,22 @@ function toast(msg, type = 'success', ms = 3500) {
   };
   const t = document.createElement('div');
   t.className = `toast toast-${type}`;
-  t.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${icons[type] || icons.info}</svg>${msg}`;
+  t.setAttribute('role', type === 'error' ? 'alert' : 'status');
+  // Ícone como innerHTML (estático, sem dados externos), texto via textContent (seguro contra XSS)
+  const iconWrap = document.createElement('span');
+  iconWrap.className = 'toast-icon';
+  iconWrap.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">${icons[type] || icons.info}</svg>`;
+  const txt = document.createElement('span');
+  txt.textContent = String(msg);
+  t.appendChild(iconWrap);
+  t.appendChild(txt);
   c.appendChild(t);
   requestAnimationFrame(() => t.classList.add('show'));
   setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 300); }, ms);
 }
 
 /* ══════════════════════════════════════════════
-   5. FORMAT HELPERS
+   5. FORMAT / SAFETY HELPERS
    ══════════════════════════════════════════════ */
 const fmt = {
   eur:  v => `${(+v || 0).toFixed(2).replace('.', ',')} €`,
@@ -407,6 +448,38 @@ const fmt = {
   date: s => { if (!s) return '—'; try { return new Date(s).toLocaleDateString('pt-PT', { day: '2-digit', month: '2-digit', year: 'numeric' }); } catch { return s; } },
   dt:   s => { if (!s) return '—'; try { return new Date(s).toLocaleString('pt-PT', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }); } catch { return s; } },
 };
+
+/** Escapa HTML para uso seguro em templates literais (defesa contra XSS em dados da API). */
+function escHtml(v) {
+  if (v === null || v === undefined) return '';
+  return String(v)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+/** Estado vazio reutilizável. Usar em containers (grid/tbody) quando a lista vier vazia. */
+function emptyState(message = 'Sem dados para mostrar', icon = '📭') {
+  return `<div class="empty-state" style="grid-column:1/-1;text-align:center;padding:48px 16px;color:var(--text-muted);">
+    <div style="font-size:32px;margin-bottom:8px;opacity:0.6;" aria-hidden="true">${icon}</div>
+    <div style="font-size:13px;">${escHtml(message)}</div>
+  </div>`;
+}
+
+/** Estado de erro reutilizável. */
+function errorState(message = 'Não foi possível carregar', onRetry = null) {
+  const id = 'err-retry-' + Math.random().toString(36).slice(2, 8);
+  if (onRetry && typeof window !== 'undefined') {
+    setTimeout(() => { document.getElementById(id)?.addEventListener('click', onRetry); }, 0);
+  }
+  return `<div class="error-state" style="grid-column:1/-1;text-align:center;padding:48px 16px;color:var(--text-muted);">
+    <div style="font-size:32px;margin-bottom:8px;opacity:0.6;" aria-hidden="true">⚠️</div>
+    <div style="font-size:13px;margin-bottom:12px;">${escHtml(message)}</div>
+    ${onRetry ? `<button id="${id}" type="button" class="btn btn-secondary btn-sm">Tentar novamente</button>` : ''}
+  </div>`;
+}
 
 function stockBar(qty, max = 100) {
   const pct = Math.min(100, (qty / Math.max(max, 1)) * 100);
@@ -566,6 +639,7 @@ const Screensaver = {
   init() {
     const page = window.location.pathname.split('/').pop() || 'index.html';
     if (page === 'index.html' || page === '' || page === '/') return;
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
 
     // Create overlay
     if (!document.getElementById('screensaver-overlay')) {
@@ -579,8 +653,8 @@ const Screensaver = {
               <path d="M8 22h8M12 11v11M7 11c0 2.8 2.2 5 5 5s5-2.2 5-5V3H7v8z"/><path d="M7 8h10"/>
             </svg>
           </div>
-          <h2 class="screensaver-title">Vinha D'Ouro</h2>
-          <p class="screensaver-subtitle">Premium Wine Management</p>
+          <h2 class="screensaver-title">the 100&apos;s</h2>
+          <p class="screensaver-subtitle">Bottled Memories</p>
           <div class="screensaver-time" id="screensaver-clock"></div>
           <p class="screensaver-hint">Clique ou toque para continuar</p>
         </div>
@@ -711,7 +785,7 @@ const Screensaver = {
    8. PAGE ENTRANCE ANIMATIONS
    ══════════════════════════════════════════════ */
 function animateEntrance() {
-  const elements = document.querySelectorAll('.kpi-card, .card, .team-card, .prova-card, .comparison-card, .wine-card');
+  const elements = document.querySelectorAll('.kpi-card, .card, .team-card, .comparison-card, .wine-card');
   elements.forEach((el, i) => {
     el.style.opacity = '0';
     el.style.transform = 'translateY(20px)';
@@ -797,9 +871,9 @@ async function loadDashboard() {
   if (topWinesTbody) {
     const sorted = [...vinhos].sort((a, b) => (b.preco * b.quantidade) - (a.preco * a.quantidade)).slice(0, 5);
     topWinesTbody.innerHTML = sorted.map((v, i) => `<tr>
-      <td><span style="font-size:11px;color:var(--text-muted);margin-right:6px;font-family:var(--font-display);">${i + 1}</span><span style="font-weight:600;font-size:13px;">${v.nome}</span></td>
-      <td><span class="badge badge-muted" style="font-size:10px;">${v.tipo || '—'}</span></td>
-      <td><span style="font-family:var(--font-display);font-size:13px;font-weight:700;color:var(--text-gold);">${fmt.eur(v.preco)}</span></td>
+      <td><span style="font-size:11px;color:var(--text-muted);margin-right:6px;font-family:var(--font-display);">${i + 1}</span><span style="font-weight:600;font-size:13px;">${escHtml(v.nome)}</span></td>
+      <td><span class="badge badge-muted" style="font-size:10px;">${escHtml(v.tipo || '—')}</span></td>
+      <td><span style="font-family:var(--font-display);font-size:13px;font-weight:700;color:var(--text-gold);">${escHtml(fmt.eur(v.preco))}</span></td>
       <td>${stockBar(v.quantidade || 0, 100)}</td>
     </tr>`).join('');
   }
@@ -820,7 +894,7 @@ async function loadDashboard() {
         return `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border-subtle);">
           <div style="display:flex;align-items:center;gap:8px;">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--${cls})" stroke-width="2">${icon}</svg>
-            <span style="font-size:13px;font-weight:500;">${v.nome}</span>
+            <span style="font-size:13px;font-weight:500;">${escHtml(v.nome)}</span>
           </div>
           <span class="badge badge-${cls}" style="font-size:11px;">${qty === 0 ? 'Esgotado' : `${qty} un.`}</span>
         </div>`;
@@ -828,7 +902,84 @@ async function loadDashboard() {
     }
   }
 
+  // Aplicar preferências guardadas de visibilidade dos widgets
+  applyDashVisibility();
+  buildDashEditorList();
   animateEntrance();
+}
+
+/* ══════════════════════════════════════════════
+   10b. DASHBOARD EDITOR — Mostrar/esconder widgets
+   ══════════════════════════════════════════════ */
+const DASH_PREFS_KEY = 'vd_dash_widgets_v1';
+const DASH_DEFAULT_VISIBLE = {
+  'kpi-receita': true, 'kpi-vendas': true, 'kpi-lucro': true, 'kpi-ticket': true,
+  'kpi-critico': true, 'kpi-stock': true,
+  'charts': true, 'top-wines': true, 'stock-alerts': true,
+};
+
+function _dashLoadPrefs() {
+  try { return { ...DASH_DEFAULT_VISIBLE, ...(JSON.parse(localStorage.getItem(DASH_PREFS_KEY) || '{}')) }; }
+  catch { return { ...DASH_DEFAULT_VISIBLE }; }
+}
+function _dashSavePrefs(prefs) {
+  try { localStorage.setItem(DASH_PREFS_KEY, JSON.stringify(prefs)); } catch {}
+}
+
+function applyDashVisibility() {
+  const prefs = _dashLoadPrefs();
+  document.querySelectorAll('[data-widget]').forEach(el => {
+    const key = el.dataset.widget;
+    if (prefs[key] === false) el.classList.add('widget-hidden');
+    else el.classList.remove('widget-hidden');
+  });
+}
+
+function buildDashEditorList() {
+  const list = document.getElementById('dash-editor-list');
+  if (!list) return;
+  const prefs = _dashLoadPrefs();
+  const widgets = Array.from(document.querySelectorAll('[data-widget]'))
+    .map(el => ({ key: el.dataset.widget, name: el.dataset.widgetName || el.dataset.widget }))
+    .filter((w, i, arr) => arr.findIndex(x => x.key === w.key) === i);
+  list.innerHTML = widgets.map(w => `
+    <label class="dash-editor-item ${prefs[w.key] !== false ? 'checked' : ''}" data-widget-key="${escHtml(w.key)}">
+      <input type="checkbox" ${prefs[w.key] !== false ? 'checked' : ''} onchange="dashToggleWidget('${escHtml(w.key)}', this.checked)">
+      <span>${escHtml(w.name)}</span>
+    </label>
+  `).join('');
+}
+
+function dashToggleWidget(key, visible) {
+  const prefs = _dashLoadPrefs();
+  prefs[key] = !!visible;
+  _dashSavePrefs(prefs);
+  applyDashVisibility();
+  // Update visual state of label
+  const label = document.querySelector(`.dash-editor-item[data-widget-key="${key}"]`);
+  if (label) label.classList.toggle('checked', !!visible);
+}
+
+function toggleDashEditor() {
+  const ed = document.getElementById('dash-editor');
+  if (!ed) return;
+  const isOpen = !ed.hasAttribute('hidden');
+  if (isOpen) {
+    ed.setAttribute('hidden', '');
+    document.body.classList.remove('dash-edit-mode');
+  } else {
+    buildDashEditorList();
+    ed.removeAttribute('hidden');
+    document.body.classList.add('dash-edit-mode');
+    ed.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+function dashResetVisibility() {
+  _dashSavePrefs({ ...DASH_DEFAULT_VISIBLE });
+  applyDashVisibility();
+  buildDashEditorList();
+  toast('Layout do dashboard reposto', 'info');
 }
 
 /* ══════════════════════════════════════════════
@@ -864,22 +1015,29 @@ function filterVendas() {
 function renderVendasTable(tbody, vendas) {
   if (!tbody) return;
   if (!vendas || !vendas.length) {
-    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:50px;color:var(--text-muted);">Nenhuma venda encontrada</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:50px;color:var(--text-muted);">Nenhuma venda encontrada</td></tr>`;
     return;
   }
   tbody.innerHTML = vendas.map(v => {
     const status = v.status || v.estado || '';
     const isPaid = status === 'CONCLUIDA' || status === 'PAGA';
+    const codigo = escHtml(v.codigo || `VD-${String(v.id).padStart(4, '0')}`);
+    const cliente = escHtml(v.clienteNome || v.cliente || 'Consumidor Final');
+    const clienteNif = v.clienteNif ? `<span style="font-size:10px;color:var(--text-muted);display:block;">NIF ${escHtml(v.clienteNif)}</span>` : '';
+    const funcionario = escHtml(v.funcionarioNome || 'Sistema');
+    const produto = escHtml(v.produto || '—');
+    const metodo = escHtml(v.metodoPagamento || '—');
     return `<tr>
-      <td><span style="font-family:var(--font-display);font-size:13px;color:var(--text-gold);font-weight:600;">${v.codigo || `VD-${String(v.id).padStart(4, '0')}`}</span></td>
-      <td>${v.cliente || v.clienteNome || '—'}</td>
-      <td class="muted" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${v.produto || '—'}</td>
-      <td class="muted">${v.metodoPagamento || '—'}</td>
+      <td><span style="font-family:var(--font-display);font-size:13px;color:var(--text-gold);font-weight:600;">${codigo}</span></td>
+      <td>${cliente}${clienteNif}</td>
+      <td><span style="display:inline-flex;align-items:center;gap:6px;font-size:12.5px;"><span style="width:22px;height:22px;border-radius:50%;background:rgba(201,169,110,0.14);color:#C9A96E;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:10px;letter-spacing:0.5px;" aria-hidden="true">${escHtml((v.funcionarioNome || 'S').split(' ').map(w => w[0]).slice(0,2).join('').toUpperCase())}</span>${funcionario}</span></td>
+      <td class="muted" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${produto}</td>
+      <td class="muted">${metodo}</td>
       <td><span style="font-family:var(--font-display);font-weight:700;">${fmt.eur(v.total)}</span></td>
       <td>${statusBadge(status)}</td>
       <td class="muted">${fmt.dt(v.dataVenda)}</td>
       <td><div style="display:flex;gap:5px;">
-        <button class="btn btn-secondary btn-sm btn-icon" onclick="printVendaReceipt(${v.id})" title="Imprimir Fatura"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></button>
+        <button class="btn btn-secondary btn-sm btn-icon" onclick="printVendaReceipt(${v.id})" title="Imprimir Fatura" aria-label="Imprimir fatura ${codigo}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13" aria-hidden="true"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></button>
         ${isPaid ? '<span class="badge badge-success" style="font-size:9px;">Paga</span>' : ''}
       </div></td>
     </tr>`;
@@ -909,43 +1067,93 @@ function updateStockStats() {
   set('stat-units', fmt.num(units));
   set('stat-critico', crit);
   set('stat-valor', fmt.eur(valor));
-  const c = document.getElementById('table-count');
-  if (c) c.textContent = `${total} referência(s) · ${fmt.num(units)} unidades`;
+}
+
+/** Ordenação da listagem de stock (filtros aplicados antes). */
+function sortStockList(items, sortKey) {
+  const arr = [...items];
+  switch (sortKey) {
+    case 'stock-asc':
+      return arr.sort((a, b) => (a.quantidade || 0) - (b.quantidade || 0));
+    case 'stock-desc':
+      return arr.sort((a, b) => (b.quantidade || 0) - (a.quantidade || 0));
+    case 'preco-desc':
+      return arr.sort((a, b) => (b.preco || 0) - (a.preco || 0));
+    case 'nome':
+    default:
+      return arr.sort((a, b) =>
+        (a.nome || '').localeCompare(b.nome || '', 'pt', { sensitivity: 'base' }));
+  }
 }
 
 function renderStock() {
   const tbody = document.getElementById('stock-table'); if (!tbody) return;
   const q = (document.getElementById('stock-search')?.value || '').toLowerCase();
   const t = document.getElementById('tipo-filter')?.value || '';
-  const list = allVinhos.filter(v => {
+  const onlyCrit = document.getElementById('stock-only-crit')?.checked;
+  const sortKey = document.getElementById('stock-sort')?.value || 'nome';
+
+  let list = allVinhos.filter(v => {
     const txt = `${v.nome || ''} ${v.regiao || ''} ${v.produtor || ''}`.toLowerCase();
-    return txt.includes(q) && (!t || v.tipo === t);
+    const qty = v.quantidade || 0;
+    const passCrit = !onlyCrit || qty < 10;
+    return txt.includes(q) && (!t || v.tipo === t) && passCrit;
   });
+
+  list = sortStockList(list, sortKey);
+
+  const meta = document.getElementById('stock-table-meta');
+  if (meta) {
+    const visUnits = list.reduce((s, v) => s + (v.quantidade || 0), 0);
+    const n = allVinhos.length;
+    meta.textContent = n
+      ? `A mostrar ${list.length} de ${n} referências · ${fmt.num(visUnits)} garrafas nesta vista`
+      : 'Sem dados — verifique a ligação à API ou adicione referências.';
+  }
+
   if (!list.length) {
-    tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:50px;color:var(--text-muted);">Nenhum vinho encontrado</td></tr>`;
+    const msg = allVinhos.length
+      ? 'Nenhum resultado com estes filtros. Ajuste a pesquisa ou desactive «Só críticos».'
+      : 'Sem referências. Clique em «Nova referência» para começar.';
+    tbody.innerHTML = `<tr><td colspan="9" class="stock-empty">${msg}</td></tr>`;
     return;
   }
+
   const maxQ = Math.max(...allVinhos.map(v => v.quantidade || 0), 100);
-  const typeDots = { Tinto: 'tinto', Branco: 'branco', 'Rosé': 'rosé', Espumante: 'espumante' };
+  const typeDots = { Tinto: 'tinto', Branco: 'branco', 'Rosé': 'rose', Espumante: 'espumante', Porto: 'porto', Madeira: 'madeira' };
+
   tbody.innerHTML = list.map(v => {
     const qty = v.quantidade || 0;
-    let sc = 'badge-success', st = 'Disponível';
+    let sc = 'badge-success', st = 'OK';
     if (qty === 0) { sc = 'badge-danger'; st = 'Esgotado'; }
     else if (qty < 10) { sc = 'badge-danger'; st = 'Crítico'; }
     else if (qty < 25) { sc = 'badge-warning'; st = 'Baixo'; }
-    return `<tr>
-      <td><div style="display:flex;align-items:center;gap:8px;"><span class="wine-type-dot ${typeDots[v.tipo] || ''}" style="position:static;"></span><span style="font-weight:600;">${v.nome}</span></div></td>
-      <td class="muted">${v.tipo || '—'}</td>
-      <td class="muted">${v.regiao || '—'}</td>
-      <td class="muted">${v.produtor || '—'}</td>
-      <td class="muted">${v.anoColheita || '—'}</td>
+    const nome = escHtml(v.nome);
+    const tipo = escHtml(v.tipo || '—');
+    const regiao = escHtml(v.regiao || '—');
+    const produtor = escHtml(v.produtor || '—');
+    const ano = v.anoColheita != null ? escHtml(String(v.anoColheita)) : '—';
+    const rowCrit = qty < 10 ? ' stock-row--critical' : '';
+    const subParts = [v.tipo, v.regiao].filter(Boolean).map(escHtml).join(' · ');
+    return `<tr class="stock-row${rowCrit}">
+      <td class="stock-cell-product"><div style="display:flex;align-items:center;gap:12px;">
+        <div class="stock-bottle-mini" aria-hidden="true">${wineBottleSVG(v.tipo)}</div>
+        <div>
+          <div class="stock-product-name">${nome}</div>
+          <div class="stock-product-sub">${subParts || '—'}</div>
+        </div>
+      </div></td>
+      <td class="stock-cell-muted"><div style="display:inline-flex;align-items:center;gap:6px;"><span class="wine-type-dot ${typeDots[v.tipo] || ''}" style="position:static;" aria-hidden="true"></span>${tipo}</div></td>
+      <td class="stock-cell-muted">${regiao}</td>
+      <td class="stock-cell-muted">${produtor}</td>
+      <td class="stock-cell-muted">${ano}</td>
       <td><span style="font-family:var(--font-display);font-weight:700;color:var(--text-gold);">${fmt.eur(v.preco)}</span></td>
-      <td style="min-width:130px;">${stockBar(qty, maxQ)}</td>
+      <td style="min-width:132px;">${stockBar(qty, maxQ)}</td>
       <td><span class="badge ${sc}">${st}</span></td>
-      <td><div style="display:flex;gap:5px;">
-        <button class="btn btn-secondary btn-sm btn-icon" onclick="openEditModal(${v.id})" title="Editar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
-        <button class="btn btn-secondary btn-sm btn-icon" onclick="openStockModal(${v.id})" title="Stock"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg></button>
-        <button class="btn btn-secondary btn-sm btn-icon" onclick="openGuiaModal(${v.id})" title="Guia de Transporte"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></button>
+      <td class="align-right"><div class="stock-actions">
+        <button type="button" class="btn btn-secondary btn-sm btn-icon" onclick="openEditModal(${v.id})" title="Editar" aria-label="Editar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13" aria-hidden="true"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+        <button type="button" class="btn btn-secondary btn-sm btn-icon" onclick="openStockModal(${v.id})" title="Ajustar stock" aria-label="Ajustar stock"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13" aria-hidden="true"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg></button>
+        <button type="button" class="btn btn-secondary btn-sm btn-icon" onclick="openGuiaModal(${v.id})" title="Guia de transporte" aria-label="Guia de transporte"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13" aria-hidden="true"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></button>
       </div></td>
     </tr>`;
   }).join('');
@@ -953,7 +1161,7 @@ function renderStock() {
 
 // Wine modal
 function openAddModal() {
-  document.getElementById('modal-title').textContent = 'Adicionar Vinho';
+  document.getElementById('modal-title').textContent = 'Nova referência';
   document.getElementById('wine-id').value = '';
   ['wine-nome', 'wine-regiao', 'wine-produtor', 'wine-ano', 'wine-preco', 'wine-qty'].forEach(id => {
     const el = document.getElementById(id); if (el) el.value = '';
@@ -963,7 +1171,7 @@ function openAddModal() {
 
 function openEditModal(id) {
   const v = allVinhos.find(x => x.id === id); if (!v) return;
-  document.getElementById('modal-title').textContent = 'Editar Vinho';
+  document.getElementById('modal-title').textContent = 'Editar referência';
   document.getElementById('wine-id').value = id;
   const set = (fid, val) => { const el = document.getElementById(fid); if (el) el.value = val || ''; };
   set('wine-nome', v.nome); set('wine-regiao', v.regiao); set('wine-produtor', v.produtor);
@@ -986,9 +1194,10 @@ async function saveWine() {
     quantidade: +document.getElementById('wine-qty')?.value || 0,
   };
   if (!body.nome) { toast('Preencha o nome', 'error'); return; }
+  if (!body.tipo) { toast('Selecione o tipo de vinho', 'error'); return; }
   try {
-    if (id) { await apiFetch(`/vinhos/${id}`, { method: 'PUT', body: JSON.stringify(body) }); toast('Vinho atualizado'); }
-    else { await apiFetch('/vinhos', { method: 'POST', body: JSON.stringify(body) }); toast('Vinho adicionado'); }
+    if (id) { await apiFetch(`/vinhos/${id}`, { method: 'PUT', body: JSON.stringify(body) }); toast('Referência atualizada'); }
+    else { await apiFetch('/vinhos', { method: 'POST', body: JSON.stringify(body) }); toast('Referência criada'); }
     closeModal(); loadStock();
   } catch {
     if (id) { const i = allVinhos.findIndex(v => v.id === +id); if (i >= 0) allVinhos[i] = { ...allVinhos[i], ...body }; }
@@ -1040,6 +1249,7 @@ function wineBottleSVG(tipo) {
     'Rosé':    { b1: '#561825', b2: '#20080D', f1: '#ECA8BC', f2: '#C46885', l: 'rgba(86,24,37,0.92)', ltr: 'R', shape: 'slim', glw: 'rgba(196,104,133,0.3)' },
     Espumante: { b1: '#0C2016', b2: '#050C08', f1: '#D4A825', f2: '#9A6E10', l: 'rgba(12,32,22,0.92)', ltr: 'E', shape: 'champagne', glw: 'rgba(180,148,30,0.28)' },
     Porto:     { b1: '#260C06', b2: '#0E0402', f1: '#9E2616', f2: '#621408', l: 'rgba(38,12,6,0.92)', ltr: 'P', shape: 'port', glw: 'rgba(158,38,22,0.3)' },
+    Madeira:   { b1: '#3A1810', b2: '#160604', f1: '#C68A2E', f2: '#7A4F12', l: 'rgba(58,24,16,0.92)', ltr: 'M', shape: 'port', glw: 'rgba(198,138,46,0.28)' },
   };
   const c = C[tipo] || C.Tinto;
   const uid = 'b' + (tipo || '').replace(/[^a-zA-Z]/g, '');
@@ -1085,21 +1295,38 @@ function wineBottleSVG(tipo) {
    14. POS (Point of Sale)
    ══════════════════════════════════════════════ */
 let catalog = [], cart = [], payMethod = 'Cartão';
-const wineTypeClass = { Tinto: 'tinto', Branco: 'branco', 'Rosé': 'rose', Espumante: 'espumante', Porto: 'porto' };
+let _posListenersBound = false;
+const wineTypeClass = { Tinto: 'tinto', Branco: 'branco', 'Rosé': 'rose', Espumante: 'espumante', Porto: 'porto', Madeira: 'madeira' };
+
+function _posActiveFilterKey() {
+  const active = document.querySelector('.pos-tab.active, .cat-btn.active, .filter-btn.active');
+  const raw = active?.getAttribute('data-filter');
+  return raw === null || raw === '' ? 'todos' : raw;
+}
 
 async function loadPOS() {
   await checkApi();
   try { catalog = await apiFetch('/vinhos'); } catch { catalog = FALLBACK.vinhos; }
   renderCatalog();
 
-  document.querySelectorAll('.filter-btn, .pos-cat-btn, .pos-tab').forEach(btn => btn.addEventListener('click', () => {
-    document.querySelectorAll('.filter-btn, .pos-cat-btn, .pos-tab').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    renderCatalog(btn.dataset.filter);
-  }));
+  const clockEl = document.getElementById('pos-clock');
+  if (clockEl && !clockEl.dataset.vdClock) {
+    clockEl.dataset.vdClock = '1';
+    const tick = () => {
+      clockEl.textContent = new Date().toLocaleString('pt-PT', {
+        weekday: 'short', day: '2-digit', month: 'short',
+        hour: '2-digit', minute: '2-digit', second: '2-digit',
+      });
+    };
+    tick();
+    setInterval(tick, 1000);
+  }
 
-  document.getElementById('wine-search')?.addEventListener('input', () =>
-    renderCatalog(document.querySelector('.pos-tab.active, .cat-btn.active, .filter-btn.active')?.dataset?.filter || 'todos'));
+  if (_posListenersBound) return;
+  _posListenersBound = true;
+
+  const searchInput = document.getElementById('pos-search') || document.getElementById('wine-search');
+  searchInput?.addEventListener('input', () => renderCatalog(_posActiveFilterKey()));
 
   document.querySelectorAll('.pay-method').forEach(btn => btn.addEventListener('click', () => {
     document.querySelectorAll('.pay-method').forEach(b => b.classList.remove('active'));
@@ -1108,11 +1335,13 @@ async function loadPOS() {
   }));
 }
 
-const wineEmojis = { Tinto: '🍷', Branco: '🥂', 'Rosé': '🌸', Espumante: '✨', Porto: '🍇' };
+const wineEmojis = { Tinto: '🍷', Branco: '🥂', 'Rosé': '🌸', Espumante: '✨', Porto: '🍇', Madeira: '🥃' };
 
 function renderCatalog(filter = 'todos') {
-  const grid = document.getElementById('wine-grid'); if (!grid) return;
-  const q = (document.getElementById('wine-search')?.value || '').toLowerCase();
+  const grid = document.getElementById('catalog-grid') || document.getElementById('wine-grid');
+  if (!grid) return;
+  const searchEl = document.getElementById('pos-search') || document.getElementById('wine-search');
+  const q = (searchEl?.value || '').toLowerCase();
   const list = catalog.filter(v =>
     (`${v.nome || ''} ${v.regiao || ''} ${v.produtor || ''}`.toLowerCase()).includes(q) &&
     (!filter || filter === 'todos' || filter === '' || v.tipo === filter)
@@ -1131,10 +1360,12 @@ function renderCatalog(filter = 'todos') {
     const qty = v.quantidade || 0;
     const stockClass = oos ? 'oos-label' : qty < 5 ? 'low' : '';
     const emoji = wineEmojis[v.tipo] || '🍷';
+    const tipoL = escHtml(v.tipo || '');
+    const nomeL = escHtml(v.nome || '');
     return `<div class="wine-tile t-${tc}${oos ? ' oos' : ''}" onclick="${oos ? 'void(0)' : `addToCart(${v.id})`}">
-      <div class="tile-type">${v.tipo || ''}</div>
+      <div class="tile-type">${tipoL}</div>
       <div class="tile-icon">${emoji}</div>
-      <div class="tile-name">${v.nome}</div>
+      <div class="tile-name">${nomeL}</div>
       <div class="tile-bottom">
         <span class="tile-price">${fmt.eur(v.preco)}</span>
         <span class="tile-stock ${stockClass}">${oos ? 'Esgotado' : qty + ' un.'}</span>
@@ -1146,8 +1377,7 @@ function renderCatalog(filter = 'todos') {
 /* Refresh catalog from API (called after sale/return) */
 async function refreshCatalog() {
   try { catalog = await apiFetch('/vinhos'); } catch { /* keep current */ }
-  const activeFilter = document.querySelector('.pos-tab.active, .cat-btn.active')?.dataset?.filter || '';
-  renderCatalog(activeFilter || 'todos');
+  renderCatalog(_posActiveFilterKey());
 }
 
 /* ══════════════════════════════════════════════
@@ -1240,8 +1470,8 @@ function renderCart() {
     div.innerHTML = `
       <div class="ci-dot ${tc}"></div>
       <div class="ci-info">
-        <div class="ci-name">${item.nome}</div>
-        <div class="ci-meta">${item.vol || '0.75L'} · ${fmt.eur(item.preco)}/un.</div>
+        <div class="ci-name">${escHtml(item.nome)}</div>
+        <div class="ci-meta">${escHtml(item.vol || '0.75L')} · ${escHtml(fmt.eur(item.preco))}/un.</div>
       </div>
       <div class="ci-qty">
         <button onclick="updateQty(${i},-1)">−</button>
@@ -1275,9 +1505,9 @@ function checkout() {
   if (coItems) {
     coItems.innerHTML = cart.map(item => `
       <div class="co-item">
-        <span class="co-item-name">${item.nome}</span>
-        <span class="co-item-qty">${item.vol ? item.vol + ' · ' : ''}×${item.qty}</span>
-        <span class="co-item-price">${fmt.eur(item.preco * item.qty)}</span>
+        <span class="co-item-name">${escHtml(item.nome)}</span>
+        <span class="co-item-qty">${escHtml(item.vol ? item.vol + ' · ' : '')}×${item.qty}</span>
+        <span class="co-item-price">${escHtml(fmt.eur(item.preco * item.qty))}</span>
       </div>`).join('');
   }
   const disc = document.getElementById('co-discount'); if (disc) disc.value = '0';
@@ -1332,9 +1562,34 @@ function calcTroco() {
   } else { el.style.display = 'none'; }
 }
 
+/* Validações simples de pagamento */
+function _validatePayment(method) {
+  if (method === 'Cartão') {
+    const num = (document.getElementById('co-card-number')?.value || '').replace(/\s/g, '');
+    const exp = (document.getElementById('co-card-expiry')?.value || '').trim();
+    const cvv = (document.getElementById('co-card-cvv')?.value || '').trim();
+    if (num.length < 12) return 'Número de cartão inválido';
+    if (!/^\d{2}\/\d{2}$/.test(exp)) return 'Validade inválida (formato MM/AA)';
+    if (cvv.length < 3) return 'CVV inválido';
+  } else if (method === 'MB Way') {
+    const phone = (document.getElementById('co-mbway-phone')?.value || '').replace(/[^\d+]/g, '');
+    if (phone.length < 9) return 'Indica o telemóvel para o pedido MB Way';
+  } else if (method === 'Numerário') {
+    const total = +(document.getElementById('co-total')?.textContent || '0').replace(/[^\d,]/g, '').replace(',', '.');
+    const recv = +(document.getElementById('co-cash-received')?.value || 0);
+    if (recv < total) return 'Valor recebido inferior ao total';
+  }
+  return null;
+}
+
 async function processPayment() {
   if (!cart.length) return;
   const btn = document.getElementById('process-btn');
+
+  // Validação por método
+  const validErr = _validatePayment(payMethod);
+  if (validErr) { toast(validErr, 'error', 4000); return; }
+
   if (btn) { btn.disabled = true; btn.innerHTML = '<span>A processar...</span>'; }
 
   const sub = cart.reduce((s, x) => s + x.preco * x.qty, 0);
@@ -1345,6 +1600,10 @@ async function processPayment() {
   const tot = afterDisc + iva;
   const nif = document.getElementById('co-nif')?.value || '';
   const notas = document.getElementById('co-notes')?.value || '';
+  const clienteNome = (document.getElementById('co-client-name')?.value || '').trim();
+  const clienteEmail = (document.getElementById('co-client-email')?.value || '').trim();
+  const clienteTelefone = (document.getElementById('co-client-phone')?.value || '').trim();
+
   const itens = cart.map(c => ({ vinhoId: c.id, quantidade: c.qty, formato: c.vol || '0.75L', precUnit: c.preco }));
 
   const code = 'VD-' + Date.now().toString(36).toUpperCase().slice(-6);
@@ -1355,16 +1614,24 @@ async function processPayment() {
     const user = Session.get();
     saleResult = await apiFetch('/vendas', {
       method: 'POST',
-      body: JSON.stringify({ itens, metodoPagamento: payMethod, funcionarioId: user?.id || 1, desconto: discPct, nif, notas })
+      body: JSON.stringify({
+        itens,
+        metodoPagamento: payMethod,
+        funcionarioId: user?.id || 1,
+        desconto: discPct,
+        notas,
+        clienteNome:     clienteNome || null,
+        clienteNif:      nif || null,
+        clienteEmail:    clienteEmail || null,
+        clienteTelefone: clienteTelefone || null,
+      })
     });
   } catch(err) {
     if (err.message && !err.message.startsWith('HTTP') && !err.message.includes('fetch')) {
-      // Server returned a specific error (e.g., stock insuficiente)
       toast(err.message, 'error', 5000);
       if (btn) { btn.disabled = false; btn.innerHTML = '<span>Confirmar Pagamento</span>'; }
       return;
     }
-    // API offline — update local catalog stock for demo mode
     itens.forEach(item => { const v = catalog.find(x => x.id === item.vinhoId); if (v) v.quantidade = Math.max(0, (v.quantidade || 0) - item.quantidade); });
   }
 
@@ -1373,12 +1640,12 @@ async function processPayment() {
   // Build receipt
   const receiptEl = document.getElementById('receipt-content');
   if (receiptEl) {
-    const lines = cart.map(item => `<div class="receipt-line"><span>${item.nome}${item.vol ? ' (' + item.vol + ')' : ''} ×${item.qty}</span><span>${fmt.eur(item.preco * item.qty)}</span></div>`).join('');
+    const lines = cart.map(item => `<div class="receipt-line"><span>${escHtml(item.nome)}${item.vol ? ' (' + escHtml(item.vol) + ')' : ''} ×${item.qty}</span><span>${escHtml(fmt.eur(item.preco * item.qty))}</span></div>`).join('');
     receiptEl.innerHTML = `
       <div class="receipt-header">
-        <div style="font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:#C9A96E;">Vinha D'Ouro</div>
+        <div style="font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:#C9A96E;">the 100's</div>
         <div style="font-size:11px;color:#777;margin-top:2px;">${now.toLocaleString('pt-PT')}</div>
-        <div style="font-size:11px;color:#777;">Ref: ${saleCode}${nif ? ' · NIF: ' + nif : ''}</div>
+        <div style="font-size:11px;color:#777;">Ref: ${escHtml(String(saleCode))}${nif ? ' · NIF: ' + escHtml(nif) : ''}</div>
       </div>
       ${lines}
       <div class="receipt-divider"></div>
@@ -1386,7 +1653,7 @@ async function processPayment() {
       <div class="receipt-line"><span>IVA 23%</span><span>${fmt.eur(iva)}</span></div>
       <div class="receipt-divider"></div>
       <div class="receipt-total-line"><span>TOTAL</span><span>${fmt.eur(tot)}</span></div>
-      <div style="text-align:center;margin-top:8px;font-size:11px;color:#555;">Pagamento: ${payMethod}</div>`;
+      <div style="text-align:center;margin-top:8px;font-size:11px;color:#555;">Pagamento: ${escHtml(payMethod)}</div>`;
   }
   const sub2 = document.getElementById('receipt-subtitle');
   if (sub2) sub2.textContent = `${cart.length} artigo(s) · IVA incluído · ${payMethod}`;
@@ -1413,17 +1680,21 @@ function updateCheckoutTotals() { updateCoTotals(); }
 function calculateChange() { calcTroco(); }
 
 function filterByType(type) {
-  document.querySelectorAll('.filter-btn, .pos-cat-btn, .pos-tab').forEach(b => b.classList.remove('active'));
-  // Handle both empty string and 'todos' as "all wines"
+  document.querySelectorAll('.filter-btn, .pos-cat-btn, .pos-tab').forEach(b => {
+    b.classList.remove('active');
+    if (b.hasAttribute('aria-selected')) b.setAttribute('aria-selected', 'false');
+  });
   const filterValue = type === '' ? '' : type;
   const target = document.querySelector(`.filter-btn[data-filter="${filterValue}"], .pos-cat-btn[data-filter="${filterValue}"], .pos-tab[data-filter="${filterValue}"]`);
-  if (target) target.classList.add('active');
+  if (target) {
+    target.classList.add('active');
+    if (target.hasAttribute('aria-selected')) target.setAttribute('aria-selected', 'true');
+  }
   renderCatalog(filterValue === '' ? 'todos' : filterValue);
 }
 
-function searchWines(query) {
-  const active = document.querySelector('.pos-tab.active, .filter-btn.active');
-  renderCatalog(active?.dataset?.filter || 'todos');
+function searchWines() {
+  renderCatalog(_posActiveFilterKey());
 }
 
 /* ══════════════════════════════════════════════
@@ -1443,21 +1714,66 @@ function selectPaymentMethod(method) {
   if (target) target.classList.add('active');
   payMethod = method;
   // Show/hide payment panels
-  const cashP = document.getElementById('co-cash-panel');
+  const cashP  = document.getElementById('co-cash-panel');
   const mbwayP = document.getElementById('co-mbway-panel');
-  const cardP = document.getElementById('co-card-panel');
-  if (cashP) cashP.style.display = method === 'Numerário' ? 'block' : 'none';
-  if (mbwayP) mbwayP.style.display = method === 'MB Way' ? 'block' : 'none';
-  if (cardP) cardP.style.display = method === 'Cartão' ? 'block' : 'none';
+  const cardP  = document.getElementById('co-card-panel');
+  const mbP    = document.getElementById('co-mb-panel');
+  if (cashP)  cashP.style.display  = method === 'Numerário' ? 'block' : 'none';
+  if (mbwayP) mbwayP.style.display = method === 'MB Way'    ? 'block' : 'none';
+  if (cardP)  cardP.style.display  = method === 'Cartão'    ? 'block' : 'none';
+  if (mbP)    mbP.style.display    = method === 'Multibanco' ? 'block' : 'none';
+
+  // Multibanco: gera referência simulada (entidade-referência-valor)
+  if (method === 'Multibanco') {
+    const totalText = document.getElementById('co-total')?.textContent || '€0,00';
+    const total = totalText.replace(/[^\d,]/g, '').replace(',', '.');
+    const ent = String(Math.floor(10000 + Math.random() * 89999)).slice(0, 5);
+    const ref = (() => {
+      const blocks = [];
+      for (let i = 0; i < 3; i++) blocks.push(String(Math.floor(100 + Math.random() * 900)));
+      return blocks.join(' ');
+    })();
+    const mbRef = document.getElementById('co-mb-ref');
+    if (mbRef) mbRef.textContent = `${ent} · ${ref} · ${(+total || 0).toFixed(2).replace('.', ',')} €`;
+  }
 }
+
+// Alias para o handler do HTML
+function selectPayMethod(method) { selectPaymentMethod(method); }
 
 function printReceipt() {
   window.print();
 }
 
+function openPrintWindow(html, title = 'Imprimir') {
+  const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const win = window.open(url, '_blank', 'width=820,height=1000');
+  if (!win) { toast('Popups bloqueados — autoriza-os no browser', 'error'); URL.revokeObjectURL(url); return null; }
+  win.addEventListener('load', () => {
+    try { win.focus(); win.print(); } catch (_) {}
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
+  }, { once: true });
+  return win;
+}
+
 /* ══════════════════════════════════════════════
    Enhanced print functions for Gerente
    ══════════════════════════════════════════════ */
+
+/* Empresa: dados oficiais The 100's (do brand.md / brand vault) */
+const COMPANY = {
+  name: 'the 100’s',
+  legal: 'The 100’s, Lda.',
+  tagline: 'Bottled Memories',
+  nif: '517 234 891',
+  address: 'Rua Cidade Newport, n.º 13',
+  postal: '9500-176 Ponta Delgada',
+  country: 'Portugal',
+  phone: '+351 936 442 822',
+  email: 'geral@the-100s.com',
+  web: 'www.the-100s.com',
+};
 
 async function printVendaReceipt(vendaId) {
   try {
@@ -1475,67 +1791,114 @@ async function printVendaReceipt(vendaId) {
     const horaFmt = dataVenda.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' });
     const docNum = venda.codigo || `FT ${new Date().getFullYear()}/${String(vendaId).padStart(5, '0')}`;
 
-    const win = window.open('', '', 'width=820,height=1000');
+    /* QR code: o conteúdo codifica um resumo + URL fictício (útil para "Send a Memory" digital).
+       Usamos api.qrserver.com (gratuito, sem auth, devolve PNG 240x240). */
+    const qrPayload = [
+      `the 100's — ${docNum}`,
+      `${dataFmt} ${horaFmt}`,
+      `Total: ${fmt.eur(total).replace(/ /g, ' ')}`,
+      `Operador: ${venda.funcionarioNome || 'Sistema'}`,
+      `https://the-100s.com/r/${encodeURIComponent(docNum)}`
+    ].join('\n');
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&margin=4&data=${encodeURIComponent(qrPayload)}`;
+
+    /* Resumo plano para envio digital (mailto / sms) */
+    const itensTxt = itens.map(it => `${it.quantidade} × ${it.nome || ('Vinho #' + it.vinhoId)} — ${fmt.eur((it.precoUnitario || 0) * (it.quantidade || 0))}`).join('\n');
+    const msgPlain = [
+      `the 100's — Fatura ${docNum}`,
+      `Data: ${dataFmt} ${horaFmt}`,
+      '',
+      itensTxt,
+      '',
+      `Total: ${fmt.eur(total)}  (IVA 23% incluído)`,
+      `Pagamento: ${venda.metodoPagamento || 'Numerário'}`,
+      '',
+      `Obrigado pela sua preferência — ${COMPANY.web}`
+    ].join('\n');
+    const subjectEmail = `Fatura ${docNum} — the 100's`;
+
     const html = `<!DOCTYPE html>
 <html lang="pt-PT">
 <head>
   <meta charset="UTF-8">
-  <title>Fatura ${docNum} — Vinha D'Ouro</title>
+  <title>Fatura ${docNum} — the 100's</title>
+  <link rel="icon" type="image/png" href="${window.location.origin}/assets/logo-the100s.png">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap');
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Inter', -apple-system, sans-serif; font-size: 11px; color: #1a1a1a; background: #fff; }
-    .invoice { max-width: 780px; margin: 0 auto; padding: 40px; }
+    body { font-family: 'Inter', -apple-system, sans-serif; font-size: 11px; color: #15110D; background: #F8F5EE; }
+    .invoice { max-width: 780px; margin: 24px auto; padding: 44px 48px; background: #fff; box-shadow: 0 8px 40px rgba(20, 14, 8, 0.08); border: 1px solid #ECE3D2; }
 
     /* Header */
-    .inv-header { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 28px; border-bottom: 3px solid #8B3A44; margin-bottom: 28px; }
-    .inv-brand h1 { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 700; color: #8B3A44; letter-spacing: 1px; margin-bottom: 4px; }
-    .inv-brand .tagline { font-size: 10px; color: #C9A96E; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; }
-    .inv-brand .company-info { margin-top: 12px; font-size: 10px; color: #666; line-height: 1.6; }
-    .inv-doc { text-align: right; }
-    .inv-doc .doc-type { font-size: 20px; font-weight: 700; color: #1a1a1a; letter-spacing: 1px; }
-    .inv-doc .doc-number { font-size: 13px; font-weight: 600; color: #8B3A44; margin-top: 2px; }
-    .inv-doc .doc-meta { margin-top: 10px; font-size: 10px; color: #666; line-height: 1.8; }
-    .inv-doc .doc-meta strong { color: #333; }
+    .inv-header { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 22px; border-bottom: 1px solid #ECE3D2; margin-bottom: 28px; }
+    .inv-header::after { content: ''; display: block; }
+    .inv-brand-logo { width: 110px; height: auto; display: block; margin-bottom: 10px; filter: drop-shadow(0 2px 6px rgba(201, 169, 110, 0.18)); }
+    .inv-brand .tagline { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 14px; color: #8B7048; margin-bottom: 14px; }
+    .inv-brand .company-info { font-size: 10px; color: #6B6358; line-height: 1.65; }
+    .inv-doc { text-align: right; min-width: 220px; }
+    .inv-doc .doc-eyebrow { font-size: 9px; font-weight: 600; color: #B89060; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 4px; }
+    .inv-doc .doc-type { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 600; color: #15110D; letter-spacing: 0.5px; }
+    .inv-doc .doc-number { font-size: 13px; font-weight: 600; color: #8B7048; margin-top: 2px; font-variant-numeric: tabular-nums; }
+    .inv-doc .doc-meta { margin-top: 10px; font-size: 10px; color: #6B6358; line-height: 1.8; }
+    .inv-doc .doc-meta strong { color: #15110D; font-weight: 600; }
 
     /* Client & Payment info */
-    .inv-parties { display: flex; gap: 40px; margin-bottom: 28px; }
+    .inv-parties { display: flex; gap: 32px; margin-bottom: 28px; }
     .inv-party { flex: 1; }
-    .inv-party-label { font-size: 9px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #C9A96E; margin-bottom: 8px; border-bottom: 1px solid #eee; padding-bottom: 4px; }
-    .inv-party p { font-size: 11px; line-height: 1.7; color: #333; }
-    .inv-party .name { font-weight: 600; font-size: 12px; color: #1a1a1a; }
+    .inv-party-label { font-size: 9px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #B89060; margin-bottom: 10px; border-bottom: 1px solid #ECE3D2; padding-bottom: 6px; }
+    .inv-party p { font-size: 11px; line-height: 1.7; color: #4A453E; }
+    .inv-party .name { font-weight: 600; font-size: 12.5px; color: #15110D; }
 
     /* Items table */
     .inv-table { width: 100%; border-collapse: collapse; margin-bottom: 24px; }
-    .inv-table thead th { background: #8B3A44; color: #fff; padding: 10px 12px; font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; text-align: left; }
+    .inv-table thead th { background: #15110D; color: #E0C992; padding: 11px 12px; font-size: 9px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; text-align: left; }
     .inv-table thead th:nth-child(n+3) { text-align: right; }
-    .inv-table tbody td { padding: 10px 12px; border-bottom: 1px solid #f0ebe6; font-size: 11px; }
+    .inv-table tbody td { padding: 11px 12px; border-bottom: 1px solid #ECE3D2; font-size: 11px; color: #2B2620; }
     .inv-table tbody td:nth-child(n+3) { text-align: right; font-variant-numeric: tabular-nums; }
-    .inv-table tbody tr:nth-child(even) { background: #faf8f5; }
-    .inv-table tbody .item-name { font-weight: 500; }
-    .inv-table tbody .item-desc { font-size: 9px; color: #888; margin-top: 2px; }
+    .inv-table tbody tr:nth-child(even) { background: #FAF6EC; }
+    .inv-table tbody .item-name { font-weight: 600; color: #15110D; }
+    .inv-table tbody .item-desc { font-size: 9.5px; color: #8B7C68; margin-top: 2px; letter-spacing: 0.02em; }
 
-    /* Totals */
-    .inv-totals { display: flex; justify-content: flex-end; margin-bottom: 28px; }
-    .inv-totals-box { width: 300px; }
-    .inv-totals-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 11px; color: #555; }
-    .inv-totals-row.subtotal { border-top: 1px solid #ddd; padding-top: 10px; }
-    .inv-totals-row.total { border-top: 2px solid #8B3A44; padding-top: 12px; margin-top: 6px; font-size: 16px; font-weight: 700; color: #1a1a1a; }
-    .inv-totals-row.total .val { color: #8B3A44; }
+    /* Totals + QR */
+    .inv-summary { display: flex; gap: 28px; align-items: flex-start; margin-bottom: 28px; }
+    .inv-qr-block { width: 200px; padding: 14px; background: #FAF6EC; border: 1px solid #ECE3D2; border-radius: 6px; text-align: center; }
+    .inv-qr-block img { width: 160px; height: 160px; display: block; margin: 0 auto 8px; }
+    .inv-qr-block .qr-label { font-size: 9px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: #B89060; margin-bottom: 4px; }
+    .inv-qr-block .qr-help { font-size: 9.5px; color: #8B7C68; line-height: 1.45; }
+
+    .inv-totals-wrap { flex: 1; display: flex; justify-content: flex-end; }
+    .inv-totals-box { width: 100%; max-width: 320px; }
+    .inv-totals-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 11.5px; color: #4A453E; }
+    .inv-totals-row.subtotal { border-top: 1px solid #ECE3D2; padding-top: 10px; }
+    .inv-totals-row.total { border-top: 2px solid #15110D; padding-top: 14px; margin-top: 8px; font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600; color: #15110D; letter-spacing: 0.5px; }
+    .inv-totals-row.total .val { color: #8B7048; }
 
     /* Footer */
-    .inv-footer { border-top: 2px solid #f0ebe6; padding-top: 20px; text-align: center; }
-    .inv-footer .thanks { font-family: 'Playfair Display', serif; font-size: 14px; color: #8B3A44; margin-bottom: 8px; }
-    .inv-footer .legal { font-size: 9px; color: #999; line-height: 1.6; max-width: 500px; margin: 0 auto; }
-    .inv-footer .gold-line { width: 60px; height: 2px; background: #C9A96E; margin: 12px auto; }
+    .inv-footer { border-top: 1px solid #ECE3D2; padding-top: 22px; text-align: center; }
+    .inv-footer .thanks { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 16px; color: #8B7048; margin-bottom: 6px; letter-spacing: 0.4px; }
+    .inv-footer .legal { font-size: 9px; color: #8B7C68; line-height: 1.65; max-width: 540px; margin: 12px auto 0; }
+    .inv-footer .gold-line { width: 48px; height: 1px; background: #B89060; margin: 14px auto; }
 
     /* Payment badge */
-    .payment-badge { display: inline-block; background: #f0ebe6; color: #8B3A44; font-size: 10px; font-weight: 600; padding: 3px 10px; border-radius: 4px; letter-spacing: 0.5px; }
-    .status-paid { background: #d4edda; color: #155724; }
+    .payment-badge { display: inline-block; background: #ECE3D2; color: #15110D; font-size: 10px; font-weight: 600; padding: 4px 12px; border-radius: 999px; letter-spacing: 0.5px; }
+    .status-paid { background: #1F4A2A; color: #C9E5A8; }
+
+    /* Send actions (no print) */
+    .send-bar { background: #15110D; color: #F5F0E8; padding: 18px 22px; border-radius: 10px; margin: 24px 0 12px; display: flex; flex-wrap: wrap; align-items: center; gap: 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.18); }
+    .send-bar h3 { font-family: 'Cormorant Garamond', serif; font-size: 17px; font-weight: 600; flex: 1; min-width: 180px; }
+    .send-bar .send-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+    .send-btn { background: #C9A96E; color: #15110D; border: none; padding: 11px 20px; border-radius: 8px; font-family: inherit; font-size: 12px; font-weight: 600; letter-spacing: 1.4px; text-transform: uppercase; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: filter .15s, transform .15s; }
+    .send-btn:hover { filter: brightness(1.08); transform: translateY(-1px); }
+    .send-btn.secondary { background: transparent; color: #E0C992; border: 1px solid #C9A96E; }
+    .send-btn svg { width: 14px; height: 14px; }
+
+    .toolbar { text-align: center; margin: 14px 0 24px; }
+    .toolbar button { background: #15110D; color: #F5F0E8; border: 1px solid #15110D; padding: 11px 26px; border-radius: 8px; font-family: inherit; font-size: 11px; font-weight: 600; letter-spacing: 1.4px; text-transform: uppercase; cursor: pointer; }
+    .toolbar button:hover { background: #2B2620; }
 
     @media print {
-      body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-      .invoice { padding: 20px; }
+      body { background: #fff; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .invoice { box-shadow: none; border: none; padding: 24px; max-width: 100%; margin: 0; }
       .no-print { display: none !important; }
     }
   </style>
@@ -1544,16 +1907,17 @@ async function printVendaReceipt(vendaId) {
   <div class="invoice">
     <div class="inv-header">
       <div class="inv-brand">
-        <h1>VINHA D'OURO</h1>
-        <div class="tagline">Premium Wine Management</div>
+        <img src="${window.location.origin}/assets/logo-the100s.png" alt="the 100's" class="inv-brand-logo" style="filter: invert(1) sepia(1) saturate(2) hue-rotate(15deg) brightness(0.9);">
+        <div class="tagline">${COMPANY.tagline}</div>
         <div class="company-info">
-          Vinha D'Ouro, Lda.<br>
-          NIF: 517 234 891<br>
-          Rua das Vindimas, 42 — 4050-612 Porto<br>
-          Tel: +351 220 145 678 · info@vinhadouro.pt
+          ${COMPANY.legal} · NIF: ${COMPANY.nif}<br>
+          ${COMPANY.address}<br>
+          ${COMPANY.postal} — ${COMPANY.country}<br>
+          ${COMPANY.phone} · ${COMPANY.email}
         </div>
       </div>
       <div class="inv-doc">
+        <div class="doc-eyebrow">Documento Fiscal</div>
         <div class="doc-type">FATURA</div>
         <div class="doc-number">${docNum}</div>
         <div class="doc-meta">
@@ -1567,33 +1931,34 @@ async function printVendaReceipt(vendaId) {
     <div class="inv-parties">
       <div class="inv-party">
         <div class="inv-party-label">Cliente</div>
-        <p class="name">${venda.clienteNome || 'Consumidor Final'}</p>
-        <p>${venda.clienteNif ? 'NIF: ' + venda.clienteNif : 'Consumidor Final — sem NIF'}</p>
-        <p>${venda.clienteMorada || ''}</p>
+        <p class="name">${escHtml(venda.clienteNome || 'Consumidor Final')}</p>
+        <p>${venda.clienteNif ? 'NIF: ' + escHtml(venda.clienteNif) : 'Consumidor Final — sem NIF'}</p>
+        ${venda.clienteMorada ? `<p>${escHtml(venda.clienteMorada)}</p>` : ''}
       </div>
       <div class="inv-party">
         <div class="inv-party-label">Pagamento</div>
-        <p><span class="payment-badge">${venda.metodoPagamento || 'Numerário'}</span></p>
+        <p><span class="payment-badge">${escHtml(venda.metodoPagamento || 'Numerário')}</span></p>
         <p style="margin-top:6px;"><span class="payment-badge status-paid">PAGO</span></p>
-        <p style="margin-top:6px;font-size:10px;color:#888;">Operador: ${venda.funcionarioNome || 'Sistema'}</p>
+        <p style="margin-top:8px;font-size:10px;color:#8B7C68;">Operador: ${escHtml(venda.funcionarioNome || 'Sistema')}</p>
       </div>
     </div>
 
     <table class="inv-table">
       <thead>
         <tr>
-          <th style="width:40%;">Descrição</th>
-          <th style="width:12%;">Qtd.</th>
+          <th style="width:46%;">Descrição</th>
+          <th style="width:10%;">Qtd.</th>
           <th style="width:16%;">Preço Unit.</th>
-          <th style="width:12%;">IVA</th>
-          <th style="width:20%;">Total</th>
+          <th style="width:10%;">IVA</th>
+          <th style="width:18%;">Total</th>
         </tr>
       </thead>
       <tbody>
-        ${itens.map((item, i) => {
+        ${itens.map(item => {
           const lineTotal = item.precoUnitario * item.quantidade;
+          const desc = [item.tipo, item.regiao, item.anoColheita].filter(Boolean).map(escHtml).join(' · ');
           return `<tr>
-            <td><div class="item-name">${item.nome || 'Vinho #' + item.vinhoId}</div><div class="item-desc">${item.tipo || ''} ${item.regiao ? '· ' + item.regiao : ''} ${item.anoColheita ? '· ' + item.anoColheita : ''}</div></td>
+            <td><div class="item-name">${escHtml(item.nome || 'Vinho #' + item.vinhoId)}</div>${desc ? `<div class="item-desc">${desc}</div>` : ''}</td>
             <td style="text-align:center;">${item.quantidade}</td>
             <td>${fmt.eur(item.precoUnitario)}</td>
             <td>23%</td>
@@ -1603,43 +1968,97 @@ async function printVendaReceipt(vendaId) {
       </tbody>
     </table>
 
-    <div class="inv-totals">
-      <div class="inv-totals-box">
-        <div class="inv-totals-row subtotal">
-          <span>Base Tributável:</span>
-          <span>${fmt.eur(baseIVA)}</span>
+    <div class="inv-summary">
+      <div class="inv-qr-block">
+        <div class="qr-label">Talão digital</div>
+        <img src="${qrUrl}" alt="QR code da fatura ${docNum}">
+        <div class="qr-help">Aponta a câmara para guardar uma cópia digital desta fatura.</div>
+      </div>
+      <div class="inv-totals-wrap">
+        <div class="inv-totals-box">
+          <div class="inv-totals-row subtotal">
+            <span>Base Tributável</span>
+            <span>${fmt.eur(baseIVA)}</span>
+          </div>
+          <div class="inv-totals-row">
+            <span>IVA (23%)</span>
+            <span>${fmt.eur(iva)}</span>
+          </div>
+          <div class="inv-totals-row total">
+            <span>TOTAL</span>
+            <span class="val">${fmt.eur(total)}</span>
+          </div>
         </div>
-        <div class="inv-totals-row">
-          <span>IVA (23%):</span>
-          <span>${fmt.eur(iva)}</span>
-        </div>
-        <div class="inv-totals-row total">
-          <span>TOTAL</span>
-          <span class="val">${fmt.eur(total)}</span>
-        </div>
+      </div>
+    </div>
+
+    <!-- Envio digital (mailto: / sms: — abrem app do utilizador, sem necessitar de servidor SMTP) -->
+    <div class="send-bar no-print">
+      <h3>Enviar talão digital ao cliente</h3>
+      <div class="send-actions">
+        <button class="send-btn" type="button" onclick="window.tsendEmail()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          E-mail
+        </button>
+        <button class="send-btn secondary" type="button" onclick="window.tsendSms()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+          SMS
+        </button>
+        <button class="send-btn secondary" type="button" onclick="window.tsendWhatsApp()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+          WhatsApp
+        </button>
       </div>
     </div>
 
     <div class="inv-footer">
-      <div class="thanks">Obrigado pela sua preferência</div>
+      <div class="thanks">${COMPANY.tagline}</div>
       <div class="gold-line"></div>
       <div class="legal">
         Documento processado por programa certificado n.º 0000/AT.<br>
-        Vinha D'Ouro, Lda. · Capital Social: €50.000 · NIPC: 517 234 891<br>
-        Conservatória do Registo Comercial do Porto<br>
-        Os bens/serviços foram colocados à disposição do cliente na data do documento.
+        ${COMPANY.legal} · NIPC: ${COMPANY.nif} · ${COMPANY.web}<br>
+        Os bens foram colocados à disposição do cliente na data do documento.
       </div>
     </div>
 
-    <div class="no-print" style="text-align:center;margin-top:30px;">
-      <button onclick="window.print()" style="background:#8B3A44;color:#fff;border:none;padding:12px 32px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;letter-spacing:0.5px;">Imprimir Fatura</button>
+    <div class="toolbar no-print">
+      <button onclick="window.print()" type="button">Imprimir Fatura</button>
     </div>
   </div>
+
+  <script>
+    const __MSG = ${JSON.stringify(msgPlain)};
+    const __SUBJECT = ${JSON.stringify(subjectEmail)};
+
+    window.tsendEmail = function() {
+      const to = prompt('E-mail do cliente:');
+      if (!to) return;
+      const url = 'mailto:' + encodeURIComponent(to)
+        + '?subject=' + encodeURIComponent(__SUBJECT)
+        + '&body='    + encodeURIComponent(__MSG);
+      window.location.href = url;
+    };
+
+    window.tsendSms = function() {
+      const num = prompt('Telemóvel do cliente (ex.: +351 912 345 678):');
+      if (!num) return;
+      const cleaned = num.replace(/[^+\\d]/g, '');
+      // sms: with body uses '?body=' on iOS / Android
+      const url = 'sms:' + cleaned + '?body=' + encodeURIComponent(__MSG);
+      window.location.href = url;
+    };
+
+    window.tsendWhatsApp = function() {
+      const num = prompt('Telemóvel WhatsApp (com indicativo, ex.: 351912345678):');
+      if (!num) return;
+      const cleaned = num.replace(/[^\\d]/g, '');
+      const url = 'https://wa.me/' + cleaned + '?text=' + encodeURIComponent(__MSG);
+      window.open(url, '_blank');
+    };
+  </script>
 </body>
 </html>`;
-    win.document.write(html);
-    win.document.close();
-    setTimeout(() => { win.print(); }, 600);
+    openPrintWindow(html, `Fatura ${docNum}`);
   } catch (err) {
     console.error('Erro ao imprimir fatura:', err);
     toast('Erro ao gerar fatura', 'error');
@@ -1651,7 +2070,6 @@ async function printGuiaTransporte(vinhoId, quantidade, destino) {
     const vinho = await apiFetch(`/vinhos/${vinhoId}`).catch(() => null);
     if (!vinho) { toast('Vinho não encontrado', 'error'); return; }
 
-    const win = window.open('', '', 'width=820,height=1000');
     const hoje = new Date();
     const dataFmt = hoje.toLocaleDateString('pt-PT');
     const horaFmt = hoje.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' });
@@ -1664,7 +2082,7 @@ async function printGuiaTransporte(vinhoId, quantidade, destino) {
 <html lang="pt-PT">
 <head>
   <meta charset="UTF-8">
-  <title>Guia de Transporte ${guiaNum} — Vinha D'Ouro</title>
+  <title>Guia de Transporte ${guiaNum} — the 100's</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap');
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -1716,12 +2134,12 @@ async function printGuiaTransporte(vinhoId, quantidade, destino) {
   <div class="guia">
     <div class="guia-header">
       <div class="guia-brand">
-        <h1>VINHA D'OURO</h1>
-        <div class="tagline">Premium Wine Management</div>
+        <img src="${window.location.origin}/assets/logo-the100s.png" alt="the 100's" style="width:96px;height:auto;margin-bottom:8px;display:block;filter: invert(1) sepia(1) saturate(2) hue-rotate(15deg) brightness(0.85);">
+        <div class="tagline">${COMPANY.tagline}</div>
         <div class="co-info">
-          Vinha D'Ouro, Lda. · NIF: 517 234 891<br>
-          Rua das Vindimas, 42 — 4050-612 Porto<br>
-          Tel: +351 220 145 678
+          ${COMPANY.legal} · NIF: ${COMPANY.nif}<br>
+          ${COMPANY.address} — ${COMPANY.postal}<br>
+          ${COMPANY.phone}
         </div>
       </div>
       <div class="guia-doc">
@@ -1738,13 +2156,13 @@ async function printGuiaTransporte(vinhoId, quantidade, destino) {
     <div class="guia-parties">
       <div class="guia-party">
         <div class="guia-party-label">Remetente (Origem)</div>
-        <p class="name">Armazém Central — Vinha D'Ouro</p>
-        <p>Rua das Vindimas, 42<br>4050-612 Porto</p>
-        <p>NIF: 517 234 891</p>
+        <p class="name">Armazém Central — ${COMPANY.name}</p>
+        <p>${COMPANY.address}<br>${COMPANY.postal}</p>
+        <p>NIF: ${COMPANY.nif}</p>
       </div>
       <div class="guia-party">
         <div class="guia-party-label">Destinatário (Destino)</div>
-        <p class="name">${destino}</p>
+        <p class="name">${escHtml(destino)}</p>
       </div>
     </div>
 
@@ -1799,7 +2217,7 @@ async function printGuiaTransporte(vinhoId, quantidade, destino) {
     <div class="guia-footer">
       <div class="gold-line"></div>
       Documento processado por programa certificado n.º 0000/AT.<br>
-      Vinha D'Ouro, Lda. · NIPC: 517 234 891 · Conservatória do Registo Comercial do Porto
+      ${COMPANY.legal} · NIPC: ${COMPANY.nif} · ${COMPANY.web}
     </div>
 
     <div class="no-print" style="text-align:center;margin-top:30px;">
@@ -1808,9 +2226,7 @@ async function printGuiaTransporte(vinhoId, quantidade, destino) {
   </div>
 </body>
 </html>`;
-    win.document.write(html);
-    win.document.close();
-    setTimeout(() => { win.print(); }, 600);
+    openPrintWindow(html, `Guia ${guiaNum}`);
   } catch (err) {
     console.error('Erro ao imprimir guia:', err);
     toast('Erro ao gerar guia de transporte', 'error');
@@ -1977,25 +2393,28 @@ async function loadEquipa() {
 function renderEquipa() {
   const g = document.getElementById('team-grid'); if (!g) return;
   if (!allFuncs.length) {
-    g.innerHTML = '<div style="text-align:center;padding:60px;color:var(--text-muted);">Sem funcionários</div>';
+    g.innerHTML = emptyState('Sem funcionários registados', '👥');
     return;
   }
   const ini = n => n ? n.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase() : '?';
   g.innerHTML = allFuncs.map(f => {
-    const nome = f.nome || (f.pessoa && f.pessoa.nome) || '—';
-    const email = f.email || (f.pessoa && f.pessoa.email) || '';
+    const nomeRaw = f.nome || (f.pessoa && f.pessoa.nome) || '—';
+    const emailRaw = f.email || (f.pessoa && f.pessoa.email) || '';
+    const nome = escHtml(nomeRaw);
+    const email = escHtml(emailRaw);
+    const cargo = escHtml(f.cargo || '—');
     return `<div class="team-card">
       <div style="display:flex;align-items:center;gap:var(--sp-4);margin-bottom:var(--sp-4);">
-        <div class="team-avatar">${ini(nome)}</div>
+        <div class="team-avatar" aria-hidden="true">${escHtml(ini(nomeRaw))}</div>
         <div><div style="font-weight:700;font-size:15px;">${nome}</div><div style="font-size:12px;color:var(--text-muted);">${email}</div></div>
       </div>
       <div style="display:flex;flex-direction:column;gap:var(--sp-2);">
-        <div style="display:flex;justify-content:space-between;"><span style="font-size:12px;color:var(--text-muted);">Cargo</span><span style="font-size:13px;font-weight:600;">${f.cargo || '—'}</span></div>
+        <div style="display:flex;justify-content:space-between;"><span style="font-size:12px;color:var(--text-muted);">Cargo</span><span style="font-size:13px;font-weight:600;">${cargo}</span></div>
         <div style="display:flex;justify-content:space-between;"><span style="font-size:12px;color:var(--text-muted);">Salário</span><span style="font-family:var(--font-display);font-size:13px;font-weight:700;color:var(--text-gold);">${fmt.eur(f.salario)}</span></div>
         <div style="display:flex;justify-content:space-between;"><span style="font-size:12px;color:var(--text-muted);">Admissão</span><span style="font-size:12px;color:var(--text-secondary);">${fmt.date(f.dataAdmissao)}</span></div>
         <div style="display:flex;justify-content:space-between;margin-top:4px;">${statusBadge(f.nivelAcesso)}${f.ativo === 1 || f.ativo === true ? '<span class="badge badge-success">Ativo</span>' : '<span class="badge badge-muted">Inativo</span>'}</div>
         <div style="display:flex;gap:6px;margin-top:var(--sp-2);">
-          <button class="btn btn-secondary btn-sm" style="flex:1;" onclick="openEditFuncModal(${f.id})">Editar</button>
+          <button class="btn btn-secondary btn-sm" style="flex:1;" onclick="openEditFuncModal(${f.id})" aria-label="Editar funcionário ${nome}">Editar</button>
         </div>
       </div>
     </div>`;
@@ -2068,182 +2487,19 @@ async function loadRelatorios() {
   if (tbody) {
     const sorted = [...vinhos].sort((a, b) => (b.preco * b.quantidade) - (a.preco * a.quantidade)).slice(0, 8);
     tbody.innerHTML = sorted.map(v => `<tr>
-      <td style="font-weight:600;">${v.nome}</td>
-      <td class="muted">${v.tipo || '—'}</td>
-      <td class="muted">${v.regiao || '—'}</td>
-      <td><span style="font-family:var(--font-display);font-weight:700;color:var(--text-gold);">${fmt.eur(v.preco)}</span></td>
+      <td style="font-weight:600;">${escHtml(v.nome)}</td>
+      <td class="muted">${escHtml(v.tipo || '—')}</td>
+      <td class="muted">${escHtml(v.regiao || '—')}</td>
+      <td><span style="font-family:var(--font-display);font-weight:700;color:var(--text-gold);">${escHtml(fmt.eur(v.preco))}</span></td>
       <td>${stockBar(v.quantidade || 0, 100)}</td>
-      <td><span style="font-family:var(--font-display);font-weight:700;">${fmt.eur((v.preco || 0) * (v.quantidade || 0))}</span></td>
+      <td><span style="font-family:var(--font-display);font-weight:700;">${escHtml(fmt.eur((v.preco || 0) * (v.quantidade || 0)))}</span></td>
     </tr>`).join('');
   }
   animateEntrance();
 }
 
 /* ══════════════════════════════════════════════
-   19. PROVAS DE VINHO
-   ══════════════════════════════════════════════ */
-let allProvas = [], provaFilter = 'todas', provaWineCache = [];
-
-const FALLBACK_PROVAS = [
-  { id: 1, titulo: "Grandes Vinhos do Douro", descricao: "Uma viagem pelos melhores vinhos da região do Douro.", dataHora: "2026-04-05T19:00", capacidade: 16, inscritos: 11, precoPorPessoa: 35, estado: "AGENDADA", vinhos: "Barca Velha, Quinta do Crasto, Niepoort Redoma" },
-  { id: 2, titulo: "Espumantes & Champagnes", descricao: "Degustação comparativa entre espumantes portugueses e champagnes.", dataHora: "2026-04-12T18:30", capacidade: 12, inscritos: 12, precoPorPessoa: 55, estado: "AGENDADA", vinhos: "Espumante Vinha D'Ouro, Graham's" },
-  { id: 3, titulo: "Alentejo em Destaque", descricao: "Os melhores tintos e brancos da região alentejana.", dataHora: "2026-03-15T19:30", capacidade: 20, inscritos: 18, precoPorPessoa: 28, estado: "CONCLUIDA", vinhos: "Esporão Reserva, Mouchão, Ravasqueira" },
-  { id: 4, titulo: "Provas de Porto & Moscatel", descricao: "Vinhos generosos portugueses, do Vintage ao Tawny.", dataHora: "2026-05-03T17:00", capacidade: 10, inscritos: 4, precoPorPessoa: 42, estado: "AGENDADA", vinhos: "Graham's LBV, Bacalhôa Moscatel" },
-];
-
-async function loadProvas() {
-  await checkApi();
-  try { allProvas = await apiFetch('/provas'); } catch { allProvas = FALLBACK_PROVAS; }
-  updateProvasStats();
-  filterProvas(provaFilter);
-  animateEntrance();
-}
-
-function updateProvasStats() {
-  const total = allProvas.length;
-  const agendadas = allProvas.filter(p => p.estado === 'AGENDADA').length;
-  const inscritos = allProvas.reduce((s, p) => s + (p.inscritos || 0), 0);
-  const receita = allProvas.reduce((s, p) => s + (p.inscritos || 0) * (p.precoPorPessoa || 0), 0);
-  const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
-  set('pv-total', total); set('pv-agendadas', agendadas); set('pv-inscritos', inscritos); set('pv-receita', fmt.eur(receita));
-}
-
-function filterProvas(estado) {
-  provaFilter = estado;
-  document.querySelectorAll('[id^="pv-filter-"]').forEach(b => b.classList.remove('active'));
-  document.getElementById(`pv-filter-${estado}`)?.classList.add('active');
-  const list = estado === 'todas' ? allProvas : allProvas.filter(p => p.estado === estado);
-  const cnt = document.getElementById('pv-count'); if (cnt) cnt.textContent = `${list.length} prova(s)`;
-  renderProvas(list);
-}
-
-function renderProvas(list) {
-  const grid = document.getElementById('provas-grid'); if (!grid) return;
-  if (!list.length) {
-    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--text-muted);">Nenhuma prova encontrada</div>`;
-    return;
-  }
-  const estadoBadge = { AGENDADA: 'badge-info', EM_CURSO: 'badge-success', CONCLUIDA: 'badge-muted', CANCELADA: 'badge-danger' };
-  const estadoLabel = { AGENDADA: 'Agendada', EM_CURSO: 'Em Curso', CONCLUIDA: 'Concluída', CANCELADA: 'Cancelada' };
-  grid.innerHTML = list.map(p => {
-    const dt = p.dataHora ? new Date(p.dataHora) : null;
-    const dtFmt = dt ? dt.toLocaleString('pt-PT', { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Data não definida';
-    const cap = p.capacidade || 0, ins = p.inscritos || 0;
-    const pct = cap ? Math.min(100, Math.round(ins / cap * 100)) : 0;
-    const vinhosList = (p.vinhos || '').split(',').map(w => w.trim()).filter(Boolean);
-    return `<div class="prova-card">
-      <div class="prova-card-header">
-        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;">
-          <div>
-            <div class="prova-card-date"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="13" height="13"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>${dtFmt}</div>
-            <div class="prova-card-title">${p.titulo || 'Prova sem título'}</div>
-          </div>
-          <span class="badge ${estadoBadge[p.estado] || 'badge-muted'}" style="flex-shrink:0;">${estadoLabel[p.estado] || p.estado}</span>
-        </div>
-        ${p.descricao ? `<div class="prova-card-desc" style="margin-top:8px;">${p.descricao}</div>` : ''}
-      </div>
-      <div class="prova-card-body">
-        <div class="prova-stat-row">
-          <div class="prova-stat"><div class="prova-stat-val">${ins}/${cap}</div><div class="prova-stat-lbl">Inscritos</div></div>
-          <div class="prova-stat"><div class="prova-stat-val">${fmt.eur(p.precoPorPessoa || 0)}</div><div class="prova-stat-lbl">/ Pessoa</div></div>
-          <div class="prova-stat"><div class="prova-stat-val">${fmt.eur(ins * (p.precoPorPessoa || 0))}</div><div class="prova-stat-lbl">Receita</div></div>
-        </div>
-        <div>
-          <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted);margin-bottom:5px;"><span>Ocupação</span><span>${pct}%</span></div>
-          <div style="background:var(--bg-raised);height:5px;border-radius:3px;overflow:hidden;"><div style="height:100%;width:${pct}%;background:${pct >= 100 ? 'var(--success)' : pct > 70 ? 'var(--warning)' : 'var(--info)'};border-radius:3px;transition:width 0.5s;"></div></div>
-        </div>
-        ${vinhosList.length ? `<div class="prova-wines-list">${vinhosList.map(w => `<span class="prova-wine-tag">${w}</span>`).join('')}</div>` : ''}
-      </div>
-      <div class="prova-card-footer">
-        <button class="btn btn-secondary btn-sm" onclick="openEditProvaModal(${p.id})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Editar</button>
-        <div style="display:flex;gap:6px;">
-          ${p.estado === 'AGENDADA' ? `<button class="btn btn-secondary btn-sm" onclick="changeProvaEstado(${p.id},'EM_CURSO')">Iniciar</button>` : ''}
-          ${p.estado === 'EM_CURSO' ? `<button class="btn btn-secondary btn-sm" onclick="changeProvaEstado(${p.id},'CONCLUIDA')">Concluir</button>` : ''}
-          ${p.estado !== 'CANCELADA' && p.estado !== 'CONCLUIDA' ? `<button class="btn btn-ghost btn-sm" onclick="changeProvaEstado(${p.id},'CANCELADA')">Cancelar</button>` : ''}
-        </div>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-function openAddProvaModal() {
-  document.getElementById('prova-modal-title').textContent = 'Nova Prova de Vinho';
-  document.getElementById('prova-id').value = '';
-  ['prova-titulo', 'prova-descricao', 'prova-notas'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
-  document.getElementById('prova-capacidade').value = '10';
-  document.getElementById('prova-inscritos').value = '0';
-  document.getElementById('prova-preco').value = '0';
-  document.getElementById('prova-estado').value = 'AGENDADA';
-  const d = new Date(); d.setDate(d.getDate() + 7); d.setHours(19, 0, 0);
-  document.getElementById('prova-data').value = d.toISOString().slice(0, 16);
-  populateProvaWines([]);
-  document.getElementById('prova-modal')?.classList.remove('hidden');
-}
-
-function openEditProvaModal(id) {
-  const p = allProvas.find(x => x.id === id); if (!p) return;
-  document.getElementById('prova-modal-title').textContent = 'Editar Prova';
-  document.getElementById('prova-id').value = id;
-  document.getElementById('prova-titulo').value = p.titulo || '';
-  document.getElementById('prova-descricao').value = p.descricao || '';
-  document.getElementById('prova-notas').value = p.notas || '';
-  document.getElementById('prova-capacidade').value = p.capacidade || 10;
-  document.getElementById('prova-inscritos').value = p.inscritos || 0;
-  document.getElementById('prova-preco').value = p.precoPorPessoa || 0;
-  document.getElementById('prova-estado').value = p.estado || 'AGENDADA';
-  if (p.dataHora) document.getElementById('prova-data').value = p.dataHora.slice(0, 16);
-  const selWines = (p.vinhos || '').split(',').map(w => w.trim());
-  populateProvaWines(selWines);
-  document.getElementById('prova-modal')?.classList.remove('hidden');
-}
-
-function populateProvaWines(selected) {
-  const container = document.getElementById('prova-wine-checks'); if (!container) return;
-  const wines = provaWineCache.length ? provaWineCache : FALLBACK.vinhos;
-  container.innerHTML = wines.map(v => `
-    <label style="display:flex;align-items:center;gap:8px;font-size:12.5px;cursor:pointer;padding:4px;">
-      <input type="checkbox" value="${v.nome}" ${selected.includes(v.nome) ? 'checked' : ''} style="accent-color:var(--accent-gold);">
-      <span>${v.nome} <span style="color:var(--text-muted);font-size:10px;">(${v.tipo})</span></span>
-    </label>`).join('');
-}
-
-function closeProvaModal() { document.getElementById('prova-modal')?.classList.add('hidden'); }
-
-async function saveProva() {
-  const id = document.getElementById('prova-id')?.value;
-  const checks = document.querySelectorAll('#prova-wine-checks input[type=checkbox]:checked');
-  const vinhos = Array.from(checks).map(c => c.value).join(', ');
-  const body = {
-    titulo: document.getElementById('prova-titulo')?.value,
-    descricao: document.getElementById('prova-descricao')?.value,
-    dataHora: document.getElementById('prova-data')?.value,
-    capacidade: +document.getElementById('prova-capacidade')?.value || 10,
-    inscritos: +document.getElementById('prova-inscritos')?.value || 0,
-    precoPorPessoa: +document.getElementById('prova-preco')?.value || 0,
-    estado: document.getElementById('prova-estado')?.value || 'AGENDADA',
-    notas: document.getElementById('prova-notas')?.value,
-    vinhos,
-  };
-  if (!body.titulo) { toast('Preencha o título', 'error'); return; }
-  try {
-    if (id) { await apiFetch(`/provas/${id}`, { method: 'PUT', body: JSON.stringify(body) }); toast('Prova atualizada'); }
-    else { await apiFetch('/provas', { method: 'POST', body: JSON.stringify(body) }); toast('Prova criada'); }
-    closeProvaModal(); loadProvas();
-  } catch {
-    if (id) { const i = allProvas.findIndex(x => x.id === +id); if (i >= 0) allProvas[i] = { ...allProvas[i], ...body }; }
-    else { allProvas.push({ id: Date.now(), ...body }); }
-    toast('Guardado (modo demo)'); closeProvaModal(); updateProvasStats(); filterProvas(provaFilter);
-  }
-}
-
-async function changeProvaEstado(id, estado) {
-  try { await apiFetch(`/provas/${id}`, { method: 'PUT', body: JSON.stringify({ estado }) }); }
-  catch { const p = allProvas.find(x => x.id === id); if (p) p.estado = estado; }
-  toast('Estado atualizado'); loadProvas();
-}
-
-/* ══════════════════════════════════════════════
-   20. CAVES — Cellar Grid
+   19. CAVES — Cellar Grid
    ══════════════════════════════════════════════ */
 const CAVE_CONFIGS = {
   A: { rows: 10, cols: 12, nome: 'Cave A — Principal' },
@@ -2256,26 +2512,47 @@ async function loadCave(cave) {
   currentCave = cave || 'A';
   await checkApi();
   const cfg = CAVE_CONFIGS[currentCave];
-  const nameEl = document.getElementById('cave-name'); if (nameEl) nameEl.textContent = cfg.nome;
+  const nameEl = document.getElementById('cave-name');
+  if (nameEl) nameEl.textContent = `${cfg.nome} — ${cfg.rows} linhas × ${cfg.cols} colunas`;
 
-  // Highlight active cave button
-  document.querySelectorAll('.cave-selector-btn').forEach(b => b.classList.remove('active'));
-  const activeBtn = document.querySelector(`.cave-selector-btn[onclick*="'${currentCave}'"]`);
-  if (activeBtn) activeBtn.classList.add('active');
+  // Tabs (novo layout) e fallback para botões antigos
+  document.querySelectorAll('.cave-tab, .cave-selector-btn').forEach(b => {
+    b.classList.remove('active');
+    if (b.hasAttribute('aria-selected')) b.setAttribute('aria-selected', 'false');
+  });
+  const activeTab = document.querySelector(`.cave-tab[data-cave="${currentCave}"]`)
+    || document.querySelector(`.cave-selector-btn[onclick*="'${currentCave}'"]`);
+  if (activeTab) {
+    activeTab.classList.add('active');
+    if (activeTab.hasAttribute('aria-selected')) activeTab.setAttribute('aria-selected', 'true');
+  }
 
   try { caveVinhos = await apiFetch('/vinhos'); } catch { caveVinhos = FALLBACK.vinhos; }
-  try { caveData = await apiFetch(`/caves/${currentCave}`); } catch {
-    caveData = {};
-    const demo = [
-      { row: 1, col: 3, vinho: FALLBACK.vinhos[0] }, { row: 1, col: 4, vinho: FALLBACK.vinhos[0] },
-      { row: 2, col: 1, vinho: FALLBACK.vinhos[2] }, { row: 3, col: 5, vinho: FALLBACK.vinhos[3] },
-      { row: 4, col: 2, vinho: FALLBACK.vinhos[6] }, { row: 4, col: 3, vinho: FALLBACK.vinhos[6] },
-      { row: 5, col: 7, vinho: FALLBACK.vinhos[9] }, { row: 6, col: 1, vinho: FALLBACK.vinhos[1] },
+  // Estado das caves: persiste em localStorage (a API /api/caves/<id> ainda não tem persistência de slots)
+  caveData = _loadCaveStorage(currentCave) || {};
+  if (!Object.keys(caveData).length) {
+    // Pré-povoa demo só se não havia nada gravado
+    const pool = caveVinhos.length ? caveVinhos : FALLBACK.vinhos;
+    const demoSlots = [
+      { row: 1, col: 3 }, { row: 1, col: 4 }, { row: 2, col: 1 },
+      { row: 3, col: 5 }, { row: 4, col: 2 }, { row: 4, col: 3 },
+      { row: 5, col: 7 }, { row: 6, col: 1 },
     ];
-    demo.forEach(d => { caveData[`${d.row}-${d.col}`] = d.vinho; });
+    demoSlots.forEach((s, i) => { if (pool[i % pool.length]) caveData[`${s.row}-${s.col}`] = pool[i % pool.length]; });
+    _saveCaveStorage(currentCave, caveData);
   }
-  renderCaveGrid(); updateCaveStats();
-  selectedSlot = null; resetSlotInfo();
+  selectedSlot = null;
+  renderCaveGrid();
+  updateCaveStats();
+  resetSlotInfo();
+}
+
+function _caveStorageKey(cave) { return `vd_cave_${cave}_v2`; }
+function _loadCaveStorage(cave) {
+  try { return JSON.parse(localStorage.getItem(_caveStorageKey(cave)) || 'null'); } catch { return null; }
+}
+function _saveCaveStorage(cave, data) {
+  try { localStorage.setItem(_caveStorageKey(cave), JSON.stringify(data)); } catch {}
 }
 
 function updateCaveStats() {
@@ -2283,33 +2560,46 @@ function updateCaveStats() {
   const total = cfg.rows * cfg.cols;
   const occ = Object.keys(caveData).length;
   const free = total - occ;
-  const pct = Math.round(occ / total * 100);
+  const pct = total ? Math.round(occ / total * 100) : 0;
   const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
-  set('cave-capacity', total); set('cave-occupied', occ); set('cave-free', free); set('cave-pct', pct + '%');
+  set('cave-capacity', total);
+  set('cave-occupied', occ);
+  set('cave-free', free);
+  set('cave-pct', pct + '%');
+  set('cave-pct-big', pct + '%');
+  set('cave-occ-text', `${occ} de ${total}`);
+  const fill = document.getElementById('cave-progress-fill');
+  if (fill) fill.style.width = pct + '%';
+  const meta = document.getElementById('cave-grid-meta');
+  if (meta) meta.innerHTML = `${cfg.rows} linhas × ${cfg.cols} colunas · <strong>${occ}/${total}</strong>`;
 }
 
 function renderCaveGrid() {
   const cfg = CAVE_CONFIGS[currentCave];
   const container = document.getElementById('cave-grid-container'); if (!container) return;
-  const typeClass = { Tinto: 'tinto', Branco: 'branco', 'Rosé': 'rose', Espumante: 'espumante', Porto: 'porto' };
+  const typeClass = { Tinto: 'tinto', Branco: 'branco', 'Rosé': 'rose', Espumante: 'espumante', Porto: 'porto', Madeira: 'madeira' };
   const colHeaders = [''].concat(Array.from({ length: cfg.cols }, (_, i) => String(i + 1).padStart(2, '0')));
-  let html = `<div class="cave-grid" style="grid-template-columns:24px repeat(${cfg.cols},56px);">`;
-  html += colHeaders.map(h => `<div class="cave-row-label" style="height:24px;">${h}</div>`).join('');
+  let html = `<div class="cave-grid" style="grid-template-columns:28px repeat(${cfg.cols},56px);">`;
+  // Linha de cabeçalhos (números das colunas)
+  html += colHeaders.map(h => `<div class="cave-row-label" style="min-height:30px;font-size:10px;letter-spacing:0.1em;">${escHtml(h)}</div>`).join('');
+  // Linhas A, B, C... × colunas 1..cols
   for (let r = 1; r <= cfg.rows; r++) {
-    html += `<div class="cave-row-label">${String.fromCharCode(64 + r)}</div>`;
+    html += `<div class="cave-row-label">${escHtml(String.fromCharCode(64 + r))}</div>`;
     for (let c = 1; c <= cfg.cols; c++) {
       const key = `${r}-${c}`;
       const wine = caveData[key];
-      const tc = wine ? typeClass[wine.tipo] || 'tinto' : '';
-      const active = selectedSlot === key ? 'style="outline:2px solid var(--accent-gold);outline-offset:2px;"' : '';
+      const tc = wine ? (typeClass[wine.tipo] || 'tinto') : '';
+      const isSelected = selectedSlot === key ? ' selected' : '';
       if (wine) {
-        const shortName = wine.nome.split(' ').slice(0, 2).join(' ');
-        html += `<div class="cave-slot occupied ${tc}" onclick="selectSlot('${key}')" title="${wine.nome}" ${active}>
-          <div class="cave-slot-label">${shortName}</div>
-          ${wine.anoColheita ? `<div class="cave-slot-year">${wine.anoColheita}</div>` : ''}
-        </div>`;
+        const shortName = (wine.nome || '').split(' ').slice(0, 2).join(' ');
+        const ano = wine.anoColheita || wine.ano_colheita;
+        html += `<button type="button" class="cave-slot occupied ${tc}${isSelected}" onclick="selectSlot('${key}')" title="${escHtml(wine.nome)} — ${escHtml(String.fromCharCode(64 + r))}${c}" aria-label="${escHtml(wine.nome)} na posição ${escHtml(String.fromCharCode(64 + r))}${c}">
+          <span class="cave-slot-label">${escHtml(shortName)}</span>
+          ${ano ? `<span class="cave-slot-year">'${escHtml(String(ano).slice(-2))}</span>` : ''}
+        </button>`;
       } else {
-        html += `<div class="cave-slot" onclick="selectSlot('${key}')" title="Posição ${String.fromCharCode(64 + r)}${c} — Vazia" ${active}><div style="font-size:9px;color:var(--border-subtle);">+</div></div>`;
+        const posTitle = `Posição ${String.fromCharCode(64 + r)}${c} — Livre`;
+        html += `<button type="button" class="cave-slot${isSelected}" onclick="selectSlot('${key}')" title="${escHtml(posTitle)}" aria-label="${escHtml(posTitle)}"></button>`;
       }
     }
   }
@@ -2324,74 +2614,110 @@ function selectSlot(key) {
   const rowLabel = String.fromCharCode(64 + parseInt(r));
   const wine = caveData[key];
   const infoEl = document.getElementById('slot-info-content');
-  const actEl = document.getElementById('slot-actions');
+  const actCard = document.getElementById('slot-actions-card');
   const clearBtn = document.getElementById('clear-slot-btn');
+
   if (infoEl) {
     if (wine) {
-      infoEl.innerHTML = `<div style="font-weight:600;font-size:14px;margin-bottom:6px;">${wine.nome}</div>
-        <div style="font-size:12px;color:var(--text-muted);margin-bottom:2px;">Tipo: ${wine.tipo} · Região: ${wine.regiao || '—'}</div>
-        <div style="font-size:12px;color:var(--text-muted);margin-bottom:2px;">Colheita: ${wine.anoColheita || '—'} · Preço: ${fmt.eur(wine.preco)}</div>
-        <div style="font-size:12px;color:var(--text-gold);margin-top:6px;font-weight:600;">Posição ${rowLabel}${c}</div>`;
+      const ano = wine.anoColheita || wine.ano_colheita;
+      infoEl.innerHTML = `
+        <div class="slot-detail-name">${escHtml(wine.nome)}</div>
+        <dl class="slot-detail-grid">
+          <dt>Tipo</dt><dd>${escHtml(wine.tipo || '—')}</dd>
+          <dt>Região</dt><dd>${escHtml(wine.regiao || '—')}</dd>
+          <dt>Colheita</dt><dd>${escHtml(ano ? String(ano) : '—')}</dd>
+          <dt>PVP</dt><dd class="gold">${escHtml(fmt.eur(wine.preco))}</dd>
+        </dl>
+        <span class="slot-position-badge">${escHtml(rowLabel)}${escHtml(String(c))}</span>
+      `;
     } else {
-      infoEl.innerHTML = `<div style="color:var(--text-muted);font-size:13px;">Posição <strong style="color:var(--text-primary);">${rowLabel}${c}</strong> está vazia.</div>`;
+      infoEl.innerHTML = `
+        <p class="slot-empty-msg">Posição <strong style="color:var(--gold);">${escHtml(rowLabel)}${escHtml(String(c))}</strong> está livre. Seleciona um vinho abaixo para o colocar nesta posição.</p>
+      `;
     }
-    infoEl.style.fontStyle = 'normal';
   }
-  if (actEl) {
-    actEl.style.display = 'flex';
+
+  if (actCard) {
+    actCard.style.display = 'block';
     const sel = document.getElementById('slot-wine-select');
-    if (sel) { sel.innerHTML = caveVinhos.map(v => `<option value="${v.id}">${v.nome} (${v.tipo} ${v.anoColheita || ''})</option>`).join(''); }
-    if (clearBtn) clearBtn.style.display = wine ? 'flex' : 'none';
+    if (sel && caveVinhos.length) {
+      sel.innerHTML = '<option value="">Selecionar vinho…</option>' + caveVinhos.map(v =>
+        `<option value="${escHtml(String(v.id))}"${wine && wine.id === v.id ? ' selected' : ''}>${escHtml(v.nome)} — ${escHtml(v.tipo || '')}${v.anoColheita ? ' · ' + escHtml(String(v.anoColheita)) : ''}</option>`
+      ).join('');
+    }
+    if (clearBtn) {
+      if (wine) clearBtn.classList.remove('hidden');
+      else clearBtn.classList.add('hidden');
+    }
   }
 }
 
 function resetSlotInfo() {
   const infoEl = document.getElementById('slot-info-content');
-  const actEl = document.getElementById('slot-actions');
-  if (infoEl) { infoEl.innerHTML = 'Clique numa posição para ver os detalhes'; infoEl.style.fontStyle = 'italic'; }
-  if (actEl) actEl.style.display = 'none';
+  const actCard = document.getElementById('slot-actions-card');
+  if (infoEl) {
+    infoEl.innerHTML = '<p class="slot-empty-msg">Clique numa posição da cave para ver os detalhes da garrafa armazenada.</p>';
+  }
+  if (actCard) actCard.style.display = 'none';
 }
 
 function assignWineToSlot() {
-  if (!selectedSlot) return;
+  if (!selectedSlot) { toast('Seleciona uma posição na cave primeiro', 'warning'); return; }
   const sel = document.getElementById('slot-wine-select'); if (!sel) return;
   const winhoId = +sel.value;
+  if (!winhoId) { toast('Escolhe um vinho da lista', 'warning'); return; }
   const wine = caveVinhos.find(v => v.id === winhoId); if (!wine) return;
   caveData[selectedSlot] = wine;
-  toast(`${wine.nome} colocado na posição ${selectedSlot}`, 'success');
-  renderCaveGrid(); selectSlot(selectedSlot); updateCaveStats();
+  _saveCaveStorage(currentCave, caveData);
+  const [r, c] = selectedSlot.split('-');
+  const pos = String.fromCharCode(64 + parseInt(r)) + c;
+  toast(`${wine.nome} colocado em ${pos}`, 'success');
+  renderCaveGrid();
+  selectSlot(selectedSlot);
+  updateCaveStats();
 }
 
 function clearSlot() {
   if (!selectedSlot) return;
+  const [r, c] = selectedSlot.split('-');
+  const pos = String.fromCharCode(64 + parseInt(r)) + c;
   delete caveData[selectedSlot];
-  toast('Posição esvaziada');
-  renderCaveGrid(); resetSlotInfo(); selectedSlot = null; updateCaveStats();
+  _saveCaveStorage(currentCave, caveData);
+  toast(`Posição ${pos} libertada`, 'info');
+  renderCaveGrid();
+  resetSlotInfo();
+  selectedSlot = null;
+  updateCaveStats();
 }
 
 /* ══════════════════════════════════════════════
    20. EXPORT FUNCTIONS
    ══════════════════════════════════════════════ */
-function exportRelatorioCSV() {
-  const table = document.getElementById('top-wines-table');
-  if (!table) { toast('Sem dados para exportar', 'warning'); return; }
-
-  let csv = 'Pos.,Produto,Tipo,Vendas,Receita,Quota\n';
-  table.querySelectorAll('tr').forEach(row => {
-    const cells = row.querySelectorAll('td');
-    if (cells.length) {
-      const vals = Array.from(cells).map(c => '"' + c.textContent.trim().replace(/"/g, '""') + '"');
-      csv += vals.join(',') + '\n';
+/* Relatório premium em Excel (gerado pelo backend com 4 sheets). */
+async function exportRelatorioCSV() {
+  try {
+    const sess = Session.get();
+    const headers = {};
+    if (sess && sess.token) headers['Authorization'] = 'Bearer ' + sess.token;
+    const res = await fetch('/api/export/relatorio.xlsx', { headers });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || ('HTTP ' + res.status));
     }
-  });
-
-  const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
-  const link = document.createElement('a');
-  link.href = URL.createObjectURL(blob);
-  link.download = `relatorio_vinhadouro_${new Date().toISOString().slice(0,10)}.csv`;
-  link.click();
-  URL.revokeObjectURL(link.href);
-  toast('Relatório exportado com sucesso', 'success');
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'the100s-relatorio-' + new Date().toISOString().slice(0,10) + '.xlsx';
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 30000);
+    toast('Relatório premium exportado', 'success');
+  } catch (err) {
+    console.error(err);
+    toast('Erro a exportar relatório: ' + (err.message || 'desconhecido'), 'error');
+  }
 }
 
 /* ══════════════════════════════════════════════
@@ -2406,12 +2732,16 @@ document.addEventListener('DOMContentLoaded', () => {
     Screensaver.init();
   }
 
-  // Add smooth page entrance
-  document.body.style.opacity = '0';
-  requestAnimationFrame(() => {
-    document.body.style.transition = 'opacity 0.4s ease';
+  const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+  if (reduceMotion) {
     document.body.style.opacity = '1';
-  });
+  } else {
+    document.body.style.opacity = '0';
+    requestAnimationFrame(() => {
+      document.body.style.transition = 'opacity 0.4s ease';
+      document.body.style.opacity = '1';
+    });
+  }
 
   switch (path) {
     case 'index.html': case '': case '/':
@@ -2427,28 +2757,31 @@ document.addEventListener('DOMContentLoaded', () => {
       loadStock();
       document.getElementById('stock-search')?.addEventListener('input', renderStock);
       document.getElementById('tipo-filter')?.addEventListener('change', renderStock);
+      document.getElementById('stock-sort')?.addEventListener('change', renderStock);
+      document.getElementById('stock-only-crit')?.addEventListener('change', renderStock);
+      setInterval(checkApi, 30000);
       break;
 
     case 'gerente-vendas.html':
       loadVendas();
       document.getElementById('vendas-search')?.addEventListener('input', filterVendas);
       document.getElementById('estado-filter')?.addEventListener('change', filterVendas);
+      setInterval(checkApi, 30000);
       break;
 
     case 'gerente-equipa.html':
-      loadEquipa(); break;
+      loadEquipa();
+      setInterval(checkApi, 30000);
+      break;
 
     case 'gerente-relatorios.html':
-      loadRelatorios(); break;
-
-    case 'provas.html':
-      (async () => {
-        try { provaWineCache = await apiFetch('/vinhos'); } catch { provaWineCache = FALLBACK.vinhos; }
-        loadProvas();
-      })();
+      loadRelatorios();
+      setInterval(checkApi, 30000);
       break;
 
     case 'caves.html':
-      loadCave('A'); break;
+      loadCave('A');
+      setInterval(checkApi, 30000);
+      break;
   }
 });

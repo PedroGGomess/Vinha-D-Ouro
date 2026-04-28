@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Histórico de Vendas — Vinha D'Ouro">
+  <meta name="description" content="Histórico de Vendas — the 100's">
   <meta name="theme-color" content="#050203">
-  <title>Histórico de Vendas — Vinha D'Ouro</title>
+  <title>Histórico de Vendas — the 100's</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
@@ -25,14 +25,8 @@
         </svg>
       </button>
       <div class="sidebar-brand">
-        <div class="sidebar-brand-logo">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M8 22h8M12 11v11M7 11c0 2.8 2.2 5 5 5s5-2.2 5-5V3H7v8z"/>
-            <path d="M7 8h10"/>
-          </svg>
-        </div>
         <div class="sidebar-brand-text">
-          <h2>Vinha D'Ouro</h2>
+          <img src="assets/logo-the100s.png" alt="the 100's" class="sidebar-logo">
           <p class="brand-subtitle">GERENTE</p>
         </div>
       </div>
@@ -140,22 +134,25 @@
     <main class="main-content" id="main-content">
       <div class="page-container">
         <!-- Toast Container -->
-        <div id="toasts" role="region" aria-label="Notificações"></div>
+        <div id="toasts" role="status" aria-live="polite" aria-atomic="false" aria-label="Notificações"></div>
 
         <!-- Page Header -->
-        <div class="page-header">
+        <div class="page-header dashboard-header">
           <div>
+            <p class="dashboard-eyebrow">Gerência · Vendas</p>
             <h1 class="page-title">Histórico de Vendas</h1>
-            <p class="page-subtitle">Acompanhe cada venda com detalhe</p>
+            <p class="page-subtitle">Cada venda com cliente, funcionário, método e detalhe.</p>
           </div>
-          <button class="btn btn-gold" onclick="exportToCSV()" aria-label="Exportar para CSV">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
-              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
-              <polyline points="7 10 12 15 17 10"/>
-              <line x1="12" y1="15" x2="12" y2="3"/>
-            </svg>
-            Exportar
-          </button>
+          <div class="dashboard-actions">
+            <button class="btn btn-gold" onclick="exportToCSV()" aria-label="Exportar Excel premium">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" aria-hidden="true">
+                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+                <polyline points="7 10 12 15 17 10"/>
+                <line x1="12" y1="15" x2="12" y2="3"/>
+              </svg>
+              Exportar Excel
+            </button>
+          </div>
         </div>
 
         <!-- Comparison Grid -->
@@ -212,6 +209,7 @@
                 <tr>
                   <th>ID Venda</th>
                   <th>Cliente</th>
+                  <th>Funcionário</th>
                   <th>Itens</th>
                   <th>Método</th>
                   <th>Total</th>
@@ -222,7 +220,7 @@
               </thead>
               <tbody id="vendas-table">
                 <tr>
-                  <td colspan="8" style="text-align:center;padding:40px;color:var(--text-muted);">A carregar vendas...</td>
+                  <td colspan="9" style="text-align:center;padding:40px;color:var(--text-muted);">A carregar vendas...</td>
                 </tr>
               </tbody>
             </table>
@@ -234,26 +232,31 @@
 
   <script src="app.js"></script>
   <script>
-    function exportToCSV() {
-      const table = document.getElementById('vendas-table');
-      if (!table) { toast('Sem dados para exportar', 'warning'); return; }
-
-      let csv = 'ID Venda,Cliente,Itens,Total,Método,Status,Data/Hora\n';
-      table.querySelectorAll('tr').forEach(row => {
-        const cells = row.querySelectorAll('td');
-        if (cells.length) {
-          const vals = Array.from(cells).map(c => '"' + c.textContent.trim().replace(/"/g, '""') + '"');
-          csv += vals.join(',') + '\n';
+    /* Exporta histórico de vendas como Excel premium gerado no servidor (the 100's branded). */
+    async function exportToCSV() {
+      try {
+        const sess = (typeof Session !== 'undefined') ? Session.get() : null;
+        const headers = {};
+        if (sess && sess.token) headers['Authorization'] = 'Bearer ' + sess.token;
+        const res = await fetch('/api/export/vendas.xlsx', { headers });
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          throw new Error(err.error || ('HTTP ' + res.status));
         }
-      });
-
-      const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.download = `vendas_vinhadouro_${new Date().toISOString().slice(0,10)}.csv`;
-      link.click();
-      URL.revokeObjectURL(link.href);
-      toast('Exportação concluída com sucesso', 'success');
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'the100s-vendas-' + new Date().toISOString().slice(0,10) + '.xlsx';
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 30000);
+        toast('Excel premium gerado com sucesso', 'success');
+      } catch (err) {
+        console.error(err);
+        toast('Erro a exportar: ' + (err.message || 'desconhecido'), 'error');
+      }
     }
   </script>
 </body>
