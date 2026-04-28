@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Relatórios e Análises — Vinha D'Ouro">
+  <meta name="description" content="Relatórios e Análises — the 100's">
   <meta name="theme-color" content="#050203">
-  <title>Relatórios e Análises — Vinha D'Ouro</title>
+  <title>Relatórios e Análises — the 100's</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
@@ -25,14 +25,8 @@
         </svg>
       </button>
       <div class="sidebar-brand">
-        <div class="sidebar-brand-logo">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M8 22h8M12 11v11M7 11c0 2.8 2.2 5 5 5s5-2.2 5-5V3H7v8z"/>
-            <path d="M7 8h10"/>
-          </svg>
-        </div>
         <div class="sidebar-brand-text">
-          <h2>Vinha D'Ouro</h2>
+          <img src="assets/logo-the100s.png" alt="the 100's" class="sidebar-logo">
           <p class="brand-subtitle">GERENTE</p>
         </div>
       </div>
@@ -140,22 +134,25 @@
     <main class="main-content" id="main-content">
       <div class="page-container">
         <!-- Toast Container -->
-        <div id="toasts" role="region" aria-label="Notificações"></div>
+        <div id="toasts" role="status" aria-live="polite" aria-atomic="false" aria-label="Notificações"></div>
 
         <!-- Page Header -->
-        <div class="page-header">
+        <div class="page-header dashboard-header">
           <div>
-            <h1 class="page-title">Relatórios e Análises</h1>
-            <p class="page-subtitle">Análise aprofundada para decisões estratégicas</p>
+            <p class="dashboard-eyebrow">Gerência · Relatórios</p>
+            <h1 class="page-title">Relatórios &amp; Análises</h1>
+            <p class="page-subtitle">Análise aprofundada para decisões estratégicas — KPIs, top vinhos, stock crítico.</p>
           </div>
-          <button class="btn btn-gold" onclick="exportRelatorioCSV()" aria-label="Exportar Relatório">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
-              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
-              <polyline points="7 10 12 15 17 10"/>
-              <line x1="12" y1="15" x2="12" y2="3"/>
-            </svg>
-            Exportar Relatório
-          </button>
+          <div class="dashboard-actions">
+            <button class="btn btn-gold" onclick="exportRelatorioCSV()" aria-label="Exportar Relatório Excel">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" aria-hidden="true">
+                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+                <polyline points="7 10 12 15 17 10"/>
+                <line x1="12" y1="15" x2="12" y2="3"/>
+              </svg>
+              Exportar Excel
+            </button>
+          </div>
         </div>
 
         <!-- KPI Grid -->

@@ -3,681 +3,412 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Gestão de Caves — Vinha D'Ouro">
-  <meta name="theme-color" content="#050203">
-  <title>Gestão de Caves — Vinha D'Ouro</title>
+  <meta name="description" content="Gestão de Caves — the 100's">
+  <meta name="theme-color" content="#0E0E0E">
+  <title>Gestão de Caves — the 100's</title>
+  <link rel="icon" type="image/png" href="assets/logo-the100s.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 
   <style>
-    /* 3D Wine Cellar Visualization */
-    .cave-grid-container {
-      perspective: 1200px;
-      width: 100%;
-      min-height: 600px;
-      padding: 40px;
+    /* ════════════════════════════════════════════
+       CAVES — Layout premium, claro e funcional
+       ════════════════════════════════════════════ */
+
+    .caves-eyebrow {
+      font-size: 0.625rem;
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      margin-bottom: var(--sp-2);
+    }
+
+    /* KPI strip */
+    .caves-kpis {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: var(--sp-5);
+      margin-bottom: var(--sp-8);
+    }
+    @media (max-width: 1100px) {
+      .caves-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 520px) {
+      .caves-kpis { grid-template-columns: 1fr; }
+    }
+
+    /* Cave selector tabs */
+    .cave-tabs {
       display: flex;
+      gap: 6px;
+      padding: 6px;
+      background: rgba(20, 16, 12, 0.55);
+      border: 1px solid var(--border);
+      border-radius: var(--r-xl);
+      margin-bottom: var(--sp-6);
+      width: fit-content;
+    }
+    .cave-tab {
+      padding: 10px 22px;
+      background: transparent;
+      border: none;
+      border-radius: var(--r-lg);
+      color: var(--text-muted);
+      font-family: 'Inter', sans-serif;
+      font-size: 12.5px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      transition: all .2s ease;
+      display: inline-flex;
       align-items: center;
-      justify-content: center;
-      background: radial-gradient(ellipse at 50% 50%, rgba(201, 162, 39, 0.08), rgba(139, 58, 68, 0.05));
-      border-radius: 12px;
-      border: 1px solid rgba(201, 162, 39, 0.15);
+      gap: 8px;
+      min-height: 40px;
+    }
+    .cave-tab:hover {
+      color: var(--text-primary);
+      background: rgba(201, 169, 110, 0.06);
+    }
+    .cave-tab.active {
+      background: linear-gradient(180deg, #C9A96E 0%, #A07D4A 100%);
+      color: #15110D;
+      box-shadow: 0 4px 16px rgba(201, 169, 110, 0.25);
+    }
+    .cave-tab .tab-meta {
+      font-size: 10px;
+      font-weight: 500;
+      opacity: 0.7;
+    }
+    .cave-tab.active .tab-meta { opacity: 0.85; }
+
+    /* Two-column layout: grid + side panel */
+    .caves-layout {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: var(--sp-6);
+      align-items: start;
+    }
+    @media (max-width: 1100px) {
+      .caves-layout { grid-template-columns: 1fr; }
+    }
+
+    /* GRID */
+    .cave-board {
+      background: linear-gradient(180deg, rgba(58, 50, 42, 0.45), rgba(28, 24, 20, 0.55));
+      border: 1px solid var(--border);
+      border-radius: var(--r-xl);
+      padding: 24px;
+      box-shadow: var(--shadow-md), inset 0 1px 0 rgba(255,255,255,0.03);
       position: relative;
       overflow: hidden;
     }
-
-    .cave-grid-container::before {
+    .cave-board::before {
       content: '';
       position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background:
-        repeating-linear-gradient(
-          90deg,
-          transparent,
-          transparent 1px,
-          rgba(201, 162, 39, 0.02) 1px,
-          rgba(201, 162, 39, 0.02) 2px
-        ),
-        repeating-linear-gradient(
-          0deg,
-          transparent,
-          transparent 1px,
-          rgba(201, 162, 39, 0.02) 1px,
-          rgba(201, 162, 39, 0.02) 2px
-        );
-      pointer-events: none;
-      border-radius: 12px;
+      inset: 0 0 auto 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(201, 169, 110, 0.45), transparent);
     }
 
-    .cave-grid {
-      transform-style: preserve-3d;
-      transform: rotateX(12deg) rotateY(-8deg) rotateZ(2deg);
-      position: relative;
-      z-index: 10;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-      gap: 24px;
-      padding: 20px;
-      background: linear-gradient(135deg, rgba(40, 25, 30, 0.7) 0%, rgba(25, 15, 20, 0.8) 100%);
-      border-radius: 8px;
-      border: 2px solid rgba(201, 162, 39, 0.2);
-      box-shadow:
-        inset 0 2px 10px rgba(0, 0, 0, 0.5),
-        0 20px 60px rgba(0, 0, 0, 0.4),
-        0 0 40px rgba(139, 58, 68, 0.15);
-    }
-
-    .cave-row {
-      display: contents;
-    }
-
-    .cave-row-label {
-      grid-column: 1 / -1;
-      padding: 10px 0;
-      font-family: 'Playfair Display', serif;
-      font-size: 14px;
-      font-weight: 600;
-      color: rgba(201, 162, 39, 0.8);
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      border-bottom: 1px solid rgba(201, 162, 39, 0.2);
-      margin-bottom: 8px;
-    }
-
-    .cave-slot-wrapper {
+    .cave-board-head {
       display: flex;
-      flex-direction: column;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 18px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .cave-board-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text-primary);
+      letter-spacing: 0.5px;
+    }
+    .cave-board-meta {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-variant-numeric: tabular-nums;
+    }
+    .cave-board-meta strong {
+      color: var(--gold);
+      font-weight: 600;
+    }
+
+    /* Slot grid */
+    .cave-grid-wrap {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: 8px;
+    }
+    .cave-grid {
+      display: grid;
+      gap: 6px;
+      width: fit-content;
+      margin: 0 auto;
+    }
+    .cave-row-label {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--gold);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      display: flex;
       align-items: center;
-      gap: 8px;
+      justify-content: center;
+      min-width: 24px;
+      min-height: 48px;
     }
 
     .cave-slot {
-      width: 80px;
-      height: 80px;
-      position: relative;
+      width: 56px;
+      height: 64px;
+      border-radius: 8px;
+      background: rgba(20, 16, 12, 0.7);
+      border: 1px solid rgba(201, 169, 110, 0.10);
       cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-      transform-style: preserve-3d;
-      border-radius: 50%;
-
-      /* Wood texture background */
-      background:
-        linear-gradient(135deg, #6B4423 0%, #8B5A2B 25%, #6B4423 50%, #7A4F28 75%, #5C3D1F 100%);
-      box-shadow:
-        inset -2px -2px 5px rgba(0, 0, 0, 0.6),
-        inset 2px 2px 5px rgba(139, 100, 60, 0.4),
-        0 8px 16px rgba(0, 0, 0, 0.5),
-        0 0 20px rgba(0, 0, 0, 0.3);
-
-      /* Circular hole appearance */
-      border: 3px solid rgba(60, 40, 25, 0.8);
-
+      transition: transform .18s cubic-bezier(.2,.7,.2,1), box-shadow .18s ease, border-color .18s ease;
+      position: relative;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
+      padding: 5px 4px;
+      text-align: center;
       overflow: hidden;
     }
-
-    .cave-slot::before {
-      content: '';
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.1), transparent);
-      pointer-events: none;
-      z-index: 2;
+    .cave-slot:hover {
+      transform: translateY(-2px);
+      border-color: rgba(201, 169, 110, 0.4);
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.45);
+    }
+    .cave-slot.selected {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 2px rgba(201, 169, 110, 0.35), 0 8px 22px rgba(201, 169, 110, 0.18);
+    }
+    .cave-slot:not(.occupied) {
+      background:
+        radial-gradient(120% 80% at 50% 0%, rgba(201, 169, 110, 0.05), transparent 50%),
+        rgba(20, 16, 12, 0.7);
+      color: rgba(201, 169, 110, 0.35);
+    }
+    .cave-slot:not(.occupied)::before {
+      content: '+';
+      font-size: 14px;
+      font-weight: 300;
+      color: rgba(201, 169, 110, 0.3);
     }
 
-    /* Empty slot - dark circular hole */
-    .cave-slot:not(.occupied)::after {
-      content: '';
-      position: absolute;
-      width: 65px;
-      height: 65px;
-      border-radius: 50%;
-      background: radial-gradient(circle at 40% 40%, rgba(20, 10, 5, 0.9), rgba(0, 0, 0, 0.98));
-      box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.9);
-      z-index: 1;
-    }
-
-    /* Wine bottle visualization */
     .cave-slot.occupied {
-      background: linear-gradient(135deg, #5A3A25 0%, #7A5A3F 50%, #4A3A25 100%);
+      background: linear-gradient(180deg, rgba(58, 50, 42, 0.7), rgba(28, 22, 18, 0.85));
+      border-color: rgba(201, 169, 110, 0.22);
     }
-
     .cave-slot.occupied::after {
       content: '';
       position: absolute;
-      width: 60px;
-      height: 72px;
-      border-radius: 50% 50% 45% 45%;
-      z-index: 2;
-      box-shadow:
-        inset -2px 0 4px rgba(0, 0, 0, 0.4),
-        inset 2px 0 4px rgba(255, 255, 255, 0.1),
-        0 4px 8px rgba(0, 0, 0, 0.6);
-      background-color: #8B0000;
-      animation: bottleGlow 0.3s ease-out;
+      inset: 0;
+      background: linear-gradient(180deg, var(--accent-color, transparent) 0%, transparent 35%);
+      opacity: 0.5;
+      pointer-events: none;
+      border-radius: 8px;
     }
-
-    /* Color coding for wine types */
-    .cave-slot.occupied[data-wine-type="tinto"]::after {
-      background: linear-gradient(135deg, #8B0000 0%, #A52A2A 50%, #6B0000 100%);
-      box-shadow:
-        inset -2px 0 4px rgba(0, 0, 0, 0.4),
-        inset 2px 0 4px rgba(255, 200, 200, 0.1),
-        0 4px 12px rgba(139, 0, 0, 0.6);
-    }
-
-    .cave-slot.occupied[data-wine-type="branco"]::after {
-      background: linear-gradient(135deg, #D4AF37 0%, #FFE4B5 50%, #B8860B 100%);
-      box-shadow:
-        inset -2px 0 4px rgba(0, 0, 0, 0.2),
-        inset 2px 0 4px rgba(255, 255, 255, 0.3),
-        0 4px 12px rgba(212, 175, 55, 0.5);
-    }
-
-    .cave-slot.occupied[data-wine-type="rosé"]::after {
-      background: linear-gradient(135deg, #E75480 0%, #FF69B4 50%, #C71585 100%);
-      box-shadow:
-        inset -2px 0 4px rgba(0, 0, 0, 0.2),
-        inset 2px 0 4px rgba(255, 200, 220, 0.2),
-        0 4px 12px rgba(231, 84, 128, 0.6);
-    }
-
-    .cave-slot.occupied[data-wine-type="espumante"]::after {
-      background: linear-gradient(135deg, #C9A96E 0%, #FFD700 50%, #B8860B 100%);
-      box-shadow:
-        inset -2px 0 4px rgba(0, 0, 0, 0.3),
-        inset 2px 0 4px rgba(255, 255, 200, 0.3),
-        0 4px 12px rgba(201, 162, 39, 0.7);
-      filter: drop-shadow(0 0 8px rgba(201, 162, 39, 0.4));
-    }
-
-    @keyframes bottleGlow {
-      from {
-        transform: scaleY(0.9);
-      }
-      to {
-        transform: scaleY(1);
-      }
-    }
-
-    /* Hover effect */
-    .cave-slot:hover {
-      transform:
-        translateY(-12px)
-        scaleX(1.15)
-        scaleY(1.15)
-        rotateX(5deg)
-        rotateY(-5deg);
-      box-shadow:
-        inset -2px -2px 5px rgba(0, 0, 0, 0.6),
-        inset 2px 2px 5px rgba(139, 100, 60, 0.4),
-        0 12px 24px rgba(0, 0, 0, 0.6),
-        0 0 30px rgba(201, 162, 39, 0.4);
-    }
-
-    .cave-slot:hover::before {
-      background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.2), transparent);
-    }
-
-    /* Selected slot */
-    .cave-slot.selected {
-      transform:
-        translateY(-16px)
-        scaleX(1.2)
-        scaleY(1.2)
-        rotateX(8deg)
-        rotateY(-8deg);
-      border-color: #C9A96E;
-      box-shadow:
-        inset -2px -2px 5px rgba(0, 0, 0, 0.6),
-        inset 2px 2px 5px rgba(139, 100, 60, 0.4),
-        0 16px 32px rgba(0, 0, 0, 0.7),
-        0 0 40px rgba(201, 162, 39, 0.8),
-        inset 0 0 20px rgba(201, 162, 39, 0.3);
-    }
-
-    .cave-slot.selected::before {
-      background: radial-gradient(circle at 30% 30%, rgba(201, 162, 39, 0.4), rgba(201, 162, 39, 0.1));
-      box-shadow: inset 0 0 20px rgba(201, 162, 39, 0.3);
-    }
+    .cave-slot.occupied.tinto     { --accent-color: rgba(170, 35, 50, 0.55); }
+    .cave-slot.occupied.branco    { --accent-color: rgba(212, 175, 55, 0.5); }
+    .cave-slot.occupied.rose      { --accent-color: rgba(231, 84, 128, 0.45); }
+    .cave-slot.occupied.espumante { --accent-color: rgba(201, 169, 110, 0.55); }
+    .cave-slot.occupied.porto     { --accent-color: rgba(140, 30, 24, 0.6); }
+    .cave-slot.occupied.madeira   { --accent-color: rgba(198, 138, 46, 0.55); }
 
     .cave-slot-label {
-      font-size: 12px;
-      color: rgba(201, 162, 39, 0.7);
+      font-size: 9px;
       font-weight: 600;
-      letter-spacing: 1px;
-      font-family: 'Inter', sans-serif;
-      text-transform: uppercase;
+      color: var(--text-primary);
+      line-height: 1.15;
+      letter-spacing: 0.02em;
+      position: relative;
+      z-index: 1;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
     }
-
     .cave-slot-year {
-      font-size: 10px;
-      color: rgba(201, 162, 39, 0.5);
       font-family: 'Cormorant Garamond', serif;
-      margin-top: 2px;
-      min-height: 14px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--gold);
+      letter-spacing: 0.5px;
+      margin-top: 3px;
+      position: relative;
+      z-index: 1;
+      font-variant-numeric: tabular-nums;
     }
 
-    /* Responsive adjustments */
-    @media (max-width: 768px) {
-      .cave-grid-container {
-        min-height: 400px;
-        padding: 20px;
-      }
-
-      .cave-grid {
-        gap: 16px;
-        padding: 12px;
-      }
-
-      .cave-slot {
-        width: 60px;
-        height: 60px;
-      }
-
-      .cave-slot::after {
-        width: 48px;
-        height: 54px;
-      }
-
-      .cave-slot:not(.occupied)::after {
-        width: 50px;
-        height: 50px;
-      }
-
-      .cave-slot-label {
-        font-size: 10px;
-      }
-    }
-
-    /* Caves layout tweaks for 3D showcase */
-    .caves-layout {
-      display: grid;
-      grid-template-columns: 300px 1fr;
-      gap: 32px;
-      align-items: start;
-    }
-
-    .cave-sidebar {
+    /* SIDE PANEL */
+    .cave-panel {
+      position: sticky;
+      top: var(--sp-4);
       display: flex;
       flex-direction: column;
-      gap: 20px;
+      gap: var(--sp-4);
     }
 
-    .cave-selector {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
+    .cave-card {
+      background: linear-gradient(180deg, rgba(58, 50, 42, 0.55), rgba(28, 24, 20, 0.55));
+      border: 1px solid var(--border);
+      border-radius: var(--r-xl);
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    .cave-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 16px; right: 16px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(201, 169, 110, 0.35), transparent);
     }
 
-    .cave-selector-btn {
-      padding: 10px 12px;
-      border: 2px solid rgba(201, 162, 39, 0.2);
-      background: rgba(201, 162, 39, 0.05);
-      color: rgba(201, 162, 39, 0.7);
-      border-radius: 6px;
-      font-family: 'Inter', sans-serif;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s ease;
+    .cave-card-title {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      margin-bottom: 14px;
+    }
+
+    /* Empty / detail content */
+    .slot-empty-msg {
       font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.55;
     }
 
-    .cave-selector-btn:hover {
-      border-color: rgba(201, 162, 39, 0.4);
-      background: rgba(201, 162, 39, 0.1);
-      color: rgba(201, 162, 39, 0.9);
+    .slot-detail-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--text-primary);
+      letter-spacing: 0.3px;
+      margin-bottom: 10px;
     }
 
-    .cave-selector-btn.active {
-      border-color: #C9A96E;
-      background: rgba(201, 162, 39, 0.15);
-      color: #C9A96E;
-      box-shadow: 0 0 12px rgba(201, 162, 39, 0.3);
-    }
-
-    .cave-info-card {
-      background: rgba(201, 162, 39, 0.05);
-      border: 1px solid rgba(201, 162, 39, 0.15);
-      border-radius: 8px;
-      padding: 16px;
-      backdrop-filter: blur(10px);
-    }
-
-    .cave-stat-row {
+    .slot-detail-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 12px;
+      gap: 10px 16px;
+      font-size: 11.5px;
     }
-
-    .cave-stat-row:last-child {
-      margin-bottom: 0;
-    }
-
-    .cave-stat-item {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .stat-lbl {
-      font-size: 11px;
-      color: rgba(201, 162, 39, 0.6);
+    .slot-detail-grid dt {
+      color: var(--text-muted);
+      font-size: 10px;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
-      letter-spacing: 1px;
       font-weight: 600;
     }
-
-    .stat-val {
-      font-family: 'Playfair Display', serif;
-      font-size: 20px;
-      color: rgba(201, 162, 39, 0.9);
-      font-weight: 600;
-    }
-
-    .cave-free-color {
-      color: #7CFF6D;
-    }
-
-    .cave-stat-progress {
-      width: 100%;
-      height: 6px;
-      background: rgba(139, 58, 68, 0.2);
-      border-radius: 3px;
-      overflow: hidden;
-      margin-top: 8px;
-    }
-
-    .cave-stat-progress-bar {
-      height: 100%;
-      background: linear-gradient(90deg, #7CFF6D, #C9A96E, #8B3A44);
-      border-radius: 3px;
-      transition: width 0.3s ease;
-      width: 0%;
-    }
-
-    .slot-info-section {
-      background: rgba(201, 162, 39, 0.05);
-      border: 1px solid rgba(201, 162, 39, 0.15);
-      border-radius: 8px;
-      padding: 16px;
-      backdrop-filter: blur(10px);
-    }
-
-    .slot-info-section h3 {
-      font-family: 'Playfair Display', serif;
-      font-size: 14px;
-      color: rgba(201, 162, 39, 0.9);
-      margin: 0 0 12px 0;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .slot-info-content {
-      font-size: 13px;
-      color: rgba(255, 255, 255, 0.7);
-      line-height: 1.6;
-    }
-
-    .slot-info-empty {
-      color: rgba(201, 162, 39, 0.5);
-      font-style: italic;
-    }
-
-    .slot-info-item {
-      margin-bottom: 8px;
-      padding-bottom: 8px;
-      border-bottom: 1px solid rgba(201, 162, 39, 0.1);
-    }
-
-    .slot-info-item:last-child {
-      margin-bottom: 0;
-      padding-bottom: 0;
-      border-bottom: none;
-    }
-
-    .slot-info-label {
-      color: rgba(201, 162, 39, 0.6);
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      display: block;
-      margin-bottom: 2px;
-    }
-
-    .slot-info-value {
-      color: rgba(255, 255, 255, 0.9);
+    .slot-detail-grid dd {
+      color: var(--text-primary);
       font-weight: 500;
-      font-family: 'Playfair Display', serif;
+      margin-bottom: 6px;
+    }
+    .slot-detail-grid dd.gold {
+      color: var(--gold);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 14px;
+      font-weight: 600;
     }
 
-    .slot-actions {
+    .slot-position-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      background: rgba(201, 169, 110, 0.14);
+      border: 1px solid rgba(201, 169, 110, 0.3);
+      border-radius: 999px;
+      color: var(--gold);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      margin-top: 12px;
+    }
+
+    /* Action group */
+    .slot-actions-group {
       display: flex;
       flex-direction: column;
       gap: 10px;
     }
-
-    .slot-select-group {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .form-select {
-      padding: 8px 10px;
-      background: rgba(139, 58, 68, 0.1);
-      border: 1px solid rgba(201, 162, 39, 0.2);
-      border-radius: 6px;
-      color: rgba(255, 255, 255, 0.8);
-      font-family: 'Inter', sans-serif;
-      font-size: 13px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .form-select:hover {
-      border-color: rgba(201, 162, 39, 0.4);
-      background: rgba(139, 58, 68, 0.15);
-    }
-
-    .form-select:focus {
-      outline: none;
-      border-color: #C9A96E;
-      background: rgba(139, 58, 68, 0.2);
-      box-shadow: 0 0 8px rgba(201, 162, 39, 0.3);
-    }
-
-    .btn {
-      padding: 8px 12px;
-      border-radius: 6px;
-      border: none;
-      font-family: 'Inter', sans-serif;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, #C9A96E, #E0C140);
-      color: #050203;
-      border: 1px solid #C9A96E;
-    }
-
-    .btn-primary:hover {
-      background: linear-gradient(135deg, #E0C140, #FFD700);
-      box-shadow: 0 4px 12px rgba(201, 162, 39, 0.4);
-      transform: translateY(-2px);
-    }
-
-    .btn-danger {
-      background: rgba(139, 58, 68, 0.2);
-      color: #FF6B6B;
-      border: 1px solid rgba(255, 107, 107, 0.3);
-    }
-
-    .btn-danger:hover {
-      background: rgba(139, 58, 68, 0.3);
-      border-color: #FF6B6B;
-      box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
-    }
-
-    .btn-sm {
-      padding: 6px 10px;
-      font-size: 12px;
+    .slot-actions-group select {
       width: 100%;
     }
-
-    .btn.hidden {
-      display: none;
+    .slot-actions-group .btn {
+      width: 100%;
+      justify-content: center;
     }
 
-    /* Page header styling */
-    .page-header {
-      margin-bottom: 32px;
+    /* Occupation progress */
+    .occ-progress-track {
+      width: 100%;
+      height: 6px;
+      background: rgba(0,0,0,0.3);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+    .occ-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #C9A96E, #E0C992);
+      border-radius: 3px;
+      transition: width .4s cubic-bezier(.2,.7,.2,1);
     }
 
-    .page-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 32px;
-      color: rgba(255, 255, 255, 0.95);
-      margin: 0 0 8px 0;
-      font-weight: 600;
-    }
-
-    .page-subtitle {
-      font-family: 'Inter', sans-serif;
-      font-size: 14px;
-      color: rgba(201, 162, 39, 0.7);
-      margin: 0;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    /* KPI Summary Cards */
-    .cave-kpi-row {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
-      margin-bottom: 28px;
-    }
-
-    .cave-kpi {
-      background: rgba(12, 8, 10, 0.6);
-      border: 1px solid rgba(201, 162, 39, 0.12);
-      border-left: 3px solid rgba(201, 162, 39, 0.4);
-      border-radius: 10px;
-      padding: 16px 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      backdrop-filter: blur(8px);
-    }
-
-    .cave-kpi-label {
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      color: rgba(201, 162, 39, 0.6);
-    }
-
-    .cave-kpi-value {
-      font-family: 'Playfair Display', serif;
-      font-size: 28px;
-      font-weight: 700;
-      color: #f5f5f5;
-    }
-
-    /* Cave Legend */
-    .cave-legend {
+    /* Legend */
+    .cave-legend-row {
       display: flex;
       flex-wrap: wrap;
-      gap: 20px;
-      justify-content: center;
-      margin-top: 20px;
-      padding: 16px 24px;
-      background: rgba(201, 162, 39, 0.04);
-      border: 1px solid rgba(201, 162, 39, 0.1);
-      border-radius: 10px;
-    }
-
-    .legend-item {
-      display: flex;
+      gap: 14px 22px;
+      padding: 16px 20px;
+      margin-top: var(--sp-6);
+      background: rgba(20, 16, 12, 0.5);
+      border: 1px solid var(--border);
+      border-radius: var(--r-xl);
+      font-size: 11.5px;
+      color: var(--text-secondary);
       align-items: center;
-      gap: 8px;
-      font-size: 12px;
-      color: rgba(255, 255, 255, 0.7);
-      font-weight: 500;
-      letter-spacing: 0.3px;
     }
-
-    .legend-dot {
-      width: 14px;
-      height: 14px;
-      border-radius: 50%;
-      flex-shrink: 0;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    .cave-legend-row strong {
+      color: var(--gold-dim);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-right: 6px;
     }
-
-    .legend-dot-empty {
-      background: radial-gradient(circle, rgba(20, 10, 5, 0.9), rgba(0, 0, 0, 0.98));
-      border: 2px solid rgba(107, 68, 35, 0.5);
+    .legend-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
     }
-
-    /* Responsive for smaller screens */
-    @media (max-width: 1024px) {
-      .caves-layout {
-        grid-template-columns: 1fr;
-        gap: 24px;
-      }
-
-      .cave-grid-container {
-        min-height: 500px;
-      }
+    .legend-chip span.dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+      display: inline-block;
     }
-
-    @media (max-width: 768px) {
-      .caves-layout {
-        grid-template-columns: 1fr;
-      }
-
-      .cave-selector {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .page-title {
-        font-size: 24px;
-      }
-
-      .cave-kpi-row {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .cave-legend {
-        gap: 12px;
-        padding: 12px 16px;
-      }
-
-      .legend-item {
-        font-size: 11px;
-      }
-    }
+    .legend-chip.tinto     .dot { background: linear-gradient(135deg, #6B2D3E, #8B1538); }
+    .legend-chip.branco    .dot { background: linear-gradient(135deg, #D4AF37, #B8860B); }
+    .legend-chip.rose      .dot { background: linear-gradient(135deg, #E75480, #C71585); }
+    .legend-chip.espumante .dot { background: linear-gradient(135deg, #C9A96E, #FFD700); }
+    .legend-chip.porto     .dot { background: linear-gradient(135deg, #5A2A22, #8B1A0E); }
+    .legend-chip.madeira   .dot { background: linear-gradient(135deg, #5A3A1F, #C68A2E); }
+    .legend-chip.empty     .dot { background: transparent; border: 1px dashed rgba(201,169,110,0.3); }
   </style>
 </head>
 <body>
@@ -685,173 +416,206 @@
 
   <div class="app-layout">
     <!-- SIDEBAR -->
-    <nav class="sidebar">
+    <aside class="sidebar">
+      <button type="button" class="sidebar-toggle" onclick="toggleSidebar()" aria-label="Abrir ou fechar menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="18" height="18" aria-hidden="true">
+          <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
+
       <div class="sidebar-brand">
-        <h2>Vinha D'Ouro</h2>
-        <p class="brand-subtitle">ARMAZÉM</p>
+        <div class="sidebar-brand-text">
+          <img src="assets/logo-the100s.png" alt="the 100's" class="sidebar-logo">
+          <p class="brand-subtitle">ARMAZÉM</p>
+        </div>
       </div>
 
-      <div class="sidebar-nav">
+      <nav class="sidebar-nav" aria-label="Inventário">
         <p class="nav-section-label">Inventário</p>
         <a href="stock.html" class="nav-link">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+            <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
           </svg>
-          Stock
+          <span>Stock</span>
         </a>
-        <a href="caves.html" class="nav-link active">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M9 21H7a2 2 0 0 1-2-2V9.414a1 1 0 0 1 .293-.707l5.414-5.414a1 1 0 0 1 1.414 0l5.414 5.414a1 1 0 0 1 .293.707V19a2 2 0 0 1-2 2h-2"></path>
-            <rect x="9" y="9" width="6" height="12"></rect>
+        <a href="caves.html" class="nav-link active" aria-current="page">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+            <path d="M12 2v20M2 12h20M7 7h10a2 2 0 012 2v6a2 2 0 01-2 2H7a2 2 0 01-2-2V9a2 2 0 012-2z"/>
           </svg>
-          Caves
+          <span>Caves</span>
         </a>
-      </div>
+      </nav>
 
       <div class="sidebar-footer">
-        <div class="user-block">
-          <div class="user-avatar" id="user-avatar">U</div>
-          <div class="user-info">
-            <p class="user-name" id="user-name">Utilizador</p>
-            <p class="user-role">Armazenista</p>
+        <div class="sidebar-user">
+          <div class="sidebar-user-avatar" id="user-avatar">U</div>
+          <div class="sidebar-user-info">
+            <h4 id="user-name">Utilizador</h4>
+            <p>Armazém</p>
           </div>
         </div>
-        <button class="btn btn-ghost btn-sm" onclick="logout()" title="Terminar sessão">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-            <polyline points="16 17 21 12 16 7"></polyline>
-            <line x1="21" y1="12" x2="9" y2="12"></line>
+        <button type="button" class="btn-logout" onclick="logout()" title="Terminar sessão">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="18" height="18" aria-hidden="true">
+            <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/>
           </svg>
-          Sair
+          <span>Sair</span>
         </button>
+        <div class="api-badge offline" id="api-badge" role="status" aria-live="polite">
+          <span class="api-dot" aria-hidden="true"></span>
+          <span id="api-label">API</span>
+        </div>
       </div>
+    </aside>
 
-      <div class="api-badge" title="Estado de ligação da API">
-        <span class="api-status"></span>
-        <span id="api-label">API Conectado</span>
-      </div>
-    </nav>
-
-    <!-- MAIN CONTENT -->
+    <!-- MAIN -->
     <main class="main-content" id="main-content">
-      <div id="toasts" class="toasts-container"></div>
+      <div class="page-container">
+        <div id="toasts" class="toasts-container" role="status" aria-live="polite" aria-atomic="false"></div>
 
-      <!-- Page Header -->
-      <div class="page-header">
-        <div>
-          <h1 class="page-title">Gestão de Caves</h1>
-          <p id="cave-name" class="page-subtitle">Cave A — Organização e localização de vinhos</p>
-        </div>
-      </div>
-
-      <!-- KPI Summary Cards -->
-      <div class="cave-kpi-row">
-        <div class="cave-kpi">
-          <span class="cave-kpi-label">Capacidade Total</span>
-          <span class="cave-kpi-value" id="cave-total-cap">300</span>
-        </div>
-        <div class="cave-kpi">
-          <span class="cave-kpi-label">Ocupadas</span>
-          <span class="cave-kpi-value" id="cave-total-occ">0</span>
-        </div>
-        <div class="cave-kpi">
-          <span class="cave-kpi-label">Disponíveis</span>
-          <span class="cave-kpi-value cave-free-color" id="cave-total-free">300</span>
-        </div>
-        <div class="cave-kpi">
-          <span class="cave-kpi-label">Taxa de Ocupação</span>
-          <span class="cave-kpi-value" id="cave-total-pct">0%</span>
-        </div>
-      </div>
-
-      <!-- Two-Column Layout -->
-      <div class="caves-layout">
-        <!-- LEFT: Cave Sidebar -->
-        <div class="cave-sidebar">
-          <!-- Cave Selector -->
-          <div class="cave-selector">
-            <button class="cave-selector-btn active" onclick="loadCave('A')">Cave A</button>
-            <button class="cave-selector-btn" onclick="loadCave('B')">Cave B</button>
-            <button class="cave-selector-btn" onclick="loadCave('C')">Cave C</button>
+        <header class="page-header">
+          <div>
+            <p class="caves-eyebrow">Armazém · Caves</p>
+            <h1 class="page-title">Gestão de Caves</h1>
+            <p id="cave-name" class="page-subtitle">Cave A — Organização e localização de garrafas</p>
           </div>
+        </header>
 
-          <!-- Cave Info Card -->
-          <div class="cave-info-card">
-            <div class="cave-stat-row">
-              <div class="cave-stat-item">
-                <span class="stat-lbl">Capacidade</span>
-                <span class="stat-val" id="cave-capacity">100</span>
+        <!-- KPIs -->
+        <section class="caves-kpis" aria-label="Resumo de ocupação">
+          <article class="kpi-card stock-kpi">
+            <div class="kpi-icon info-icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/>
+              </svg>
+            </div>
+            <div class="kpi-content">
+              <p class="kpi-label">Capacidade</p>
+              <p class="kpi-value" id="cave-capacity">0</p>
+            </div>
+          </article>
+          <article class="kpi-card stock-kpi">
+            <div class="kpi-icon wine-icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M8 22h8M12 11v11M7 11c0 2.8 2.2 5 5 5s5-2.2 5-5V3H7v8z"/>
+              </svg>
+            </div>
+            <div class="kpi-content">
+              <p class="kpi-label">Ocupadas</p>
+              <p class="kpi-value" id="cave-occupied">0</p>
+            </div>
+          </article>
+          <article class="kpi-card stock-kpi">
+            <div class="kpi-icon success-icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+              </svg>
+            </div>
+            <div class="kpi-content">
+              <p class="kpi-label">Disponíveis</p>
+              <p class="kpi-value" id="cave-free">0</p>
+            </div>
+          </article>
+          <article class="kpi-card stock-kpi">
+            <div class="kpi-icon danger-icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+              </svg>
+            </div>
+            <div class="kpi-content">
+              <p class="kpi-label">Taxa de Ocupação</p>
+              <p class="kpi-value" id="cave-pct">0%</p>
+            </div>
+          </article>
+        </section>
+
+        <!-- TABS -->
+        <div class="cave-tabs" role="tablist" aria-label="Selecionar cave">
+          <button type="button" class="cave-tab active" role="tab" aria-selected="true" data-cave="A" onclick="loadCave('A')">
+            <span>Cave A</span><span class="tab-meta">Principal</span>
+          </button>
+          <button type="button" class="cave-tab" role="tab" aria-selected="false" data-cave="B" onclick="loadCave('B')">
+            <span>Cave B</span><span class="tab-meta">Reserva</span>
+          </button>
+          <button type="button" class="cave-tab" role="tab" aria-selected="false" data-cave="C" onclick="loadCave('C')">
+            <span>Cave C</span><span class="tab-meta">Premium</span>
+          </button>
+        </div>
+
+        <!-- LAYOUT -->
+        <div class="caves-layout">
+
+          <!-- BOARD -->
+          <section class="cave-board" aria-labelledby="cave-board-title">
+            <div class="cave-board-head">
+              <h2 id="cave-board-title" class="cave-board-title">Mapa da Cave</h2>
+              <p class="cave-board-meta" id="cave-grid-meta">— linhas × — colunas · <strong>0/0</strong></p>
+            </div>
+            <div class="cave-grid-wrap">
+              <div id="cave-grid-container">
+                <div style="text-align:center;padding:60px 20px;color:var(--text-muted);font-size:13px;">A carregar mapa…</div>
               </div>
-              <div class="cave-stat-item">
-                <span class="stat-lbl">Ocupação</span>
-                <span class="stat-val" id="cave-occupied">0</span>
+            </div>
+          </section>
+
+          <!-- SIDE PANEL -->
+          <aside class="cave-panel" aria-label="Detalhes e ações">
+
+            <!-- Ocupação -->
+            <div class="cave-card">
+              <p class="cave-card-title">Ocupação</p>
+              <div style="display:flex;align-items:baseline;justify-content:space-between;">
+                <span style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;color:var(--text-primary);" id="cave-pct-big">0%</span>
+                <span style="font-size:11px;color:var(--text-muted);" id="cave-occ-text">0 de 0</span>
+              </div>
+              <div class="occ-progress-track">
+                <div class="occ-progress-fill" id="cave-progress-fill" style="width:0%"></div>
               </div>
             </div>
 
-            <div class="cave-stat-row">
-              <div class="cave-stat-item">
-                <span class="stat-lbl">Disponível</span>
-                <span class="stat-val cave-free-color" id="cave-free">100</span>
-              </div>
-              <div class="cave-stat-item">
-                <span class="stat-lbl">Taxa Ocupação</span>
-                <span class="stat-val" id="cave-pct">0%</span>
+            <!-- Detalhes da posição -->
+            <div class="cave-card">
+              <p class="cave-card-title">Posição Selecionada</p>
+              <div id="slot-info-content">
+                <p class="slot-empty-msg">Clique numa posição da cave para ver os detalhes da garrafa armazenada.</p>
               </div>
             </div>
 
-            <div class="cave-stat-progress">
-              <div class="cave-stat-progress-bar" id="cave-progress-bar"></div>
-            </div>
-          </div>
-
-          <!-- Slot Info Section -->
-          <div class="slot-info-section">
-            <h3>Detalhes da Posição</h3>
-            <div id="slot-info-content" class="slot-info-content">
-              <div class="slot-info-empty">Selecione uma posição para ver detalhes</div>
-            </div>
-          </div>
-
-          <!-- Slot Actions -->
-          <div class="slot-info-section">
-            <h3>Movimentação</h3>
-            <div class="slot-actions" id="slot-actions">
-              <div class="slot-select-group">
-                <select id="slot-wine-select" class="form-select">
-                  <option value="">Selecione um vinho...</option>
+            <!-- Ações -->
+            <div class="cave-card" id="slot-actions-card" style="display:none;">
+              <p class="cave-card-title">Movimentar</p>
+              <div class="slot-actions-group" id="slot-actions">
+                <select id="slot-wine-select" class="form-select" aria-label="Vinho a colocar">
+                  <option value="">Selecionar vinho…</option>
                 </select>
+                <button type="button" class="btn btn-primary btn-sm" onclick="assignWineToSlot()">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14" aria-hidden="true">
+                    <polyline points="12 5 19 12 12 19"/><polyline points="19 12 5 12"/>
+                  </svg>
+                  Colocar nesta posição
+                </button>
+                <button type="button" id="clear-slot-btn" class="btn btn-secondary btn-sm hidden" onclick="clearSlot()">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14" aria-hidden="true">
+                    <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
+                  </svg>
+                  Retirar garrafa
+                </button>
               </div>
-              <button class="btn btn-primary btn-sm" onclick="assignWineToSlot()">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <polyline points="12 5 19 12 12 19"></polyline>
-                  <polyline points="19 12 5 12"></polyline>
-                </svg>
-                Colocar Vinho
-              </button>
-              <button id="clear-slot-btn" class="btn btn-danger btn-sm hidden" onclick="clearSlot()">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <polyline points="3 6 5 6 21 6"></polyline>
-                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                </svg>
-                Retirar Vinho
-              </button>
             </div>
-          </div>
+
+          </aside>
         </div>
 
-        <!-- RIGHT: Cave Grid -->
-        <div id="cave-grid-container" class="cave-grid-container">
-          <!-- Filled by JavaScript -->
+        <!-- LEGEND -->
+        <div class="cave-legend-row" aria-label="Legenda">
+          <strong>Tipos:</strong>
+          <span class="legend-chip tinto"><span class="dot" aria-hidden="true"></span> Tinto</span>
+          <span class="legend-chip branco"><span class="dot" aria-hidden="true"></span> Branco</span>
+          <span class="legend-chip rose"><span class="dot" aria-hidden="true"></span> Rosé</span>
+          <span class="legend-chip espumante"><span class="dot" aria-hidden="true"></span> Espumante</span>
+          <span class="legend-chip porto"><span class="dot" aria-hidden="true"></span> Porto</span>
+          <span class="legend-chip madeira"><span class="dot" aria-hidden="true"></span> Madeira</span>
+          <span class="legend-chip empty"><span class="dot" aria-hidden="true"></span> Posição livre</span>
         </div>
-      </div>
-
-      <!-- Cave Legend -->
-      <div class="cave-legend">
-        <span class="legend-item"><span class="legend-dot" style="background: linear-gradient(135deg, #8B0000, #A52A2A);"></span> Tinto</span>
-        <span class="legend-item"><span class="legend-dot" style="background: linear-gradient(135deg, #D4AF37, #FFE4B5);"></span> Branco</span>
-        <span class="legend-item"><span class="legend-dot" style="background: linear-gradient(135deg, #E75480, #FF69B4);"></span> Rosé</span>
-        <span class="legend-item"><span class="legend-dot" style="background: linear-gradient(135deg, #C9A96E, #FFD700);"></span> Espumante</span>
-        <span class="legend-item"><span class="legend-dot legend-dot-empty"></span> Disponível</span>
       </div>
     </main>
   </div>

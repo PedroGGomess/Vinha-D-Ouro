@@ -1,0 +1,42 @@
+# Ambiente / segredos — NUNCA committar
+.env
+.env.local
+.env.*.local
+.env.save
+.env.bak
+
+# Base de dados local
+vinhadouro.db
+*.sqlite
+*.sqlite3
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.venv/
+venv/
+env/
+
+# Java / Maven
+backend/target/
+backend/.mvn/
+backend/dependency-reduced-pom.xml
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# macOS
+.DS_Store
+
+# Logs
+*.log
+
+# Claude Code worktrees / cache
+.claude/
+
+# Python cache
+__pycache__/

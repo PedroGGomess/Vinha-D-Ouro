@@ -1,8 +1,8 @@
 -- ============================================================
---  Vinha D'Ouro — Setup MySQL Melhorado
+--  the 100's — Setup MySQL Melhorado
 --  Corre este script no MySQL Workbench (File → Open SQL Script)
 --  e depois clica em "Execute" (raio ⚡)
---  Inclui: clientes, provas, caves, movimentos_stock e muito mais!
+--  Inclui: clientes, caves, movimentos_stock e muito mais!
 -- ============================================================
 
 -- 1. Criar a base de dados (se ainda não existir)
@@ -130,36 +130,7 @@ CREATE TABLE IF NOT EXISTS itens_venda (
   COMMENT = 'Items individuais de cada venda'
 ) ENGINE=InnoDB;
 
--- 10. Tabela de Provas (eventos de prova de vinho)
-CREATE TABLE IF NOT EXISTS provas (
-  id              INT AUTO_INCREMENT PRIMARY KEY,
-  nome            VARCHAR(200) NOT NULL,
-  data_evento     DATETIME NOT NULL,
-  descricao       TEXT,
-  max_participantes INT DEFAULT 20,
-  preco_pessoa    DECIMAL(10,2) DEFAULT 0,
-  vinho_ids       JSON COMMENT 'Array de IDs de vinhos: [1,2,3]',
-  ativo           TINYINT(1) DEFAULT 1,
-  criado_em       DATETIME DEFAULT CURRENT_TIMESTAMP,
-  COMMENT = 'Eventos de prova de vinho'
-) ENGINE=InnoDB;
-
--- 11. Tabela de Participantes de Provas
-CREATE TABLE IF NOT EXISTS participantes_prova (
-  id         INT AUTO_INCREMENT PRIMARY KEY,
-  prova_id   INT NOT NULL,
-  pessoa_id  INT NOT NULL,
-  cliente_id INT,
-  estado     ENUM('confirmado','pendente','cancelado') DEFAULT 'pendente',
-  data_inscricao DATETIME DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (prova_id) REFERENCES provas(id) ON DELETE CASCADE,
-  FOREIGN KEY (pessoa_id) REFERENCES pessoas(id) ON DELETE CASCADE,
-  FOREIGN KEY (cliente_id) REFERENCES clientes(id),
-  UNIQUE KEY uq_prova_pessoa (prova_id, pessoa_id),
-  COMMENT = 'Inscrições em provas de vinho'
-) ENGINE=InnoDB;
-
--- 12. Tabela de Movimentos de Stock
+-- 10. Tabela de Movimentos de Stock
 CREATE TABLE IF NOT EXISTS movimentos_stock (
   id           INT AUTO_INCREMENT PRIMARY KEY,
   vinho_id     INT NOT NULL,
@@ -203,14 +174,6 @@ CREATE INDEX idx_vendas_estado ON vendas(estado);
 -- Itens de Venda
 CREATE INDEX idx_itens_venda_venda_id ON itens_venda(venda_id);
 CREATE INDEX idx_itens_venda_vinho_id ON itens_venda(vinho_id);
-
--- Provas
-CREATE INDEX idx_provas_data_evento ON provas(data_evento);
-CREATE INDEX idx_provas_ativo ON provas(ativo);
-
--- Participantes Prova
-CREATE INDEX idx_participantes_prova_prova_id ON participantes_prova(prova_id);
-CREATE INDEX idx_participantes_prova_pessoa_id ON participantes_prova(pessoa_id);
 
 -- Movimentos Stock
 CREATE INDEX idx_movimentos_stock_vinho_id ON movimentos_stock(vinho_id);
@@ -300,7 +263,10 @@ INSERT IGNORE INTO funcionarios (id, pessoa_id, cargo, salario, nivel, ativo) VA
 (3, 3, 'Armazenista',       1300.00, 'FUNCIONARIO', 1),
 (4, 4, 'Assistente Vendas', 1350.00, 'FUNCIONARIO', 1);
 
--- Utilizadores (passwords são texto simples para demo; em produção usa bcrypt)
+-- Utilizadores
+-- Estas linhas guardam passwords em plaintext ("1234") apenas para o setup inicial.
+-- No primeiro login bem-sucedido, server.py faz upgrade automático para hash pbkdf2:sha256.
+-- Em produção, usar diretamente generate_password_hash() (werkzeug) ou bcrypt.
 INSERT IGNORE INTO utilizadores (id, pessoa_id, username, password_hash, role, ativo) VALUES
 (1, 1, 'gerente', '1234', 'GERENTE',     1),
 (2, 2, 'loja',    '1234', 'FUNCIONARIO', 1),
@@ -311,7 +277,7 @@ INSERT IGNORE INTO utilizadores (id, pessoa_id, username, password_hash, role, a
 INSERT IGNORE INTO caves (id, nome, localizacao, capacidade, temperatura_ideal, humidade_ideal, notas) VALUES
 (1, 'Cave Principal',     'Subsolo Zona A',    500, 12.5, 65.0, 'Cave climatizada com controlo total'),
 (2, 'Cave Secundária',    'Subsolo Zona B',    300, 12.5, 65.0, 'Cave para stock de longa duração'),
-(3, 'Montra Sala de Prova','Piso 1',          50,  16.0, 55.0, 'Ambiente para apresentações e provas');
+(3, 'Montra Loja',         'Piso 1',          50,  16.0, 55.0, 'Ambiente expositor para vinhos premium em destaque');
 
 -- Vinhos (catálogo ampliado com 20+ vinhos)
 INSERT IGNORE INTO vinhos (id, nome, tipo, regiao, produtor, ano_colheita, preco, quantidade, stock_minimo, descricao, ativo) VALUES
@@ -337,13 +303,6 @@ INSERT IGNORE INTO vinhos (id, nome, tipo, regiao, produtor, ano_colheita, preco
 (20, 'Casal Mendes Vinho Verde',        'Branco',    'Vinho Verde',  'Casal Mendes',             2023, 5.50,  200, 30, 'Leve e refrescante, com notas de maçã verde e cítricos. O melhor custo-benefício para consumo diário.', 1),
 (21, 'Herdade do Rocim Trincadeira',    'Tinto',     'Alentejo',     'Herdade do Rocim',         2019, 14.50,  75,  12, 'Trincadeira puro com elegância. Acidez vibrante e taninos estruturados. Ótima evolução em garrafa.', 1),
 (22, 'Adega de Borba Garrafeira',       'Tinto',     'Alentejo',     'Adega de Borba',           2015, 25.00,  22,  6,  'Vinho de guarda com 8 anos. Terciários complexos, estrutura fina e final sedoso e persistente.', 1);
-
--- Provas (eventos de prova)
-INSERT IGNORE INTO provas (id, nome, data_evento, descricao, max_participantes, preco_pessoa, vinho_ids, ativo) VALUES
-(1, 'Prova Douro Premium',           '2026-04-15 18:00:00', 'Seleção de 5 tintos do Douro de excelência, acompanhados de queijos da região.', 15, 45.00, '[1, 2, 7, 13, 18]', 1),
-(2, 'Brancos Portugueses de Qualidade','2026-04-22 19:00:00', 'Descoberta dos melhores brancos: Vinho Verde, Dão, Bairrada e Douro.',         20, 35.00, '[4, 5, 9, 15, 20]', 1),
-(3, 'Explorando Alentejo',           '2026-05-10 18:30:00', 'Os vinhos mais importantes da região: Espumantes, Tintos e Moscatéis.',        25, 50.00, '[3, 10, 11, 14, 21]', 1),
-(4, 'Espumantes Lusitanos',          '2026-05-20 18:00:00', 'Masterclass sobre espumantes portugueses com expert internacional.',          12, 55.00, '[19, 6]', 1);
 
 -- Vendas de exemplo
 INSERT IGNORE INTO vendas (id, codigo, pessoa_id, cliente_id, funcionario_id, total, metodo_pagamento, estado, criado_em) VALUES
@@ -378,17 +337,6 @@ INSERT IGNORE INTO itens_venda (venda_id, vinho_id, quantidade, preco_unit, subt
 (8, 3,  2,  18.90,  37.80),
 (8, 12, 1,  17.50,  17.50),
 (8, 6,  1,  12.50,  12.50);
-
--- Participantes em provas
-INSERT IGNORE INTO participantes_prova (id, prova_id, pessoa_id, cliente_id, estado, data_inscricao) VALUES
-(1, 1, 5, 1, 'confirmado',  DATE_SUB(NOW(), INTERVAL 10 DAY)),
-(2, 1, 6, 2, 'confirmado',  DATE_SUB(NOW(), INTERVAL 9 DAY)),
-(3, 1, 7, 3, 'pendente',    DATE_SUB(NOW(), INTERVAL 8 DAY)),
-(4, 2, 8, 4, 'confirmado',  DATE_SUB(NOW(), INTERVAL 7 DAY)),
-(5, 2, 5, 1, 'confirmado',  DATE_SUB(NOW(), INTERVAL 6 DAY)),
-(6, 3, 6, 2, 'confirmado',  DATE_SUB(NOW(), INTERVAL 5 DAY)),
-(7, 3, 7, 3, 'cancelado',   DATE_SUB(NOW(), INTERVAL 4 DAY)),
-(8, 4, 8, 4, 'confirmado',  DATE_SUB(NOW(), INTERVAL 2 DAY));
 
 -- Movimentos de stock
 INSERT IGNORE INTO movimentos_stock (id, vinho_id, tipo, quantidade, motivo, funcionario_id, criado_em) VALUES

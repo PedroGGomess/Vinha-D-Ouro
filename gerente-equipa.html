@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Gestão de Equipa — Vinha D'Ouro">
+  <meta name="description" content="Gestão de Equipa — the 100's">
   <meta name="theme-color" content="#050203">
-  <title>Gestão de Equipa — Vinha D'Ouro</title>
+  <title>Gestão de Equipa — the 100's</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
@@ -25,14 +25,8 @@
         </svg>
       </button>
       <div class="sidebar-brand">
-        <div class="sidebar-brand-logo">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M8 22h8M12 11v11M7 11c0 2.8 2.2 5 5 5s5-2.2 5-5V3H7v8z"/>
-            <path d="M7 8h10"/>
-          </svg>
-        </div>
         <div class="sidebar-brand-text">
-          <h2>Vinha D'Ouro</h2>
+          <img src="assets/logo-the100s.png" alt="the 100's" class="sidebar-logo">
           <p class="brand-subtitle">GERENTE</p>
         </div>
       </div>
@@ -133,18 +127,21 @@
     <main class="main-content" id="main-content">
       <div class="page-container">
         <!-- Page Header -->
-        <header class="page-header">
+        <header class="page-header dashboard-header">
           <div>
+            <p class="dashboard-eyebrow">Gerência · Equipa</p>
             <h1 class="page-title">Gestão de Equipa</h1>
-            <p class="page-subtitle">Gerir colaboradores, cargos e níveis de acesso</p>
+            <p class="page-subtitle">Colaboradores, cargos e níveis de acesso ao sistema.</p>
           </div>
-          <button class="btn btn-primary" onclick="openAddFuncModal()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
-              <line x1="12" y1="5" x2="12" y2="19"/>
-              <line x1="5" y1="12" x2="19" y2="12"/>
-            </svg>
-            Novo Funcionário
-          </button>
+          <div class="dashboard-actions">
+            <button class="btn btn-gold" onclick="openAddFuncModal()" aria-label="Novo funcionário">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" aria-hidden="true">
+                <line x1="12" y1="5" x2="12" y2="19"/>
+                <line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+              Novo Funcionário
+            </button>
+          </div>
         </header>
 
         <!-- Team Grid -->
@@ -242,7 +239,7 @@
   </div>
 
   <!-- Toast Container -->
-  <div id="toasts" role="region" aria-label="Notificações"></div>
+  <div id="toasts" role="status" aria-live="polite" aria-atomic="false" aria-label="Notificações"></div>
 
   <script src="app.js"></script>
 </body>
