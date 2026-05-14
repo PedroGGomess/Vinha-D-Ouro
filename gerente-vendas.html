@@ -155,29 +155,54 @@
           </div>
         </div>
 
-        <!-- Comparison Grid -->
-        <div class="comparison-grid">
-          <div class="table-card">
-            <div class="card-header">
-              <h3 class="card-title">Vendas da Semana</h3>
-              <p class="card-subtitle">Período semanal em curso</p>
+        <!-- KPI Grid premium (vendas) -->
+        <div class="kpi-grid kpi-grid-main">
+          <article class="kpi-card kpi-card-pro">
+            <div class="kpi-card-header">
+              <span class="kpi-label">Vendas Hoje</span>
+              <span class="kpi-icon-mini info-tone" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+              </span>
             </div>
-            <div class="card-content">
-              <p class="stat-value" id="sales-this-week">0</p>
-              <p class="stat-label">vendas concluídas com sucesso</p>
+            <p class="kpi-value" id="hv-kpi-hoje">0</p>
+            <p class="kpi-trend" id="hv-kpi-hoje-eur">0,00 €</p>
+          </article>
+          <article class="kpi-card kpi-card-pro">
+            <div class="kpi-card-header">
+              <span class="kpi-label">Esta Semana</span>
+              <span class="kpi-icon-mini gold-tone" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+              </span>
             </div>
-          </div>
+            <p class="kpi-value" id="hv-kpi-semana">0,00 €</p>
+            <p class="kpi-trend" id="hv-kpi-semana-n">0 vendas</p>
+          </article>
+          <article class="kpi-card kpi-card-pro">
+            <div class="kpi-card-header">
+              <span class="kpi-label">Este Mês</span>
+              <span class="kpi-icon-mini success-tone" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              </span>
+            </div>
+            <p class="kpi-value" id="hv-kpi-mes">0,00 €</p>
+            <p class="kpi-trend" id="hv-kpi-mes-n">0 vendas</p>
+          </article>
+          <article class="kpi-card kpi-card-pro">
+            <div class="kpi-card-header">
+              <span class="kpi-label">Ticket Médio</span>
+              <span class="kpi-icon-mini wine-tone" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M8 22h8M12 11v11M7 11c0 2.8 2.2 5 5 5s5-2.2 5-5V3H7v8z"/></svg>
+              </span>
+            </div>
+            <p class="kpi-value" id="hv-kpi-ticket">0,00 €</p>
+            <p class="kpi-trend" id="hv-kpi-total">Total: 0 vendas</p>
+          </article>
+        </div>
 
-          <div class="table-card">
-            <div class="card-header">
-              <h3 class="card-title">Volume Total</h3>
-              <p class="card-subtitle">Desde o início</p>
-            </div>
-            <div class="card-content">
-              <p class="stat-value" id="total-transactions">0</p>
-              <p class="stat-label">transações registadas</p>
-            </div>
-          </div>
+        <!-- Compatibility (mantém IDs antigos, escondidos) -->
+        <div style="display:none;">
+          <span id="sales-this-week">0</span>
+          <span id="total-transactions">0</span>
         </div>
 
         <!-- Vendas Table Card -->

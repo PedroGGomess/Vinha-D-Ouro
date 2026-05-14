@@ -71,7 +71,7 @@ CREATE TABLE IF NOT EXISTS utilizadores (
 CREATE TABLE IF NOT EXISTS vinhos (
   id           INT AUTO_INCREMENT PRIMARY KEY,
   nome         VARCHAR(200) NOT NULL,
-  tipo         ENUM('Tinto','Branco','Rosé','Espumante','Porto') DEFAULT 'Tinto',
+  tipo         VARCHAR(20) DEFAULT 'Tinto',
   regiao       VARCHAR(100),
   produtor     VARCHAR(200),
   ano_colheita INT,

@@ -262,6 +262,92 @@
       gap: 18px;
     }
 
+    /* Secções por tipo (modo "Todos") */
+    .pos-section { margin-bottom: 32px; }
+    .pos-section:last-child { margin-bottom: 0; }
+    .pos-section-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      padding-bottom: 12px;
+      margin-bottom: 16px;
+      border-bottom: 1px solid rgba(201,169,110,0.18);
+      position: relative;
+    }
+    .pos-section-head::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      width: 64px;
+      height: 1px;
+      background: linear-gradient(90deg, #C9A96E, transparent);
+    }
+    .pos-section-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      font-weight: 600;
+      color: #F5F0E8;
+      letter-spacing: 0.5px;
+    }
+    .pos-section-count {
+      font-size: 11px;
+      color: #9B9590;
+      letter-spacing: 0.05em;
+      font-variant-numeric: tabular-nums;
+    }
+    .pos-section-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 18px;
+    }
+
+    /* POS quick-stats strip (KPIs do dia) */
+    .pos-stats {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      padding: 12px 18px;
+      background: linear-gradient(180deg, rgba(58,50,42,0.55), rgba(28,24,20,0.55));
+      border: 1px solid rgba(201,169,110,0.14);
+      border-radius: 14px;
+      margin-bottom: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+    .pos-stats::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 16px; right: 16px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(201,169,110,0.35), transparent);
+    }
+    .pos-stat {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      flex: 1;
+      min-width: 100px;
+      position: relative;
+    }
+    .pos-stat + .pos-stat { padding-left: 14px; border-left: 1px solid rgba(201,169,110,0.1); }
+    .pos-stat-label {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #B89060;
+    }
+    .pos-stat-value {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 18px;
+      font-weight: 600;
+      color: #F5F0E8;
+      letter-spacing: -0.01em;
+      font-variant-numeric: tabular-nums;
+    }
+    .pos-stat-value.gold { color: #E0C992; }
+
     /* PRODUCT CARD — Premium curated tiles (The100s style) */
     .wine-tile {
       border-radius: 14px;
@@ -734,35 +820,56 @@
     .pos-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.7);
-      backdrop-filter: blur(8px);
+      background: rgba(8, 6, 5, 0.78);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       display: flex;
       align-items: center;
       justify-content: center;
       z-index: 9999;
       padding: 20px;
       opacity: 1;
-      transition: opacity 0.2s ease;
+      transition: opacity 0.28s cubic-bezier(.2,.8,.2,1);
+      animation: posOverlayIn 0.28s cubic-bezier(.2,.8,.2,1);
+    }
+    @keyframes posOverlayIn {
+      from { opacity: 0; backdrop-filter: blur(0); -webkit-backdrop-filter: blur(0); }
+      to   { opacity: 1; }
     }
 
     .pos-overlay.hidden {
       opacity: 0;
       pointer-events: none;
+      animation: none;
     }
 
     .pos-modal {
-      background: #3A322A;
-      border: 1px solid rgba(201, 169, 110, 0.12);
+      background: linear-gradient(180deg, #3A322A 0%, #2A2622 100%);
+      border: 1px solid rgba(201, 169, 110, 0.22);
       border-radius: 16px;
       width: 100%;
       max-width: 540px;
       max-height: 85vh;
       display: flex;
       flex-direction: column;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 24px 72px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(201,169,110,0.05), inset 0 1px 0 rgba(255,255,255,0.05);
       transform: scale(1);
-      transition: transform 0.2s ease;
+      transition: transform 0.32s cubic-bezier(.34,1.56,.64,1);
       overflow: hidden;
+      position: relative;
+      animation: posModalIn 0.4s cubic-bezier(.34,1.56,.64,1);
+    }
+    @keyframes posModalIn {
+      from { opacity: 0; transform: scale(0.92) translateY(10px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .pos-modal::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 24px; right: 24px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(201,169,110,0.5), transparent);
+      pointer-events: none;
     }
 
     .pos-overlay.hidden .pos-modal {
@@ -1105,16 +1212,100 @@
       font-family: 'Inter', sans-serif;
     }
 
+    /* Returns modal — premium */
+    .returns-search-wrap {
+      position: relative;
+      margin-bottom: 14px;
+    }
+    .returns-search-wrap svg {
+      position: absolute;
+      left: 14px; top: 50%; transform: translateY(-50%);
+      color: #9B9590;
+      pointer-events: none;
+    }
+    .returns-search-input {
+      padding-left: 40px !important;
+      width: 100%;
+    }
+    .returns-help {
+      font-size: 11.5px;
+      color: #9B9590;
+      letter-spacing: 0.02em;
+      margin-bottom: 12px;
+    }
+    .returns-list {
+      max-height: 320px;
+      overflow-y: auto;
+      padding-right: 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .returns-empty {
+      text-align: center;
+      padding: 40px 16px;
+      color: #9B9590;
+      font-size: 13px;
+    }
+
+    .returns-confirm {
+      margin-top: 18px;
+      padding-top: 18px;
+      border-top: 1px solid rgba(201,169,110,0.18);
+      animation: returnsConfirmIn 0.4s cubic-bezier(.2,.8,.2,1);
+    }
+    @keyframes returnsConfirmIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .returns-confirm-head { margin-bottom: 12px; }
+    .returns-confirm-eyebrow {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #B89060;
+      margin-bottom: 4px;
+      display: block;
+    }
+    .returns-confirm-head h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 18px;
+      font-weight: 600;
+      color: #F5F0E8;
+      letter-spacing: 0.3px;
+    }
+    .returns-items {
+      background: rgba(20,16,12,0.4);
+      border: 1px solid rgba(201,169,110,0.12);
+      border-radius: 8px;
+      padding: 10px 14px;
+    }
+
     /* Returns modal extras */
     .return-sale-item {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 10px 12px;
-      background: #2C2C2C;
-      border-radius: 8px;
-      margin-bottom: 8px;
-      font-size: 0.8rem;
+      gap: 12px;
+      padding: 12px 14px;
+      background: rgba(20,16,12,0.45);
+      border: 1px solid rgba(201,169,110,0.12);
+      border-radius: 10px;
+      margin-bottom: 0;
+      font-size: 13px;
+      cursor: pointer;
+      transition: border-color .15s, background-color .15s, transform .15s;
+    }
+    .return-sale-item:hover {
+      border-color: rgba(201,169,110,0.4);
+      background: rgba(201,169,110,0.06);
+      transform: translateX(2px);
+    }
+    .return-sale-item.selected {
+      border-color: var(--gold, #C9A96E);
+      background: rgba(201,169,110,0.1);
+      box-shadow: 0 0 0 1px rgba(201,169,110,0.3);
     }
 
     .return-sale-item .rsi-info {
@@ -1242,6 +1433,26 @@
 
     <!-- ═══ LEFT: PRODUCTS ═══ -->
     <div class="products-panel">
+      <!-- Quick stats do dia (vendas, ticket, top categoria) -->
+      <div class="pos-stats" aria-label="Resumo do dia">
+        <div class="pos-stat">
+          <span class="pos-stat-label">Vendas Hoje</span>
+          <span class="pos-stat-value" id="pos-stat-vendas">0</span>
+        </div>
+        <div class="pos-stat">
+          <span class="pos-stat-label">Receita Hoje</span>
+          <span class="pos-stat-value gold" id="pos-stat-receita">0,00 €</span>
+        </div>
+        <div class="pos-stat">
+          <span class="pos-stat-label">Ticket Médio</span>
+          <span class="pos-stat-value" id="pos-stat-ticket">0,00 €</span>
+        </div>
+        <div class="pos-stat">
+          <span class="pos-stat-label">Top Categoria</span>
+          <span class="pos-stat-value" id="pos-stat-top">—</span>
+        </div>
+      </div>
+
       <div class="cat-strip" role="tablist" aria-label="Filtrar por tipo de vinho">
         <button class="cat-btn pos-tab active" data-filter="" onclick="filterByType('')" role="tab" aria-selected="true">Todos</button>
         <button class="cat-btn pos-tab" data-filter="Tinto" onclick="filterByType('Tinto')" role="tab" aria-selected="false">Tinto</button>
@@ -1419,31 +1630,46 @@
 
   <!-- ═══ RETURNS MODAL ═══ -->
   <div class="pos-overlay hidden" id="returns-modal" onclick="closeReturns()">
-    <div class="pos-modal" onclick="event.stopPropagation()">
+    <div class="pos-modal" onclick="event.stopPropagation()" style="max-width:640px;">
       <div class="pos-modal-head">
-        <h2>Devoluções</h2>
+        <div>
+          <h2 style="margin-bottom:2px;">Devoluções</h2>
+          <p style="font-size:11px;color:#9B9590;letter-spacing:0.04em;">Repõe stock e cancela a venda original.</p>
+        </div>
         <button class="pos-modal-close" onclick="closeReturns()">✕</button>
       </div>
       <div class="pos-modal-body">
-        <p style="color:#9B9590;font-size:0.8rem;margin-bottom:14px;">Selecione uma venda para devolver:</p>
-        <div id="returns-list">
-          <p style="color:#9B9590;text-align:center;padding:24px;font-size:0.85rem;">A carregar vendas...</p>
+        <!-- Pesquisa -->
+        <div class="returns-search-wrap">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          <input type="search" id="returns-search" class="co-input returns-search-input" placeholder="Pesquisar código, cliente, produto…" autocomplete="off" aria-label="Pesquisar venda para devolver">
         </div>
-        <!-- Confirm return sub-section (hidden by default) -->
-        <div id="return-confirm" style="display:none;margin-top:16px;">
-          <div class="co-section">
+
+        <p class="returns-help">Toca numa venda para ver os detalhes. Podes devolver completa ou parcial.</p>
+
+        <div id="returns-list" class="returns-list">
+          <p class="returns-empty">A carregar vendas…</p>
+        </div>
+
+        <!-- Confirm return -->
+        <div id="return-confirm" style="display:none;" class="returns-confirm">
+          <header class="returns-confirm-head">
+            <span class="returns-confirm-eyebrow">A devolver</span>
             <h3 id="return-confirm-title">Devolver Venda</h3>
-            <div id="return-confirm-items"></div>
-            <div class="co-field" style="margin-top:12px;">
-              <label class="co-label">Motivo da Devolução</label>
-              <textarea id="return-reason" class="co-input" placeholder="Descreva o motivo..." rows="2" style="resize:vertical;"></textarea>
-            </div>
+          </header>
+          <div id="return-confirm-items" class="returns-items"></div>
+          <div class="co-field" style="margin-top:14px;">
+            <label class="co-label">Motivo (opcional)</label>
+            <textarea id="return-reason" class="co-input" placeholder="ex.: Cliente desistiu, garrafa partida…" rows="2" style="resize:vertical;"></textarea>
           </div>
         </div>
       </div>
       <div class="pos-modal-foot">
         <button class="mbtn mbtn-ghost" onclick="closeReturns()">Fechar</button>
         <button class="mbtn mbtn-gold" id="confirm-return-btn" onclick="confirmReturn()" style="display:none;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right:6px;vertical-align:-2px;"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 00-4-4H4"/></svg>
           Confirmar Devolução
         </button>
       </div>

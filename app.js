@@ -426,17 +426,24 @@ function toast(msg, type = 'success', ms = 3500) {
   const t = document.createElement('div');
   t.className = `toast toast-${type}`;
   t.setAttribute('role', type === 'error' ? 'alert' : 'status');
+  t.style.setProperty('--toast-dur', ms + 'ms');
   // Ícone como innerHTML (estático, sem dados externos), texto via textContent (seguro contra XSS)
   const iconWrap = document.createElement('span');
   iconWrap.className = 'toast-icon';
-  iconWrap.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">${icons[type] || icons.info}</svg>`;
+  iconWrap.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">${icons[type] || icons.info}</svg>`;
   const txt = document.createElement('span');
   txt.textContent = String(msg);
+  txt.style.flex = '1';
   t.appendChild(iconWrap);
   t.appendChild(txt);
   c.appendChild(t);
+  // Permitir clicar para fechar
+  t.addEventListener('click', () => {
+    t.classList.remove('show');
+    setTimeout(() => t.remove(), 320);
+  });
   requestAnimationFrame(() => t.classList.add('show'));
-  setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 300); }, ms);
+  setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 320); }, ms);
 }
 
 /* ══════════════════════════════════════════════
@@ -448,6 +455,27 @@ const fmt = {
   date: s => { if (!s) return '—'; try { return new Date(s).toLocaleDateString('pt-PT', { day: '2-digit', month: '2-digit', year: 'numeric' }); } catch { return s; } },
   dt:   s => { if (!s) return '—'; try { return new Date(s).toLocaleString('pt-PT', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }); } catch { return s; } },
 };
+
+/** Anima um número de 0 ao valor target ao longo de duration ms. */
+function countUp(el, target, opts = {}) {
+  if (!el) return;
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    el.textContent = opts.format ? opts.format(target) : String(target);
+    return;
+  }
+  const duration = opts.duration ?? 900;
+  const fmtFn = opts.format || (v => String(Math.round(v)));
+  const start = performance.now();
+  function tick(now) {
+    const t = Math.min(1, (now - start) / duration);
+    const eased = 1 - Math.pow(1 - t, 3); // easeOutCubic
+    const v = target * eased;
+    el.textContent = fmtFn(v);
+    if (t < 1) requestAnimationFrame(tick);
+    else el.textContent = fmtFn(target);
+  }
+  requestAnimationFrame(tick);
+}
 
 /** Escapa HTML para uso seguro em templates literais (defesa contra XSS em dados da API). */
 function escHtml(v) {
@@ -847,13 +875,14 @@ async function loadDashboard() {
   let data;
   try { data = await apiFetch('/dashboard'); } catch { data = FALLBACK.dashboard; }
 
-  const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
-  set('kpi-receita', fmt.eur(data.receitaTotal));
-  set('kpi-vendas', data.vendas);
-  set('kpi-lucro', fmt.eur(data.lucroLiquido));
-  set('kpi-ticket', fmt.eur(data.ticketMedio));
-  set('kpi-critico', data.stockCritico);
-  set('kpi-stock', fmt.eur(data.valorStock));
+  // KPIs com count-up animado
+  const eurFmt = v => fmt.eur(v);
+  countUp(document.getElementById('kpi-receita'), data.receitaTotal || 0, { format: eurFmt });
+  countUp(document.getElementById('kpi-vendas'),  data.vendas || 0);
+  countUp(document.getElementById('kpi-lucro'),   data.lucroLiquido || 0, { format: eurFmt });
+  countUp(document.getElementById('kpi-ticket'),  data.ticketMedio || 0, { format: eurFmt });
+  countUp(document.getElementById('kpi-critico'), data.stockCritico || 0);
+  countUp(document.getElementById('kpi-stock'),   data.valorStock || 0, { format: eurFmt });
 
   drawBarChart('chart-vendas', data.vendasLabels || ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Hj'], data.vendasSemanais || [0, 0, 0, 0, 0, 0, 0], '#C9A96E');
   drawLineChart('chart-receita', ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'], [120, 185, 240, 180, 310, 420], '#A83D4A');
@@ -867,38 +896,61 @@ async function loadDashboard() {
   let vinhos;
   try { vinhos = await apiFetch('/vinhos'); } catch { vinhos = FALLBACK.vinhos; }
 
-  const topWinesTbody = document.getElementById('dash-top-wines');
-  if (topWinesTbody) {
+  // Top vinhos — premium ranking list
+  const topWinesEl = document.getElementById('dash-top-wines');
+  if (topWinesEl) {
     const sorted = [...vinhos].sort((a, b) => (b.preco * b.quantidade) - (a.preco * a.quantidade)).slice(0, 5);
-    topWinesTbody.innerHTML = sorted.map((v, i) => `<tr>
-      <td><span style="font-size:11px;color:var(--text-muted);margin-right:6px;font-family:var(--font-display);">${i + 1}</span><span style="font-weight:600;font-size:13px;">${escHtml(v.nome)}</span></td>
-      <td><span class="badge badge-muted" style="font-size:10px;">${escHtml(v.tipo || '—')}</span></td>
-      <td><span style="font-family:var(--font-display);font-size:13px;font-weight:700;color:var(--text-gold);">${escHtml(fmt.eur(v.preco))}</span></td>
-      <td>${stockBar(v.quantidade || 0, 100)}</td>
-    </tr>`).join('');
+    const maxValor = Math.max(...sorted.map(v => (v.preco || 0) * (v.quantidade || 0)), 1);
+    const typeColors = { Tinto:'#8B3A44', Branco:'#D4AF37', 'Rosé':'#E75480', Espumante:'#C9A96E', Porto:'#5A2A22', Madeira:'#C68A2E' };
+    topWinesEl.innerHTML = `<ol class="rank-list">${sorted.map((v, i) => {
+      const valor = (v.preco || 0) * (v.quantidade || 0);
+      const pct = Math.round((valor / maxValor) * 100);
+      const color = typeColors[v.tipo] || 'var(--gold)';
+      return `<li class="rank-item" style="animation-delay:${i * 70}ms">
+        <span class="rank-num">${i + 1}</span>
+        <span class="rank-bar" style="--rank-color:${color}">
+          <span class="rank-fill" style="width:${pct}%"></span>
+        </span>
+        <div class="rank-body">
+          <div class="rank-line">
+            <span class="rank-name">${escHtml(v.nome)}</span>
+            <span class="rank-value">${escHtml(fmt.eur(valor))}</span>
+          </div>
+          <div class="rank-meta">
+            <span class="rank-tag">${escHtml(v.tipo || '—')}</span>
+            <span class="rank-stock">${v.quantidade || 0} un. · ${escHtml(fmt.eur(v.preco))}</span>
+          </div>
+        </div>
+      </li>`;
+    }).join('')}</ol>`;
   }
 
-  // Stock alerts
+  // Stock alerts — premium alert cards
   const alertsEl = document.getElementById('dash-stock-alerts');
   if (alertsEl) {
     const critical = vinhos.filter(v => (v.quantidade || 0) < 10).sort((a, b) => (a.quantidade || 0) - (b.quantidade || 0));
     if (!critical.length) {
-      alertsEl.innerHTML = `<div style="display:flex;align-items:center;gap:10px;padding:14px;background:var(--success-bg);border:1px solid var(--success-border);border-radius:var(--r-md);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg><span style="font-size:13px;color:var(--success);">Todos os vinhos com stock adequado</span></div>`;
+      alertsEl.innerHTML = `<div class="alert-clean">
+        <div class="alert-clean-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <div>
+          <p class="alert-clean-title">Tudo em ordem</p>
+          <p class="alert-clean-sub">Todos os vinhos têm stock adequado.</p>
+        </div>
+      </div>`;
     } else {
-      alertsEl.innerHTML = critical.slice(0, 6).map(v => {
+      alertsEl.innerHTML = `<ul class="alert-list">${critical.slice(0, 6).map((v, i) => {
         const qty = v.quantidade || 0;
-        const cls = qty === 0 ? 'danger' : 'warning';
-        const icon = qty === 0
-          ? '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>'
-          : '<path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/>';
-        return `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border-subtle);">
-          <div style="display:flex;align-items:center;gap:8px;">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--${cls})" stroke-width="2">${icon}</svg>
-            <span style="font-size:13px;font-weight:500;">${escHtml(v.nome)}</span>
+        const isOut = qty === 0;
+        return `<li class="alert-item ${isOut ? 'alert-out' : 'alert-low'}" style="animation-delay:${i * 60}ms">
+          <span class="alert-dot" aria-hidden="true"></span>
+          <div class="alert-body">
+            <span class="alert-name">${escHtml(v.nome)}</span>
+            <span class="alert-meta">${escHtml(v.tipo || '—')} · ${escHtml(v.regiao || '—')}</span>
           </div>
-          <span class="badge badge-${cls}" style="font-size:11px;">${qty === 0 ? 'Esgotado' : `${qty} un.`}</span>
-        </div>`;
-      }).join('');
+          <span class="alert-qty ${isOut ? 'qty-out' : 'qty-low'}">${isOut ? 'ESGOTADO' : qty + ' un.'}</span>
+        </li>`;
+      }).join('')}</ul>
+      <a href="stock.html" class="alert-link">Ver inventário completo →</a>`;
     }
   }
 
@@ -994,11 +1046,40 @@ async function loadVendas() {
   const el = document.getElementById('vendas-count');
   if (el) el.textContent = `${allVendas.length} transação(ões) registada(s)`;
 
-  // Update comparison cards
-  const thisWeekTotal = allVendas.reduce((s, v) => s + (v.total || 0), 0);
-  const setC = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
-  setC('sales-this-week', fmt.eur(thisWeekTotal));
-  setC('total-transactions', allVendas.length);
+  // ── KPIs por período ──
+  const concluded = allVendas.filter(v => (v.status || v.estado) === 'CONCLUIDA');
+  const now = new Date();
+  const todayStr = now.toISOString().slice(0, 10);
+  const monStart = new Date(now); monStart.setDate(now.getDate() - ((now.getDay() + 6) % 7)); monStart.setHours(0,0,0,0);
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+
+  const inPeriod = (start) => concluded.filter(v => {
+    const d = new Date(v.dataVenda || 0);
+    return d >= start;
+  });
+  const ofToday = concluded.filter(v => String(v.dataVenda || '').slice(0,10) === todayStr);
+  const ofWeek  = inPeriod(monStart);
+  const ofMonth = inPeriod(monthStart);
+
+  const sumT = arr => arr.reduce((s, v) => s + (+v.total || 0), 0);
+  const totHoje = sumT(ofToday);
+  const totSem = sumT(ofWeek);
+  const totMes = sumT(ofMonth);
+  const ticketMed = concluded.length ? sumT(concluded) / concluded.length : 0;
+
+  const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+  countUp(document.getElementById('hv-kpi-hoje'), ofToday.length);
+  set('hv-kpi-hoje-eur', fmt.eur(totHoje));
+  countUp(document.getElementById('hv-kpi-semana'), totSem, { format: fmt.eur });
+  set('hv-kpi-semana-n', `${ofWeek.length} venda${ofWeek.length === 1 ? '' : 's'}`);
+  countUp(document.getElementById('hv-kpi-mes'), totMes, { format: fmt.eur });
+  set('hv-kpi-mes-n', `${ofMonth.length} venda${ofMonth.length === 1 ? '' : 's'}`);
+  countUp(document.getElementById('hv-kpi-ticket'), ticketMed, { format: fmt.eur });
+  set('hv-kpi-total', `Total: ${concluded.length} venda${concluded.length === 1 ? '' : 's'}`);
+
+  // Compatibilidade legacy
+  set('sales-this-week', fmt.eur(totSem));
+  set('total-transactions', allVendas.length);
   animateEntrance();
 }
 
@@ -1304,10 +1385,45 @@ function _posActiveFilterKey() {
   return raw === null || raw === '' ? 'todos' : raw;
 }
 
+/** Recolhe e atualiza os KPIs do topo da loja (vendas/receita/ticket/top categoria — dia em curso). */
+async function loadPOSStats() {
+  let vendas = [];
+  try { vendas = await apiFetch('/vendas'); } catch { vendas = []; }
+  const hoje = new Date().toISOString().slice(0, 10);
+  const doDia = vendas.filter(v => {
+    const d = String(v.dataVenda || '').slice(0, 10);
+    return d === hoje && (v.estado === 'CONCLUIDA' || v.status === 'CONCLUIDA');
+  });
+  const receita = doDia.reduce((s, v) => s + (+v.total || 0), 0);
+  const ticket = doDia.length ? receita / doDia.length : 0;
+
+  // Top categoria: contar vendas por tipo (precisa de ler catálogo)
+  const topCat = (() => {
+    const cnt = {};
+    for (const v of doDia) {
+      const produtos = String(v.produto || '').split(',').map(s => s.trim()).filter(Boolean);
+      for (const p of produtos) {
+        const w = (catalog || []).find(x => x.nome === p);
+        const t = w?.tipo || 'Outros';
+        cnt[t] = (cnt[t] || 0) + 1;
+      }
+    }
+    const entries = Object.entries(cnt).sort((a, b) => b[1] - a[1]);
+    return entries.length ? entries[0][0] : '—';
+  })();
+
+  countUp(document.getElementById('pos-stat-vendas'), doDia.length);
+  countUp(document.getElementById('pos-stat-receita'), receita, { format: fmt.eur });
+  countUp(document.getElementById('pos-stat-ticket'), ticket, { format: fmt.eur });
+  const topEl = document.getElementById('pos-stat-top');
+  if (topEl) topEl.textContent = topCat;
+}
+
 async function loadPOS() {
   await checkApi();
   try { catalog = await apiFetch('/vinhos'); } catch { catalog = FALLBACK.vinhos; }
   renderCatalog();
+  loadPOSStats();
 
   const clockEl = document.getElementById('pos-clock');
   if (clockEl && !clockEl.dataset.vdClock) {
@@ -1337,47 +1453,79 @@ async function loadPOS() {
 
 const wineEmojis = { Tinto: '🍷', Branco: '🥂', 'Rosé': '🌸', Espumante: '✨', Porto: '🍇', Madeira: '🥃' };
 
+function _renderTile(v) {
+  const oos = (v.quantidade || 0) === 0;
+  const tc = wineTypeClass[v.tipo] || 'tinto';
+  const qty = v.quantidade || 0;
+  const stockClass = oos ? 'oos-label' : qty < 5 ? 'low' : '';
+  const emoji = wineEmojis[v.tipo] || '🍷';
+  const tipoL = escHtml(v.tipo || '');
+  const nomeL = escHtml(v.nome || '');
+  return `<div class="wine-tile t-${tc}${oos ? ' oos' : ''}" onclick="${oos ? 'void(0)' : `addToCart(${v.id})`}" title="${nomeL} — ${tipoL} ${escHtml(v.regiao || '')}">
+    <div class="tile-type">${tipoL}</div>
+    <div class="tile-icon" aria-hidden="true">${emoji}</div>
+    <div class="tile-name">${nomeL}</div>
+    <div class="tile-bottom">
+      <span class="tile-price">${fmt.eur(v.preco)}</span>
+      <span class="tile-stock ${stockClass}">${oos ? 'Esgotado' : qty + ' un.'}</span>
+    </div>
+  </div>`;
+}
+
+const POS_TYPE_ORDER = ['Tinto', 'Branco', 'Rosé', 'Espumante', 'Porto', 'Madeira'];
+
 function renderCatalog(filter = 'todos') {
   const grid = document.getElementById('catalog-grid') || document.getElementById('wine-grid');
   if (!grid) return;
   const searchEl = document.getElementById('pos-search') || document.getElementById('wine-search');
   const q = (searchEl?.value || '').toLowerCase();
+  const isAll = !filter || filter === 'todos' || filter === '';
+
   const list = catalog.filter(v =>
     (`${v.nome || ''} ${v.regiao || ''} ${v.produtor || ''}`.toLowerCase()).includes(q) &&
-    (!filter || filter === 'todos' || filter === '' || v.tipo === filter)
+    (isAll || v.tipo === filter)
   );
 
   const countEl = document.getElementById('pos-product-count');
   if (countEl) countEl.textContent = `${list.length} produto${list.length !== 1 ? 's' : ''}`;
 
   if (!list.length) {
-    grid.innerHTML = `<div class="pos-empty">Nenhum vinho encontrado</div>`;
+    grid.innerHTML = `<div class="pos-empty">Nenhum vinho encontrado${q ? ' para “' + escHtml(q) + '”' : ''}.</div>`;
     return;
   }
-  grid.innerHTML = list.map(v => {
-    const oos = (v.quantidade || 0) === 0;
-    const tc = wineTypeClass[v.tipo] || 'tinto';
-    const qty = v.quantidade || 0;
-    const stockClass = oos ? 'oos-label' : qty < 5 ? 'low' : '';
-    const emoji = wineEmojis[v.tipo] || '🍷';
-    const tipoL = escHtml(v.tipo || '');
-    const nomeL = escHtml(v.nome || '');
-    return `<div class="wine-tile t-${tc}${oos ? ' oos' : ''}" onclick="${oos ? 'void(0)' : `addToCart(${v.id})`}">
-      <div class="tile-type">${tipoL}</div>
-      <div class="tile-icon">${emoji}</div>
-      <div class="tile-name">${nomeL}</div>
-      <div class="tile-bottom">
-        <span class="tile-price">${fmt.eur(v.preco)}</span>
-        <span class="tile-stock ${stockClass}">${oos ? 'Esgotado' : qty + ' un.'}</span>
-      </div>
-    </div>`;
-  }).join('');
+
+  // Modo "Todos" sem pesquisa: agrupar por tipo com cabeçalho de secção
+  if (isAll && !q) {
+    const groups = {};
+    for (const v of list) {
+      const t = v.tipo || 'Outros';
+      (groups[t] = groups[t] || []).push(v);
+    }
+    const types = Object.keys(groups).sort((a, b) => {
+      const ai = POS_TYPE_ORDER.indexOf(a); const bi = POS_TYPE_ORDER.indexOf(b);
+      return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
+    });
+    grid.innerHTML = types.map(t => {
+      const items = groups[t];
+      const totalUn = items.reduce((s, x) => s + (x.quantidade || 0), 0);
+      return `<section class="pos-section" data-type="${escHtml(t)}">
+        <header class="pos-section-head">
+          <span class="pos-section-name">${escHtml(t)}</span>
+          <span class="pos-section-count">${items.length} ${items.length === 1 ? 'referência' : 'referências'} · ${totalUn} un.</span>
+        </header>
+        <div class="pos-section-grid">${items.map(_renderTile).join('')}</div>
+      </section>`;
+    }).join('');
+  } else {
+    grid.innerHTML = list.map(_renderTile).join('');
+  }
 }
 
 /* Refresh catalog from API (called after sale/return) */
 async function refreshCatalog() {
   try { catalog = await apiFetch('/vinhos'); } catch { /* keep current */ }
   renderCatalog(_posActiveFilterKey());
+  loadPOSStats();
 }
 
 /* ══════════════════════════════════════════════
@@ -2284,70 +2432,106 @@ function newSale() {
    ══════════════════════════════════════════════ */
 let returnVendaId = null;
 
+let _returnsCache = [];
+
 async function openReturns() {
   document.getElementById('returns-modal')?.classList.remove('hidden');
   document.getElementById('return-confirm').style.display = 'none';
   document.getElementById('confirm-return-btn').style.display = 'none';
   returnVendaId = null;
+  const searchEl = document.getElementById('returns-search');
+  if (searchEl) searchEl.value = '';
 
   const list = document.getElementById('returns-list');
   if (!list) return;
-  list.innerHTML = '<p style="color:#555;text-align:center;padding:20px;">A carregar...</p>';
+  list.innerHTML = '<p class="returns-empty">A carregar vendas…</p>';
 
   let vendas;
-  try { vendas = await apiFetch('/vendas'); } catch { vendas = FALLBACK.vendas; }
+  try { vendas = await apiFetch('/vendas'); } catch { vendas = FALLBACK.vendas || []; }
+  _returnsCache = vendas.filter(v => (v.status || v.estado) === 'CONCLUIDA');
 
-  // Only show completed sales (not already returned)
-  const completadas = vendas.filter(v => v.status === 'CONCLUIDA').slice(0, 15);
+  // Listener pesquisa (uma única vez)
+  if (searchEl && !searchEl.dataset.bound) {
+    searchEl.dataset.bound = '1';
+    searchEl.addEventListener('input', _renderReturnsList);
+  }
+  _renderReturnsList();
+}
 
-  if (!completadas.length) {
-    list.innerHTML = '<p style="color:#555;text-align:center;padding:20px;">Sem vendas para devolver</p>';
+function _renderReturnsList() {
+  const list = document.getElementById('returns-list');
+  if (!list) return;
+  const q = (document.getElementById('returns-search')?.value || '').toLowerCase();
+  const filtered = _returnsCache.filter(v => {
+    if (!q) return true;
+    return (
+      String(v.codigo || '').toLowerCase().includes(q) ||
+      String(v.cliente || v.clienteNome || '').toLowerCase().includes(q) ||
+      String(v.produto || '').toLowerCase().includes(q)
+    );
+  }).slice(0, 30);
+
+  if (!filtered.length) {
+    list.innerHTML = `<p class="returns-empty">${q ? 'Nenhuma venda corresponde à pesquisa.' : 'Sem vendas para devolver.'}</p>`;
     return;
   }
 
-  list.innerHTML = completadas.map(v => `
-    <div class="return-sale-item">
-      <span class="rsi-code">${v.codigo}</span>
-      <div class="rsi-info">
-        <div>${v.produto || '—'}</div>
-        <div class="rsi-date">${v.dataVenda || ''}</div>
+  list.innerHTML = filtered.map(v => {
+    const dataFmt = fmt.dt(v.dataVenda);
+    const cliente = v.clienteNome || v.cliente || 'Consumidor Final';
+    const produtos = (v.produto || '—').length > 60 ? (v.produto || '').slice(0, 60) + '…' : (v.produto || '—');
+    return `<div class="return-sale-item" onclick="selectReturn(${v.id}, '${escHtml(v.codigo)}', this)" tabindex="0" role="button">
+      <div style="display:flex;flex-direction:column;gap:3px;flex:1;min-width:0;">
+        <div style="display:flex;gap:10px;align-items:baseline;">
+          <span style="font-family:'Cormorant Garamond',serif;font-weight:700;color:#E0C992;font-size:14px;letter-spacing:0.5px;">${escHtml(v.codigo || '—')}</span>
+          <span style="font-size:11px;color:#9B9590;">${escHtml(cliente)}</span>
+        </div>
+        <div style="font-size:11px;color:#9B9590;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escHtml(produtos)}</div>
+        <div style="font-size:10px;color:#9B9590;letter-spacing:0.04em;">${escHtml(dataFmt)} · ${escHtml(v.metodoPagamento || '')}</div>
       </div>
-      <span class="rsi-total">${fmt.eur(v.total)}</span>
-      <button class="return-sale-btn" onclick="selectReturn(${v.id}, '${v.codigo}')">Devolver</button>
-    </div>
-  `).join('');
+      <span style="font-family:'Cormorant Garamond',serif;font-weight:700;color:#C9A96E;font-size:15px;font-variant-numeric:tabular-nums;flex-shrink:0;">${escHtml(fmt.eur(v.total))}</span>
+    </div>`;
+  }).join('');
 }
 
-async function selectReturn(vendaId, codigo) {
+async function selectReturn(vendaId, codigo, rowEl) {
   returnVendaId = vendaId;
+  // Highlight selected row
+  document.querySelectorAll('.return-sale-item.selected').forEach(el => el.classList.remove('selected'));
+  if (rowEl) rowEl.classList.add('selected');
+
   const confirmDiv = document.getElementById('return-confirm');
   const confirmBtn = document.getElementById('confirm-return-btn');
   const titleEl = document.getElementById('return-confirm-title');
   const itemsEl = document.getElementById('return-confirm-items');
 
-  if (titleEl) titleEl.textContent = `Devolver ${codigo}`;
+  if (titleEl) titleEl.textContent = `Devolver venda ${codigo}`;
   if (confirmDiv) confirmDiv.style.display = 'block';
   if (confirmBtn) confirmBtn.style.display = 'inline-flex';
 
   // Load sale items
   if (itemsEl) {
-    itemsEl.innerHTML = '<p style="color:#555;font-size:0.7rem;">A carregar itens...</p>';
+    itemsEl.innerHTML = '<p style="color:#9B9590;font-size:11px;text-align:center;padding:8px;">A carregar itens…</p>';
     try {
       const itens = await apiFetch(`/vendas/${vendaId}/itens`);
+      const total = itens.reduce((s, i) => s + (i.precoUnitario || 0) * (i.quantidade || 0), 0);
       itemsEl.innerHTML = itens.map(item => `
-        <div class="return-item-row">
-          <span class="ri-name">${item.nome || 'Vinho #' + item.vinhoId}</span>
-          <span class="ri-qty">×${item.quantidade}</span>
-          <span class="ri-price">${fmt.eur(item.precoUnitario * item.quantidade)}</span>
+        <div class="return-item-row" style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(201,169,110,0.06);font-size:13px;">
+          <span style="flex:1;color:#F5F0E8;">${escHtml(item.nome || 'Vinho #' + item.vinhoId)}</span>
+          <span style="color:#9B9590;font-variant-numeric:tabular-nums;">×${item.quantidade}</span>
+          <span style="color:#C9A96E;font-weight:600;font-variant-numeric:tabular-nums;min-width:64px;text-align:right;">${escHtml(fmt.eur((item.precoUnitario || 0) * (item.quantidade || 0)))}</span>
         </div>
-      `).join('');
+      `).join('') + `
+        <div style="display:flex;justify-content:space-between;padding-top:10px;margin-top:6px;border-top:2px solid rgba(201,169,110,0.25);">
+          <span style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:#B89060;font-weight:700;align-self:center;">Total a devolver</span>
+          <span style="font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;color:#E0C992;font-variant-numeric:tabular-nums;">${escHtml(fmt.eur(total))}</span>
+        </div>`;
     } catch {
-      itemsEl.innerHTML = '<p style="color:#888;font-size:0.7rem;">Devolução total será processada</p>';
+      itemsEl.innerHTML = '<p style="color:#9B9590;font-size:11px;padding:8px;">Será processada devolução total da venda.</p>';
     }
   }
 
-  // Scroll to confirm section
-  confirmDiv?.scrollIntoView({ behavior: 'smooth' });
+  confirmDiv?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
 async function confirmReturn() {
@@ -2472,11 +2656,11 @@ async function loadRelatorios() {
   await checkApi();
   let dash;
   try { dash = await apiFetch('/dashboard'); } catch { dash = FALLBACK.dashboard; }
-  const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
-  set('r-receita', fmt.eur(dash.receitaTotal));
-  set('r-lucro', fmt.eur(dash.lucroLiquido));
-  set('r-ticket', fmt.eur(dash.ticketMedio));
-  set('r-vendas', dash.vendas);
+
+  countUp(document.getElementById('r-receita'), dash.receitaTotal || 0, { format: fmt.eur });
+  countUp(document.getElementById('r-lucro'),   dash.lucroLiquido || 0, { format: fmt.eur });
+  countUp(document.getElementById('r-ticket'),  dash.ticketMedio || 0, { format: fmt.eur });
+  countUp(document.getElementById('r-vendas'),  dash.vendas || 0);
 
   drawBarChart('chart-vendas', dash.vendasLabels || ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Hj'], dash.vendasSemanais || [0, 0, 0, 0, 0, 0, 0], '#C9A96E');
   drawLineChart('chart-receita', ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'], [120, 185, 240, 180, 310, 420], '#A83D4A');
@@ -2486,14 +2670,21 @@ async function loadRelatorios() {
   const tbody = document.getElementById('top-wines-table');
   if (tbody) {
     const sorted = [...vinhos].sort((a, b) => (b.preco * b.quantidade) - (a.preco * a.quantidade)).slice(0, 8);
-    tbody.innerHTML = sorted.map(v => `<tr>
-      <td style="font-weight:600;">${escHtml(v.nome)}</td>
-      <td class="muted">${escHtml(v.tipo || '—')}</td>
-      <td class="muted">${escHtml(v.regiao || '—')}</td>
-      <td><span style="font-family:var(--font-display);font-weight:700;color:var(--text-gold);">${escHtml(fmt.eur(v.preco))}</span></td>
-      <td>${stockBar(v.quantidade || 0, 100)}</td>
-      <td><span style="font-family:var(--font-display);font-weight:700;">${escHtml(fmt.eur((v.preco || 0) * (v.quantidade || 0)))}</span></td>
-    </tr>`).join('');
+    const totalReceita = sorted.reduce((s, v) => s + (v.preco || 0) * (v.quantidade || 0), 0) || 1;
+    tbody.innerHTML = sorted.map((v, i) => {
+      const valor = (v.preco || 0) * (v.quantidade || 0);
+      const quota = (valor / totalReceita) * 100;
+      const rankBadge = `<span class="rep-rank rep-rank-${i + 1}">${i + 1}</span>`;
+      return `<tr class="rep-row">
+        <td>${rankBadge}</td>
+        <td style="font-weight:600;">${escHtml(v.nome)}</td>
+        <td class="muted">${escHtml(v.tipo || '—')}</td>
+        <td class="muted">${escHtml(v.regiao || '—')}</td>
+        <td><span style="font-family:var(--font-display);font-weight:700;color:var(--text-gold);">${escHtml(fmt.eur(v.preco))}</span></td>
+        <td><span style="font-family:var(--font-display);font-weight:700;">${escHtml(fmt.eur(valor))}</span></td>
+        <td><div class="rep-bar"><span class="rep-bar-fill" style="width:${quota.toFixed(1)}%"></span></div><span class="rep-bar-label">${quota.toFixed(1)}%</span></td>
+      </tr>`;
+    }).join('');
   }
   animateEntrance();
 }
