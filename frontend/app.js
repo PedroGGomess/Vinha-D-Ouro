@@ -1534,19 +1534,62 @@ async function loadPOS() {
   setTimeout(() => {
     if (document.activeElement === document.body) searchInput?.focus();
   }, 200);
+
+  /* ─── Restaura estado do ícone de som a partir do localStorage ─── */
+  syncSoundIcon();
+}
+
+/** Alterna o som on/off e atualiza o ícone. Chamado pelo botão na topbar do POS. */
+function toggleSound() {
+  const nowOn = SoundFX.toggle();
+  syncSoundIcon();
+  toast(nowOn ? '🔊 Som ligado' : '🔇 Som desligado', 'info', 1800);
+}
+
+/** Sincroniza o ícone do botão de som com o estado em localStorage. */
+function syncSoundIcon() {
+  const on  = document.getElementById('sound-icon-on');
+  const off = document.getElementById('sound-icon-off');
+  if (!on || !off) return;
+  const enabled = SoundFX.isEnabled();
+  on.style.display  = enabled ? '' : 'none';
+  off.style.display = enabled ? 'none' : '';
 }
 
 const wineEmojis = { Tinto: '🍷', Branco: '🥂', 'Rosé': '🌸', Espumante: '✨', Porto: '🍇', Madeira: '🥃' };
 
-function _renderTile(v) {
+/**
+ * Destaca (highlight) os caracteres do nome que correspondem ao termo de pesquisa.
+ * Faz escaping HTML primeiro (segurança XSS), depois envolve a porção com <mark>.
+ * Insensível a maiúsculas/acentos.
+ */
+function highlightMatch(text, query) {
+  const safe = escHtml(text || '');
+  if (!query) return safe;
+  const q = String(query).trim();
+  if (!q) return safe;
+  // Normaliza para comparação sem acentos
+  const norm = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+  const safeLower = norm(safe);
+  const qLower = norm(q);
+  const idx = safeLower.indexOf(qLower);
+  if (idx === -1) return safe;
+  // Encontra a posição equivalente no texto original (safe pode ter HTML entities)
+  return safe.slice(0, idx) +
+         '<mark class="pos-mark">' + safe.slice(idx, idx + q.length) + '</mark>' +
+         safe.slice(idx + q.length);
+}
+
+function _renderTile(v, query = '') {
   const oos = (v.quantidade || 0) === 0;
   const tc = wineTypeClass[v.tipo] || 'tinto';
   const qty = v.quantidade || 0;
   const stockClass = oos ? 'oos-label' : qty < 5 ? 'low' : '';
   const emoji = wineEmojis[v.tipo] || '🍷';
   const tipoL = escHtml(v.tipo || '');
-  const nomeL = escHtml(v.nome || '');
-  return `<div class="wine-tile t-${tc}${oos ? ' oos' : ''}" onclick="${oos ? 'void(0)' : `addToCart(${v.id})`}" title="${nomeL} — ${tipoL} ${escHtml(v.regiao || '')}">
+  const nomeL = highlightMatch(v.nome || '', query);
+  const titleL = `${escHtml(v.nome || '')} — ${tipoL} ${escHtml(v.regiao || '')}`;
+  return `<div class="wine-tile t-${tc}${oos ? ' oos' : ''}" onclick="${oos ? 'void(0)' : `addToCart(${v.id})`}" title="${titleL}">
     <div class="tile-type">${tipoL}</div>
     <div class="tile-icon" aria-hidden="true">${emoji}</div>
     <div class="tile-name">${nomeL}</div>
@@ -1598,11 +1641,11 @@ function renderCatalog(filter = 'todos') {
           <span class="pos-section-name">${escHtml(t)}</span>
           <span class="pos-section-count">${items.length} ${items.length === 1 ? 'referência' : 'referências'} · ${totalUn} un.</span>
         </header>
-        <div class="pos-section-grid">${items.map(_renderTile).join('')}</div>
+        <div class="pos-section-grid">${items.map(v => _renderTile(v, q)).join('')}</div>
       </section>`;
     }).join('');
   } else {
-    grid.innerHTML = list.map(_renderTile).join('');
+    grid.innerHTML = list.map(v => _renderTile(v, q)).join('');
   }
 }
 
@@ -1628,6 +1671,53 @@ function addToCart(id) {
   if (!v || (v.quantidade || 0) === 0) return;
   // Direct add at standard 0.75L — no modal needed
   addToCartWithSize(id, '0.75L', 'Garrafa Standard', 1.0);
+  flyToCart(id);
+}
+
+/**
+ * Animação "fly to cart" — pequena bolinha dourada que voa do tile para o carrinho.
+ * Pura visual, não bloqueia nada. Respeita prefers-reduced-motion.
+ */
+function flyToCart(wineId) {
+  if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
+  // Encontra o tile clicado (pelo onclick attr)
+  const tile = document.querySelector(`.wine-tile[onclick*="addToCart(${wineId})"]`);
+  // Destino: o painel do carrinho (procura várias possíveis IDs)
+  const cartTarget = document.querySelector('.pos-cart-summary, #cart-panel, #cart-total, .cart-total, .pos-cart');
+  if (!tile || !cartTarget) return;
+
+  const fromRect = tile.getBoundingClientRect();
+  const toRect   = cartTarget.getBoundingClientRect();
+  const fromX = fromRect.left + fromRect.width / 2;
+  const fromY = fromRect.top + fromRect.height / 2;
+  const toX   = toRect.left + toRect.width / 2;
+  const toY   = toRect.top + 20;
+
+  const dot = document.createElement('div');
+  dot.style.cssText = `
+    position: fixed; left: ${fromX}px; top: ${fromY}px;
+    width: 18px; height: 18px; border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, #F0D88A, #C9A96E 60%, #8B7048);
+    box-shadow: 0 4px 14px rgba(201,169,110,0.55), 0 0 0 1px rgba(255,255,255,0.18) inset;
+    pointer-events: none; z-index: 9000; transform: translate(-50%,-50%);
+    transition: transform .55s cubic-bezier(.4,.0,.2,1), opacity .55s ease-out;
+  `;
+  document.body.appendChild(dot);
+
+  // Pulse leve no tile
+  tile.animate(
+    [{ transform: 'scale(1)' }, { transform: 'scale(0.96)' }, { transform: 'scale(1)' }],
+    { duration: 250, easing: 'ease-out' }
+  );
+
+  // Força o reflow para a transição arrancar do ponto correto
+  // eslint-disable-next-line no-unused-expressions
+  dot.getBoundingClientRect();
+  requestAnimationFrame(() => {
+    dot.style.transform = `translate(${toX - fromX - 9}px, ${toY - fromY - 9}px) scale(0.4)`;
+    dot.style.opacity = '0';
+  });
+  setTimeout(() => dot.remove(), 700);
 }
 
 function openSizeSelector(id) {
@@ -1663,12 +1753,75 @@ function addToCartWithSize(id, vol, nomeTamanho, mult) {
     cart.push({ cartKey, id, nome: v.nome, vol, nomeTamanho, preco, qty: 1 });
   }
   toast(`${v.nome} (${vol}) adicionado`, 'success', 2000);
+  SoundFX.cartAdd();
   renderCart();
 }
 
 function removeFromCart(i) { cart.splice(i, 1); renderCart(); }
 function updateQty(i, d) { cart[i].qty += d; if (cart[i].qty <= 0) cart.splice(i, 1); renderCart(); }
 function clearCart() { cart = []; renderCart(); }
+
+/* ──────────────────────────────────────────────────────────────
+   Sound feedback — Web Audio API (sem ficheiros externos)
+   ──────────────────────────────────────────────────────────────
+   Gera tons curtos sintetizados para feedback sonoro premium.
+   Respeita preferencia do utilizador via localStorage ('sound:off').
+   ────────────────────────────────────────────────────────────── */
+const SoundFX = (() => {
+  let ctx = null;
+  function getCtx() {
+    if (!ctx) {
+      try { ctx = new (window.AudioContext || window.webkitAudioContext)(); }
+      catch { return null; }
+    }
+    return ctx;
+  }
+  function enabled() {
+    return localStorage.getItem('the100s:sound') !== 'off';
+  }
+  function tone(freq, durationMs, type = 'sine', volume = 0.15, delay = 0) {
+    const c = getCtx();
+    if (!c) return;
+    const osc = c.createOscillator();
+    const gain = c.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, c.currentTime + delay);
+    gain.gain.setValueAtTime(0, c.currentTime + delay);
+    gain.gain.linearRampToValueAtTime(volume, c.currentTime + delay + 0.012);
+    gain.gain.exponentialRampToValueAtTime(0.001, c.currentTime + delay + durationMs / 1000);
+    osc.connect(gain);
+    gain.connect(c.destination);
+    osc.start(c.currentTime + delay);
+    osc.stop(c.currentTime + delay + durationMs / 1000 + 0.05);
+  }
+  return {
+    /** Cash register "ding" — 3 tons ascendentes (acorde maior) */
+    saleSuccess() {
+      if (!enabled()) return;
+      tone(880, 90, 'sine', 0.18, 0);       // A5
+      tone(1108, 90, 'sine', 0.16, 0.06);   // C#6
+      tone(1318, 220, 'sine', 0.20, 0.12);  // E6 (mantém um pouco mais)
+    },
+    /** "Click" subtil ao adicionar ao carrinho */
+    cartAdd() {
+      if (!enabled()) return;
+      tone(1200, 50, 'triangle', 0.06, 0);
+    },
+    /** Erro — tom mais grave e curto */
+    error() {
+      if (!enabled()) return;
+      tone(180, 180, 'sawtooth', 0.10, 0);
+    },
+    toggle() {
+      const next = enabled() ? 'off' : 'on';
+      localStorage.setItem('the100s:sound', next);
+      if (next === 'on') this.cartAdd();
+      return next === 'on';
+    },
+    isEnabled: enabled,
+  };
+})();
+window.SoundFX = SoundFX;
 
 function renderCart() {
   const c = document.getElementById('cart-items'); if (!c) return;
@@ -1915,6 +2068,7 @@ async function processPayment() {
   }
 
   document.getElementById('receipt-modal')?.classList.remove('hidden');
+  SoundFX.saleSuccess();   // Cash register ding — feedback sonoro premium
   if (btn) { btn.disabled = false; btn.textContent = 'Confirmar Pagamento'; }
 }
 

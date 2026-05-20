@@ -462,6 +462,14 @@
       -webkit-box-orient: vertical;
       overflow: hidden;
     }
+    /* Highlight do match da pesquisa — porção dourada subtil */
+    .wine-tile .tile-name mark.pos-mark {
+      background: linear-gradient(180deg, transparent 60%, rgba(201,169,110,0.45) 60%);
+      color: #FCEFCB;
+      padding: 0 2px;
+      border-radius: 2px;
+      font-weight: 700;
+    }
 
     .wine-tile .tile-bottom {
       display: flex;
@@ -1419,6 +1427,10 @@
       </div>
 
       <div class="topbar-actions">
+        <button class="topbar-btn" id="sound-toggle" onclick="toggleSound()" title="Ligar / desligar som" aria-label="Alternar som de feedback">
+          <svg id="sound-icon-on" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 010 7.07"/><path d="M19.07 4.93a10 10 0 010 14.14"/></svg>
+          <svg id="sound-icon-off" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+        </button>
         <button class="topbar-btn returns" onclick="openReturns()" title="Devoluções">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 105.64-11.36L1 10"/></svg>
           Devoluções
