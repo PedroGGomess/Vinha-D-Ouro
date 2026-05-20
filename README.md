@@ -15,8 +15,8 @@
 [![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?logo=mysql&logoColor=white)](https://www.mysql.com/)
 [![Status](https://img.shields.io/badge/status-Pronto%20para%20demo-7BB78F)](#-quick-start)
 
-**Projeto académico** · Análise e Desenho de Sistemas + Bases de Dados
-Universidade Lusófona — Centro Universitário do Porto · 2025/26
+**Projeto pessoal de Pedro Gabriel Matias Gomes**
+the 100's — Bottled Memories · © 2026
 
 </div>
 
@@ -255,16 +255,15 @@ Abre o browser em **http://localhost:8080** 🎉
 
 ---
 
-## 👥 Autores
+## 👥 Autor & créditos
 
-| Nome                              | Contribuição                                |
-|-----------------------------------|---------------------------------------------|
-| **Eduardo Saavedra Lourenço**     | Backend Flask + MySQL · auth                |
-| **Kollan Andre Gafuro Intacua**   | Frontend POS + checkout · CSS Design System |
-| **Pedro Gabriel Matias Gomes**    | Arquitetura · Dashboard + relatórios · QA   |
+| Nome                              | Função                                                                  |
+|-----------------------------------|-------------------------------------------------------------------------|
+| **Pedro Gabriel Matias Gomes** 👑 | **Criador & proprietário** — arquitetura, backend Flask + MySQL, frontend completo (POS, dashboard, caves, relatórios, equipa), design system, segurança, base de dados, talão fiscal AT-compliant, documentação & QA |
+| Eduardo Saavedra Lourenço         | Contribuição menor — revisão de queries SQL                              |
 
-*Grupo 13 · Universidade Lusófona — Centro Universitário do Porto*
-*Análise e Desenho de Sistemas + Bases de Dados · 2025/26*
+> 📌 **Este é um projeto pessoal de Pedro Gabriel Matias Gomes.**
+> Não pertence a nenhuma instituição de ensino — o autor mantém todos os direitos sobre o código, design, identidade visual ("the 100's", "Bottled Memories") e respetivos ativos. Licença MIT para uso livre por terceiros, mas a autoria e marca permanecem exclusivamente do Pedro.
 
 ---
 

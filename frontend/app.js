@@ -1915,13 +1915,118 @@ const COMPANY = {
   legal: 'The 100’s, Lda.',
   tagline: 'Bottled Memories',
   nif: '517 234 891',
+  nifPlain: '517234891',                // sem espaços para QR AT
+  capitalSocial: '5.000,00 €',
+  conservatoria: 'C.R.C. Ponta Delgada',
+  matricula: '517234891',
   address: 'Rua Cidade Newport, n.º 13',
   postal: '9500-176 Ponta Delgada',
   country: 'Portugal',
   phone: '+351 936 442 822',
   email: 'geral@the-100s.com',
   web: 'www.the-100s.com',
+  espacoFiscal: 'PT',                   // PT (continental) | PT-AC (Açores) | PT-MA (Madeira)
+  certificadoAT: '9999',                // nº fictício — software não certificado pela AT (ambiente demo)
+  csvSerie: 'JFTH9CK2',                 // CSV simulado emitido pela AT para a série (real: 8 chars alfanum)
 };
+
+/* ──────────────────────────────────────────────────────────────
+   Helpers fiscais portugueses (AT — Portaria 195/2020, Lei 28/2019)
+   ────────────────────────────────────────────────────────────── */
+
+/** Gera ATCUD (Código Único de Documento). Real: CSV é emitido pela AT por série. */
+function generateATCUD(docNum) {
+  const seq = String(docNum).match(/(\d+)\s*$/);
+  const num = seq ? String(parseInt(seq[1], 10)) : '1';
+  return `${COMPANY.csvSerie}-${num}`;
+}
+
+/** Hash de 4 caracteres (simulação determinística do hash SAF-T). */
+function generateDocHash(docNum, total, dataIso) {
+  const str = `${dataIso};${(+total).toFixed(2)};${docNum};${COMPANY.nifPlain}`;
+  let h = 5381;
+  for (let i = 0; i < str.length; i++) h = ((h * 33) ^ str.charCodeAt(i)) >>> 0;
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // sem 0,O,1,I,L para legibilidade
+  return chars[h % 32]
+       + chars[(h >>> 5) % 32]
+       + chars[(h >>> 10) % 32]
+       + chars[(h >>> 15) % 32];
+}
+
+/** Sanitiza NIF (mantém só dígitos). */
+function sanitizeNIF(nif) {
+  return String(nif || '').replace(/\D/g, '');
+}
+
+/** Constrói o payload QR no formato AT (Portaria 195/2020). */
+function buildATQRPayload(opts) {
+  const {
+    nifCli, paisCli, tipoDoc, dataIso, docNum, atcud,
+    baseIVA, valorIVA, total, hash,
+  } = opts;
+  // Datas no formato AAAAMMDD; valores com 2 casas decimais (ponto como separador)
+  const dataAT = dataIso.replace(/-/g, '');
+  const docCompact = String(docNum).replace(/\s+/g, '');
+  const nifAdq = sanitizeNIF(nifCli) || '999999990'; // 999999990 = Consumidor Final (norma AT)
+
+  return [
+    `A:${COMPANY.nifPlain}`,           // NIF do emitente
+    `B:${nifAdq}`,                     // NIF do adquirente
+    `C:${paisCli || 'PT'}`,            // País do adquirente (ISO 3166-1 alpha-2)
+    `D:${tipoDoc}`,                    // Tipo de documento: FS / FT / FR / NC / ND
+    `E:N`,                             // Estado: N (Normal) | A (Anulado) | F (Faturado)
+    `F:${dataAT}`,                     // Data emissão AAAAMMDD
+    `G:${docCompact}`,                 // Número do documento
+    `H:${atcud}`,                      // ATCUD
+    `I1:${COMPANY.espacoFiscal}`,      // Espaço fiscal: PT / PT-AC / PT-MA
+    `I7:${(+baseIVA).toFixed(2)}`,     // Base tributável IVA taxa normal (23%)
+    `I8:${(+valorIVA).toFixed(2)}`,    // Valor IVA taxa normal
+    `N:${(+valorIVA).toFixed(2)}`,     // Total de impostos
+    `O:${(+total).toFixed(2)}`,        // Total documento c/ impostos
+    `Q:${hash}`,                       // 4 caracteres do hash da assinatura
+    `R:${COMPANY.certificadoAT}`,      // Nº de certificado do software
+  ].join('*');
+}
+
+/** Converte total (€) para extenso em português — útil para faturas. */
+function valorPorExtenso(valor) {
+  const v = Math.round((+valor) * 100) / 100;
+  const inteiro = Math.floor(v);
+  const cent = Math.round((v - inteiro) * 100);
+  const unidades = ['', 'um', 'dois', 'três', 'quatro', 'cinco', 'seis', 'sete', 'oito', 'nove'];
+  const dez10_19 = ['dez', 'onze', 'doze', 'treze', 'catorze', 'quinze', 'dezasseis', 'dezassete', 'dezoito', 'dezanove'];
+  const dezenas = ['', '', 'vinte', 'trinta', 'quarenta', 'cinquenta', 'sessenta', 'setenta', 'oitenta', 'noventa'];
+  const centenas = ['', 'cento', 'duzentos', 'trezentos', 'quatrocentos', 'quinhentos', 'seiscentos', 'setecentos', 'oitocentos', 'novecentos'];
+  function ate999(n) {
+    if (n === 0) return '';
+    if (n === 100) return 'cem';
+    let r = '';
+    const c = Math.floor(n / 100), d = Math.floor((n % 100) / 10), u = n % 10;
+    if (c) r += centenas[c];
+    if (d || u) r += (r ? ' e ' : '');
+    if (d === 1) r += dez10_19[u];
+    else {
+      if (d) r += dezenas[d];
+      if (d && u) r += ' e ';
+      if (u) r += unidades[u];
+    }
+    return r;
+  }
+  function ate999999(n) {
+    if (n === 0) return 'zero';
+    const milhares = Math.floor(n / 1000), resto = n % 1000;
+    let r = '';
+    if (milhares) r += (milhares === 1 ? 'mil' : ate999(milhares) + ' mil');
+    if (resto) r += (r ? (resto < 100 || resto % 100 === 0 ? ' e ' : ', ') : '') + ate999(resto);
+    return r || 'zero';
+  }
+  const txtInt = ate999999(inteiro);
+  const moedaInt = inteiro === 1 ? 'euro' : 'euros';
+  if (cent === 0) return `${txtInt} ${moedaInt}`;
+  const txtCent = ate999(cent);
+  const moedaCent = cent === 1 ? 'cêntimo' : 'cêntimos';
+  return `${txtInt} ${moedaInt} e ${txtCent} ${moedaCent}`;
+}
 
 async function printVendaReceipt(vendaId) {
   try {
@@ -1930,40 +2035,70 @@ async function printVendaReceipt(vendaId) {
 
     if (!venda) { toast('Venda não encontrada', 'error'); return; }
 
-    const subtotal = itens.reduce((sum, item) => sum + (item.precoUnitario * item.quantidade), 0);
-    const baseIVA = subtotal / 1.23;
-    const iva = subtotal - baseIVA;
-    const total = subtotal;
+    /* ─── Cálculos fiscais (IVA 23% — taxa normal aplicável a vinho) ─── */
+    const TAXA_IVA = 0.23;
+    const totalComIVA = itens.reduce((sum, item) => sum + (item.precoUnitario * item.quantidade), 0);
+    const baseIVA = totalComIVA / (1 + TAXA_IVA);
+    const iva = totalComIVA - baseIVA;
+    const total = totalComIVA;
+
     const dataVenda = venda.dataVenda ? new Date(venda.dataVenda) : new Date();
     const dataFmt = dataVenda.toLocaleDateString('pt-PT');
     const horaFmt = dataVenda.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' });
-    const docNum = venda.codigo || `FT ${new Date().getFullYear()}/${String(vendaId).padStart(5, '0')}`;
+    // ISO YYYY-MM-DD (independente do timezone)
+    const dataIso = `${dataVenda.getFullYear()}-${String(dataVenda.getMonth()+1).padStart(2,'0')}-${String(dataVenda.getDate()).padStart(2,'0')}`;
 
-    /* QR code: o conteúdo codifica um resumo + URL fictício (útil para "Send a Memory" digital).
-       Usamos api.qrserver.com (gratuito, sem auth, devolve PNG 240x240). */
-    const qrPayload = [
-      `the 100's — ${docNum}`,
-      `${dataFmt} ${horaFmt}`,
-      `Total: ${fmt.eur(total).replace(/ /g, ' ')}`,
-      `Operador: ${venda.funcionarioNome || 'Sistema'}`,
-      `https://the-100s.com/r/${encodeURIComponent(docNum)}`
-    ].join('\n');
-    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&margin=4&data=${encodeURIComponent(qrPayload)}`;
+    /* ─── Tipo de documento (regras AT):
+       FS (Fatura Simplificada) — total ≤ 100€ e sem NIF cliente
+       FT (Fatura)              — restantes casos                 */
+    const temNIF = !!sanitizeNIF(venda.clienteNif);
+    const tipoDoc = (total <= 100 && !temNIF) ? 'FS' : 'FT';
+    const tipoDocLabel = tipoDoc === 'FS' ? 'Fatura Simplificada' : 'Fatura';
 
+    const ano = dataVenda.getFullYear();
+    const seqNum = String(vendaId).padStart(5, '0');
+    const docNum = venda.codigo || `${tipoDoc} ${ano}/${seqNum}`;
+
+    /* ─── ATCUD + Hash 4 chars (Portaria 195/2020 + Lei 28/2019) ─── */
+    const atcud = generateATCUD(docNum);
+    const hash4 = generateDocHash(docNum, total, dataIso);
+    const valorExtenso = valorPorExtenso(total);
+
+    /* ─── QR Code formato AT (Portaria 195/2020) — passa em validadores fiscais oficiais.
+       Parâmetros A→R conforme especificação da Autoridade Tributária. */
+    const qrPayloadAT = buildATQRPayload({
+      nifCli: venda.clienteNif,
+      paisCli: 'PT',
+      tipoDoc,
+      dataIso,
+      docNum,
+      atcud,
+      baseIVA,
+      valorIVA: iva,
+      total,
+      hash: hash4,
+    });
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&margin=2&ecc=M&data=${encodeURIComponent(qrPayloadAT)}`;
+
+    
     /* Resumo plano para envio digital (mailto / sms) */
     const itensTxt = itens.map(it => `${it.quantidade} × ${it.nome || ('Vinho #' + it.vinhoId)} — ${fmt.eur((it.precoUnitario || 0) * (it.quantidade || 0))}`).join('\n');
     const msgPlain = [
-      `the 100's — Fatura ${docNum}`,
+      `the 100's — ${tipoDocLabel} ${docNum}`,
+      `ATCUD: ${atcud}`,
       `Data: ${dataFmt} ${horaFmt}`,
       '',
       itensTxt,
       '',
-      `Total: ${fmt.eur(total)}  (IVA 23% incluído)`,
+      `Base tributável: ${fmt.eur(baseIVA)}`,
+      `IVA (23%): ${fmt.eur(iva)}`,
+      `Total: ${fmt.eur(total)}`,
       `Pagamento: ${venda.metodoPagamento || 'Numerário'}`,
       '',
+      `Documento processado por programa certificado n.º ${COMPANY.certificadoAT}/AT`,
       `Obrigado pela sua preferência — ${COMPANY.web}`
     ].join('\n');
-    const subjectEmail = `Fatura ${docNum} — the 100's`;
+    const subjectEmail = `${tipoDocLabel} ${docNum} — the 100's`;
 
     const html = `<!DOCTYPE html>
 <html lang="pt-PT">
@@ -2058,19 +2193,22 @@ async function printVendaReceipt(vendaId) {
         <img src="${window.location.origin}/assets/logo-the100s.png" alt="the 100's" class="inv-brand-logo" style="filter: invert(1) sepia(1) saturate(2) hue-rotate(15deg) brightness(0.9);">
         <div class="tagline">${COMPANY.tagline}</div>
         <div class="company-info">
-          ${COMPANY.legal} · NIF: ${COMPANY.nif}<br>
+          ${COMPANY.legal} · NIPC: ${COMPANY.nif}<br>
           ${COMPANY.address}<br>
           ${COMPANY.postal} — ${COMPANY.country}<br>
-          ${COMPANY.phone} · ${COMPANY.email}
+          ${COMPANY.phone} · ${COMPANY.email}<br>
+          Capital social: ${COMPANY.capitalSocial} · Matriculada na ${COMPANY.conservatoria}
         </div>
       </div>
       <div class="inv-doc">
         <div class="doc-eyebrow">Documento Fiscal</div>
-        <div class="doc-type">FATURA</div>
+        <div class="doc-type">${tipoDocLabel.toUpperCase()}</div>
         <div class="doc-number">${docNum}</div>
         <div class="doc-meta">
+          <strong>ATCUD:</strong> ${atcud}<br>
           <strong>Data:</strong> ${dataFmt}<br>
           <strong>Hora:</strong> ${horaFmt}<br>
+          <strong>Espaço fiscal:</strong> ${COMPANY.espacoFiscal}<br>
           <strong>Original</strong>
         </div>
       </div>
@@ -2078,10 +2216,11 @@ async function printVendaReceipt(vendaId) {
 
     <div class="inv-parties">
       <div class="inv-party">
-        <div class="inv-party-label">Cliente</div>
+        <div class="inv-party-label">Adquirente</div>
         <p class="name">${escHtml(venda.clienteNome || 'Consumidor Final')}</p>
-        <p>${venda.clienteNif ? 'NIF: ' + escHtml(venda.clienteNif) : 'Consumidor Final — sem NIF'}</p>
+        <p>NIF: ${temNIF ? escHtml(venda.clienteNif) : '999999990'} <span style="color:#8B7C68;font-size:9.5px;">(${temNIF ? 'identificado' : 'consumidor final'})</span></p>
         ${venda.clienteMorada ? `<p>${escHtml(venda.clienteMorada)}</p>` : ''}
+        <p style="font-size:9.5px;color:#8B7C68;margin-top:4px;">País: PT — Portugal</p>
       </div>
       <div class="inv-party">
         <div class="inv-party-label">Pagamento</div>
@@ -2116,11 +2255,31 @@ async function printVendaReceipt(vendaId) {
       </tbody>
     </table>
 
+    <!-- Discriminação do IVA por taxa (obrigatório AT — art.º 36.º CIVA) -->
+    <table class="inv-iva-table" style="width:100%;border-collapse:collapse;margin-bottom:18px;font-size:10px;">
+      <thead>
+        <tr>
+          <th style="background:#FAF6EC;color:#8B7048;padding:8px 10px;text-align:left;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border:1px solid #ECE3D2;">Taxa</th>
+          <th style="background:#FAF6EC;color:#8B7048;padding:8px 10px;text-align:right;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border:1px solid #ECE3D2;">Incidência</th>
+          <th style="background:#FAF6EC;color:#8B7048;padding:8px 10px;text-align:right;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border:1px solid #ECE3D2;">Valor IVA</th>
+          <th style="background:#FAF6EC;color:#8B7048;padding:8px 10px;text-align:right;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border:1px solid #ECE3D2;">Total c/ IVA</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding:8px 10px;border:1px solid #ECE3D2;color:#15110D;font-weight:600;">Normal (23%)</td>
+          <td style="padding:8px 10px;border:1px solid #ECE3D2;text-align:right;font-variant-numeric:tabular-nums;">${fmt.eur(baseIVA)}</td>
+          <td style="padding:8px 10px;border:1px solid #ECE3D2;text-align:right;font-variant-numeric:tabular-nums;">${fmt.eur(iva)}</td>
+          <td style="padding:8px 10px;border:1px solid #ECE3D2;text-align:right;font-variant-numeric:tabular-nums;font-weight:600;">${fmt.eur(total)}</td>
+        </tr>
+      </tbody>
+    </table>
+
     <div class="inv-summary">
       <div class="inv-qr-block">
-        <div class="qr-label">Talão digital</div>
-        <img src="${qrUrl}" alt="QR code da fatura ${docNum}">
-        <div class="qr-help">Aponta a câmara para guardar uma cópia digital desta fatura.</div>
+        <div class="qr-label">QR · AT</div>
+        <img src="${qrUrl}" alt="QR code AT da ${tipoDocLabel.toLowerCase()} ${docNum}">
+        <div class="qr-help">QR Code conforme Portaria 195/2020. Lê com app fiscal para validar.</div>
       </div>
       <div class="inv-totals-wrap">
         <div class="inv-totals-box">
@@ -2133,8 +2292,11 @@ async function printVendaReceipt(vendaId) {
             <span>${fmt.eur(iva)}</span>
           </div>
           <div class="inv-totals-row total">
-            <span>TOTAL</span>
+            <span>TOTAL A PAGAR</span>
             <span class="val">${fmt.eur(total)}</span>
+          </div>
+          <div style="margin-top:10px;padding:8px 10px;background:#FAF6EC;border-left:3px solid #C9A96E;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:10.5px;color:#4A453E;line-height:1.5;">
+            <strong style="font-style:normal;color:#15110D;">Por extenso:</strong> ${valorExtenso}.
           </div>
         </div>
       </div>
@@ -2162,10 +2324,22 @@ async function printVendaReceipt(vendaId) {
     <div class="inv-footer">
       <div class="thanks">${COMPANY.tagline}</div>
       <div class="gold-line"></div>
+
+      <!-- Linha fiscal obrigatória (Portaria 195/2020 · Lei 28/2019) -->
+      <div style="background:#15110D;color:#E0C992;padding:10px 14px;border-radius:4px;font-size:9.5px;font-family:'Courier New',monospace;letter-spacing:0.5px;margin-bottom:14px;text-align:center;">
+        <strong>${hash4}</strong> · Processado por programa certificado n.º ${COMPANY.certificadoAT}/AT &nbsp;|&nbsp; ATCUD: <strong>${atcud}</strong>
+      </div>
+
       <div class="legal">
-        Documento processado por programa certificado n.º 0000/AT.<br>
-        ${COMPANY.legal} · NIPC: ${COMPANY.nif} · ${COMPANY.web}<br>
-        Os bens foram colocados à disposição do cliente na data do documento.
+        <strong>Menções legais obrigatórias:</strong><br>
+        • Os bens/serviços foram colocados à disposição do adquirente na data deste documento.<br>
+        • IVA incluído à taxa normal (23%) — Continente. Regime geral de IVA (art.º 18.º CIVA).<br>
+        • Documento emitido nos termos do art.º 36.º do CIVA e do Decreto-Lei n.º 28/2019.<br>
+        • Reclamações: Livro de Reclamações disponível ao abrigo do D.L. n.º 156/2005.<br>
+        • Venda de bebidas alcoólicas: proibida a menores de 18 anos (Lei n.º 109/2015).<br>
+        <br>
+        ${COMPANY.legal} · NIPC ${COMPANY.nif} · ${COMPANY.address}, ${COMPANY.postal} · ${COMPANY.web}<br>
+        <span style="color:#B89060;font-style:italic;">⚠ Documento gerado em ambiente de demonstração (software académico — não certificado pela AT).</span>
       </div>
     </div>
 

@@ -2,7 +2,9 @@
 """
 the 100's — Servidor Python + MySQL
 Sistema de Gestão de Loja de Vinhos Premium
-Universidade Lusófona — Grupo 13
+
+Projeto pessoal · © 2026 Pedro Gabriel Matias Gomes
+Bottled Memories — www.the-100s.com
 
 Corre: python3 server.py
 Site:  http://localhost:8080
