@@ -1784,6 +1784,8 @@ async function processPayment() {
   }
 
   const saleCode = saleResult?.codigo || code;
+  // Guarda o ID real da venda — usado pelo botão "Imprimir Fatura" para abrir o talão AT.
+  window.__lastSaleId = saleResult?.id || null;
 
   // Build receipt
   const receiptEl = document.getElementById('receipt-content');
@@ -1889,8 +1891,31 @@ function selectPaymentMethod(method) {
 // Alias para o handler do HTML
 function selectPayMethod(method) { selectPaymentMethod(method); }
 
+/**
+ * Abre o talão fiscal AT-compliant numa janela nova.
+ * Chamado pelo botão "Imprimir" do modal de checkout.
+ * Se a venda foi gravada no servidor → abre o talão oficial (com ATCUD, QR AT, hash, etc.).
+ * Se não conseguiu gravar (modo offline) → fallback para impressão do modal só.
+ */
 function printReceipt() {
-  window.print();
+  const saleId = window.__lastSaleId;
+  if (saleId && typeof printVendaReceipt === 'function') {
+    printVendaReceipt(saleId);
+    return;
+  }
+  // Fallback: imprime só o conteúdo do recibo, isolado numa janela limpa
+  const receipt = document.getElementById('receipt-content');
+  if (!receipt) { toast('Talão indisponível', 'error'); return; }
+  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Recibo</title>
+    <style>
+      body{font-family:'Courier New',monospace;padding:24px;max-width:380px;margin:0 auto;color:#000;}
+      .receipt-line{display:flex;justify-content:space-between;padding:4px 0;font-size:12px;}
+      .receipt-divider{border-top:1px dashed #999;margin:8px 0;}
+      .receipt-total-line{display:flex;justify-content:space-between;font-weight:bold;font-size:14px;padding:8px 0;border-top:2px solid #000;}
+      .receipt-header{text-align:center;margin-bottom:12px;}
+      @media print{body{padding:0;}}
+    </style></head><body>${receipt.innerHTML}</body></html>`;
+  openPrintWindow(html, 'Recibo');
 }
 
 function openPrintWindow(html, title = 'Imprimir') {
