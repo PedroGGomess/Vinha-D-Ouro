@@ -1,0 +1,16 @@
+# the 100's — dependências Python
+# Instalar com: pip install -r requirements.txt
+
+# Web framework
+flask>=3.0
+flask-cors>=4.0
+
+# MySQL driver (com suporte caching_sha2_password do MySQL 8)
+pymysql>=1.1
+cryptography>=42.0
+
+# Hash de passwords (vem com Flask, mas listado explicitamente)
+werkzeug>=3.0
+
+# Exports Excel premium (relatórios + histórico de vendas)
+openpyxl>=3.1

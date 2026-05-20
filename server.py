@@ -62,7 +62,10 @@ except ImportError:
 
 import sqlite3  # fallback
 
-app = Flask(__name__, static_folder=BASE_DIR, static_url_path='')
+# Onde estão os ficheiros estáticos (HTML/CSS/JS/assets). Movidos para frontend/ na v9.2.
+FRONTEND_DIR = os.path.join(BASE_DIR, 'frontend')
+
+app = Flask(__name__, static_folder=FRONTEND_DIR, static_url_path='')
 
 # CORS — restringido a origens conhecidas (configurável via .env)
 _cors_origins = [o.strip() for o in os.getenv(
@@ -589,15 +592,15 @@ def _seed_sqlite(conn):
 # ── Static Files ──────────────────────────────────────────
 @app.route('/')
 def index():
-    """Servir página principal"""
-    return send_from_directory(BASE_DIR, 'index.html')
+    """Servir página principal (frontend/index.html)."""
+    return send_from_directory(FRONTEND_DIR, 'index.html')
 
 @app.route('/<path:filename>')
 def serve_static(filename):
-    """Servir ficheiros estáticos (ignora rotas da API)."""
+    """Servir ficheiros estáticos (frontend/...). Ignora rotas da API."""
     if filename.startswith('api/'):
         return jsonify({'error': 'Endpoint não encontrado'}), 404
-    return send_from_directory(BASE_DIR, filename)
+    return send_from_directory(FRONTEND_DIR, filename)
 
 # ── Health ────────────────────────────────────────────────
 @app.route('/api/health')
