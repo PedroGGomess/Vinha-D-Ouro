@@ -15,8 +15,8 @@
 [![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?logo=mysql&logoColor=white)](https://www.mysql.com/)
 [![Status](https://img.shields.io/badge/status-Pronto%20para%20demo-7BB78F)](#-quick-start)
 
-**Projeto pessoal de Pedro Gabriel Matias Gomes**
-the 100's — Bottled Memories · © 2026
+**Projeto académico** · Análise e Desenho de Sistemas + Bases de Dados
+Universidade Lusófona — Centro Universitário do Porto · 2025/26
 
 </div>
 
@@ -28,7 +28,8 @@ the 100's — Bottled Memories · © 2026
 - 🛒 **Ponto de Venda completo** — catálogo agrupado por tipo, carrinho, 4 métodos de pagamento (Cartão, Numerário com troco, MB Way, Multibanco com referência gerada)
 - 📊 **Dashboard editável** — utilizador escolhe que widgets ver; preferências persistidas em localStorage
 - 📤 **Exports Excel premium** — relatórios formatados com `openpyxl` (1 sheet para vendas, 4 sheets para análises)
-- 🧾 **Fatura digital com QR code** — gerada com `api.qrserver.com`, envio por **Email / SMS / WhatsApp** via `mailto:` / `sms:` / `wa.me`
+- 🧾 **Talão fiscal AT-compliant** — ATCUD, QR Code formato AT (Portaria 195/2020), hash 4 chars, auto-deteção FS/FT, IVA discriminado, valor por extenso, todas as menções legais portuguesas
+- ⌨️ **Atalhos de teclado profissionais** — `/` para pesquisa, `F9` abre checkout, `Enter` confirma, `Esc` fecha, `?` mostra ajuda
 - 🍷 **Cave 3D** — gestão visual de slots em 3 caves (A/B/C), persistente
 - 🔐 **Auth com tokens** — `secrets.token_urlsafe`, hash de passwords (pbkdf2/scrypt via `werkzeug.security`), decorators de role
 - 🔄 **Devoluções** — pesquisa em tempo real, reposição automática de stock
@@ -255,15 +256,16 @@ Abre o browser em **http://localhost:8080** 🎉
 
 ---
 
-## 👥 Autor & créditos
+## 👥 Autores
 
-| Nome                              | Função                                                                  |
-|-----------------------------------|-------------------------------------------------------------------------|
-| **Pedro Gabriel Matias Gomes** 👑 | **Criador & proprietário** — arquitetura, backend Flask + MySQL, frontend completo (POS, dashboard, caves, relatórios, equipa), design system, segurança, base de dados, talão fiscal AT-compliant, documentação & QA |
-| Eduardo Saavedra Lourenço         | Contribuição menor — revisão de queries SQL                              |
+| Nome                              | Contribuição                                |
+|-----------------------------------|---------------------------------------------|
+| **Eduardo Saavedra Lourenço**     | Backend Flask + MySQL · auth                |
+| **Kollan Andre Gafuro Intacua**   | Frontend POS + checkout · CSS Design System |
+| **Pedro Gabriel Matias Gomes**    | Arquitetura · Dashboard + relatórios · QA   |
 
-> 📌 **Este é um projeto pessoal de Pedro Gabriel Matias Gomes.**
-> Não pertence a nenhuma instituição de ensino — o autor mantém todos os direitos sobre o código, design, identidade visual ("the 100's", "Bottled Memories") e respetivos ativos. Licença MIT para uso livre por terceiros, mas a autoria e marca permanecem exclusivamente do Pedro.
+*Grupo 13 · Universidade Lusófona — Centro Universitário do Porto*
+*Análise e Desenho de Sistemas + Bases de Dados · 2025/26*
 
 ---
 

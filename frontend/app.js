@@ -393,11 +393,35 @@ function updateApiBadge() {
   if (dot) dot.className = apiOnline ? 'status-dot' : 'status-dot off';
 }
 
+/**
+ * Wrapper de fetch para a API:
+ *  · injeta Authorization Bearer + Content-Type JSON
+ *  · timeout de 15s via AbortController (evita pendurar para sempre)
+ *  · 401 → limpa sessão + redireciona para login
+ *  · erro de rede → mensagem amigável
+ */
 async function apiFetch(path, opts = {}) {
   const sess = Session.get();
   const headers = { 'Content-Type': 'application/json', ...(opts.headers || {}) };
   if (sess && sess.token) headers['Authorization'] = `Bearer ${sess.token}`;
-  const r = await fetch(`${API}${path}`, { ...opts, headers });
+
+  // AbortController para timeout — 15s é tempo suficiente para queries lentas em MySQL
+  const controller = new AbortController();
+  const timeoutMs = opts.timeoutMs || 15000;
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+
+  let r;
+  try {
+    r = await fetch(`${API}${path}`, { ...opts, headers, signal: controller.signal });
+  } catch (err) {
+    clearTimeout(timer);
+    if (err.name === 'AbortError') {
+      throw new Error(`Pedido ao servidor demorou mais de ${timeoutMs/1000}s — verifica a ligação`);
+    }
+    throw new Error('Não foi possível contactar o servidor (rede offline?)');
+  }
+  clearTimeout(timer);
+
   let data;
   try { data = await r.json(); } catch { data = {}; }
   if (r.status === 401) {
@@ -1449,6 +1473,67 @@ async function loadPOS() {
     btn.classList.add('active');
     payMethod = btn.dataset.method;
   }));
+
+  /* ─── Atalhos de teclado (UX nível POS profissional) ───
+       /       → focar barra de pesquisa
+       Esc     → fechar modal aberto
+       F9      → abrir checkout (se carrinho tem itens)
+       Enter   → confirmar pagamento (se modal checkout aberto)
+       Ctrl+L  → limpar carrinho                                  */
+  document.addEventListener('keydown', (e) => {
+    // Não interfere quando o utilizador está a escrever em inputs/textareas
+    const inEditable = /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName);
+    const checkoutOpen = !document.getElementById('checkout-modal')?.classList.contains('hidden');
+    const receiptOpen  = !document.getElementById('receipt-modal')?.classList.contains('hidden');
+    const returnsOpen  = !document.getElementById('returns-modal')?.classList.contains('hidden');
+    const anyModalOpen = checkoutOpen || receiptOpen || returnsOpen;
+
+    // '/' → foca pesquisa
+    if (e.key === '/' && !inEditable && !anyModalOpen) {
+      e.preventDefault();
+      searchInput?.focus();
+      searchInput?.select();
+      return;
+    }
+    // Esc → fecha qualquer modal aberto
+    if (e.key === 'Escape') {
+      if (checkoutOpen) { closeCheckoutModal(); e.preventDefault(); return; }
+      if (receiptOpen)  { closeReceiptAndReset(); e.preventDefault(); return; }
+      if (returnsOpen)  { document.getElementById('returns-modal')?.classList.add('hidden'); e.preventDefault(); return; }
+    }
+    // F9 → abre checkout (se houver itens no carrinho)
+    if (e.key === 'F9' && !anyModalOpen) {
+      e.preventDefault();
+      if (cart.length > 0 && typeof openCheckoutModal === 'function') {
+        openCheckoutModal();
+      } else {
+        toast('Carrinho vazio — adiciona produtos primeiro', 'warning');
+      }
+      return;
+    }
+    // Enter dentro do checkout → confirma pagamento
+    if (e.key === 'Enter' && checkoutOpen && !inEditable) {
+      const btn = document.getElementById('co-confirm-btn') || document.querySelector('#checkout-modal .btn-confirm');
+      btn?.click();
+      e.preventDefault();
+      return;
+    }
+    // Ctrl+L → limpa carrinho
+    if (e.key === 'l' && (e.ctrlKey || e.metaKey) && !inEditable && !anyModalOpen) {
+      e.preventDefault();
+      if (cart.length > 0 && confirm('Limpar carrinho?')) clearCart();
+    }
+    // '?' → mostra ajuda dos atalhos
+    if (e.key === '?' && !inEditable && !anyModalOpen) {
+      e.preventDefault();
+      showShortcutsHelp();
+    }
+  });
+
+  /* ─── Auto-focus na barra de pesquisa quando o POS carrega ─── */
+  setTimeout(() => {
+    if (document.activeElement === document.body) searchInput?.focus();
+  }, 200);
 }
 
 const wineEmojis = { Tinto: '🍷', Branco: '🥂', 'Rosé': '🌸', Espumante: '✨', Porto: '🍇', Madeira: '🥃' };
@@ -1808,12 +1893,77 @@ async function processPayment() {
   const sub2 = document.getElementById('receipt-subtitle');
   if (sub2) sub2.textContent = `${cart.length} artigo(s) · IVA incluído · ${payMethod}`;
 
+  // Lista dos IDs vendidos — para detetar stock crítico após refresh do catálogo
+  const soldIds = itens.map(it => it.vinhoId);
+
   closeCheckoutModal();
   clearCart();
   // Refresh catalog from API to get real stock values
   await refreshCatalog();
+
+  /* ─── Alerta de stock crítico (UX nível POS profissional) ───
+     Verifica os vinhos vendidos: se algum ficou ≤5 unidades,
+     mostra toast amarelo a avisar o operador.                  */
+  const criticos = catalog.filter(v => soldIds.includes(v.id) && v.quantidade > 0 && v.quantidade <= 5);
+  const esgotados = catalog.filter(v => soldIds.includes(v.id) && (v.quantidade || 0) === 0);
+  if (esgotados.length > 0) {
+    const nomes = esgotados.slice(0, 2).map(v => v.nome).join(', ') + (esgotados.length > 2 ? ` +${esgotados.length - 2}` : '');
+    setTimeout(() => toast(`⛔ Esgotado: ${nomes}`, 'error', 5000), 600);
+  } else if (criticos.length > 0) {
+    const nomes = criticos.slice(0, 2).map(v => `${v.nome} (${v.quantidade}un)`).join(', ') + (criticos.length > 2 ? ` +${criticos.length - 2}` : '');
+    setTimeout(() => toast(`⚠ Stock crítico: ${nomes}`, 'warning', 5000), 600);
+  }
+
   document.getElementById('receipt-modal')?.classList.remove('hidden');
   if (btn) { btn.disabled = false; btn.textContent = 'Confirmar Pagamento'; }
+}
+
+/**
+ * Mostra um diálogo flutuante com os atalhos de teclado do POS.
+ * Disparado quando o utilizador carrega '?' (sem estar a escrever em input).
+ * Auto-fecha em 8s ou ao clicar fora.
+ */
+function showShortcutsHelp() {
+  // Se já está aberto, fecha e sai (toggle)
+  const existing = document.getElementById('shortcuts-help');
+  if (existing) { existing.remove(); return; }
+
+  const overlay = document.createElement('div');
+  overlay.id = 'shortcuts-help';
+  overlay.setAttribute('role', 'dialog');
+  overlay.setAttribute('aria-label', 'Atalhos de teclado');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(5,2,3,0.75);backdrop-filter:blur(6px);z-index:9999;display:flex;align-items:center;justify-content:center;animation:fadeIn .2s ease;';
+  overlay.innerHTML = `
+    <style>@keyframes fadeIn{from{opacity:0}to{opacity:1}}</style>
+    <div style="background:#1A1410;border:1px solid #C9A96E33;border-radius:14px;padding:28px 32px;max-width:420px;width:92%;color:#F5F0E8;box-shadow:0 20px 60px rgba(0,0,0,0.55);font-family:'Inter',sans-serif;" onclick="event.stopPropagation()">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+        <h3 style="font-family:'Playfair Display',serif;font-size:20px;font-weight:600;color:#C9A96E;margin:0;">Atalhos de Teclado</h3>
+        <button onclick="document.getElementById('shortcuts-help')?.remove()" style="background:transparent;border:none;color:#8B7C68;font-size:22px;cursor:pointer;padding:0 8px;" aria-label="Fechar">×</button>
+      </div>
+      <table style="width:100%;border-collapse:collapse;font-size:13px;">
+        <tbody>
+          <tr><td style="padding:8px 0;color:#C9B895;">Procurar produto</td><td style="text-align:right;"><kbd style="background:#0A0807;border:1px solid #2B2620;color:#E0C992;padding:3px 8px;border-radius:4px;font-family:'Courier New',monospace;font-size:11px;">/</kbd></td></tr>
+          <tr><td style="padding:8px 0;color:#C9B895;">Abrir checkout</td><td style="text-align:right;"><kbd style="background:#0A0807;border:1px solid #2B2620;color:#E0C992;padding:3px 8px;border-radius:4px;font-family:'Courier New',monospace;font-size:11px;">F9</kbd></td></tr>
+          <tr><td style="padding:8px 0;color:#C9B895;">Confirmar pagamento</td><td style="text-align:right;"><kbd style="background:#0A0807;border:1px solid #2B2620;color:#E0C992;padding:3px 8px;border-radius:4px;font-family:'Courier New',monospace;font-size:11px;">Enter</kbd></td></tr>
+          <tr><td style="padding:8px 0;color:#C9B895;">Fechar modal</td><td style="text-align:right;"><kbd style="background:#0A0807;border:1px solid #2B2620;color:#E0C992;padding:3px 8px;border-radius:4px;font-family:'Courier New',monospace;font-size:11px;">Esc</kbd></td></tr>
+          <tr><td style="padding:8px 0;color:#C9B895;">Limpar carrinho</td><td style="text-align:right;"><kbd style="background:#0A0807;border:1px solid #2B2620;color:#E0C992;padding:3px 8px;border-radius:4px;font-family:'Courier New',monospace;font-size:11px;">⌘L</kbd></td></tr>
+          <tr><td style="padding:8px 0;color:#C9B895;">Esta ajuda</td><td style="text-align:right;"><kbd style="background:#0A0807;border:1px solid #2B2620;color:#E0C992;padding:3px 8px;border-radius:4px;font-family:'Courier New',monospace;font-size:11px;">?</kbd></td></tr>
+        </tbody>
+      </table>
+      <p style="margin:18px 0 0;font-size:11px;color:#8B7C68;font-style:italic;text-align:center;">Pressiona qualquer tecla para fechar</p>
+    </div>
+  `;
+  overlay.addEventListener('click', () => overlay.remove());
+  document.body.appendChild(overlay);
+
+  // Fechar com qualquer tecla
+  const closeOnKey = (e) => {
+    if (e.key !== '?' || true) {
+      overlay.remove();
+      document.removeEventListener('keydown', closeOnKey);
+    }
+  };
+  setTimeout(() => document.addEventListener('keydown', closeOnKey, { once: true }), 100);
 }
 
 function closeReceiptAndReset() {
@@ -2563,8 +2713,9 @@ async function printGuiaTransporte(vinhoId, quantidade, destino) {
 
     <div class="guia-footer">
       <div class="gold-line"></div>
-      Documento processado por programa certificado n.º 0000/AT.<br>
-      ${COMPANY.legal} · NIPC: ${COMPANY.nif} · ${COMPANY.web}
+      Documento processado por programa certificado n.º ${COMPANY.certificadoAT}/AT.<br>
+      ${COMPANY.legal} · NIPC: ${COMPANY.nif} · ${COMPANY.address}, ${COMPANY.postal} · ${COMPANY.web}<br>
+      <span style="color:#B89060;font-style:italic;font-size:9px;">⚠ Documento gerado em ambiente de demonstração (software académico — não certificado pela AT).</span>
     </div>
 
     <div class="no-print" style="text-align:center;margin-top:30px;">
