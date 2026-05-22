@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" width="900" height="600">
+
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+    <path d="M 0 0 L 10 5 L 0 10 z" fill="#C9A96E"/>
+  </marker>
+  <marker id="arrow-mid" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+    <path d="M 0 0 L 10 5 L 0 10 z" fill="#8B7C68"/>
+  </marker>
+  <marker id="arrow-wine" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+    <path d="M 0 0 L 10 5 L 0 10 z" fill="#8B3A44"/>
+  </marker>
+  <marker id="arrow-open" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+    <path d="M 0 0 L 10 5 L 0 10" fill="none" stroke="#15110D" stroke-width="1.5"/>
+  </marker>
+</defs>
+
+
+<style>
+  text { font-family: 'Inter', 'Helvetica', sans-serif; }
+  .title { font-family: 'Playfair Display', 'Georgia', serif; font-size: 22px; font-weight: 700; fill: #15110D; }
+  .subtitle { font-size: 11px; fill: #8B7C68; }
+  .label { font-size: 13px; font-weight: 600; }
+  .small { font-size: 10px; fill: #4A453E; }
+  .tiny { font-size: 9px; fill: #8B7C68; }
+  .arrow { stroke: #C9A96E; stroke-width: 1.8; fill: none; marker-end: url(#arrow); }
+  .arrow-thin { stroke: #8B7C68; stroke-width: 1.2; fill: none; marker-end: url(#arrow-mid); }
+  .arrow-include { stroke: #8B3A44; stroke-width: 1.4; fill: none; marker-end: url(#arrow-wine); stroke-dasharray: 5,4; }
+  .box { fill: #FAF6EC; stroke: #C9A96E; stroke-width: 1.5; }
+  .box-dark { fill: #15110D; stroke: #C9A96E; stroke-width: 1.5; }
+  .actor-line { stroke: #15110D; stroke-width: 1.4; fill: none; }
+  .lifeline { stroke: #8B7C68; stroke-width: 1; stroke-dasharray: 4,4; }
+  .activation { fill: #C9A96E; opacity: 0.85; stroke: #C9A96E; stroke-width: 0.5; }
+  .gold-line { stroke: #C9A96E; stroke-width: 0.5; }
+</style>
+
+<rect width="900" height="600" fill="#FAF6EC"/>
+
+    <text x="450.0" y="38" class="title" text-anchor="middle">Arquitetura em 3 Camadas</text>
+    <text x="450.0" y="56" class="subtitle" text-anchor="middle">the 100's — Bottled Memories</text>
+
+    <!-- Camada Apresentação -->
+    <rect x="120" y="90" width="660" height="120" rx="12" class="box-dark"/>
+    <text x="450.0" y="118" text-anchor="middle" fill="#C9A96E" font-size="11" font-weight="700" letter-spacing="3">CAMADA DE APRESENTAÇÃO</text>
+    <text x="450.0" y="144" text-anchor="middle" fill="#FAF6EC" font-size="18" font-weight="600">Browser (Safari / Chrome / Edge)</text>
+    <text x="450.0" y="172" text-anchor="middle" fill="#E0C992" font-size="12">HTML5 semântico · CSS3 (Design System) · JavaScript vanilla</text>
+    <text x="450.0" y="190" text-anchor="middle" fill="#ECE3D2" font-size="11">Session · apiFetch · escHtml · fmt · toast · SoundFX</text>
+
+    <!-- Seta 1 -->
+    <line x1="450.0" y1="218" x2="450.0" y2="265" class="arrow"/>
+    <text x="462.0" y="245" font-size="11" fill="#C9A96E" font-weight="600">HTTP/JSON · Bearer Token</text>
+
+    <!-- Camada Aplicação -->
+    <rect x="120" y="275" width="660" height="120" rx="12" class="box"/>
+    <text x="450.0" y="303" text-anchor="middle" fill="#8B3A44" font-size="11" font-weight="700" letter-spacing="3">CAMADA DE APLICAÇÃO</text>
+    <text x="450.0" y="329" text-anchor="middle" font-size="18" font-weight="600">Flask  ·  :8080  ·  server.py</text>
+    <text x="450.0" y="357" text-anchor="middle" font-size="12" fill="#4A453E">25+ endpoints REST  ·  @requires_auth · @requires_role</text>
+    <text x="450.0" y="375" text-anchor="middle" font-size="11" fill="#8B7C68">Werkzeug (hash)  ·  openpyxl (Excel)  ·  PyMySQL/sqlite3</text>
+
+    <!-- Seta 2 -->
+    <line x1="450.0" y1="403" x2="450.0" y2="450" class="arrow"/>
+    <text x="462.0" y="430" font-size="11" fill="#C9A96E" font-weight="600">SQL parametrizado</text>
+
+    <!-- Camada Dados (dois lado a lado) -->
+    <rect x="120" y="460" width="320" height="110" rx="12" class="box"/>
+    <text x="280" y="488" text-anchor="middle" fill="#8B3A44" font-size="11" font-weight="700" letter-spacing="3">DADOS · PRINCIPAL</text>
+    <text x="280" y="514" text-anchor="middle" font-size="16" font-weight="600">MySQL 8.0</text>
+    <text x="280" y="535" text-anchor="middle" font-size="11" fill="#4A453E">vinhadouro · utf8mb4</text>
+    <text x="280" y="552" text-anchor="middle" font-size="10" fill="#8B7C68">9 tabelas · 3 vistas · 13 índices</text>
+
+    <rect x="460" y="460" width="320" height="110" rx="12" class="box" stroke-dasharray="6,4"/>
+    <text x="620" y="488" text-anchor="middle" fill="#8B7C68" font-size="11" font-weight="700" letter-spacing="3">DADOS · FALLBACK</text>
+    <text x="620" y="514" text-anchor="middle" font-size="16" font-weight="600">SQLite</text>
+    <text x="620" y="535" text-anchor="middle" font-size="11" fill="#4A453E">automático se MySQL offline</text>
+    <text x="620" y="552" text-anchor="middle" font-size="10" fill="#8B7C68">mesmo schema, mesmas queries</text>
+
+    <!-- Footer brand -->
+    <line x1="120" y1="585" x2="780" y2="585" class="gold-line"/>
+    
+</svg>

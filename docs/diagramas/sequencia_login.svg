@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" width="1000" height="650">
+
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+    <path d="M 0 0 L 10 5 L 0 10 z" fill="#C9A96E"/>
+  </marker>
+  <marker id="arrow-mid" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+    <path d="M 0 0 L 10 5 L 0 10 z" fill="#8B7C68"/>
+  </marker>
+  <marker id="arrow-wine" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+    <path d="M 0 0 L 10 5 L 0 10 z" fill="#8B3A44"/>
+  </marker>
+  <marker id="arrow-open" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+    <path d="M 0 0 L 10 5 L 0 10" fill="none" stroke="#15110D" stroke-width="1.5"/>
+  </marker>
+</defs>
+
+
+<style>
+  text { font-family: 'Inter', 'Helvetica', sans-serif; }
+  .title { font-family: 'Playfair Display', 'Georgia', serif; font-size: 22px; font-weight: 700; fill: #15110D; }
+  .subtitle { font-size: 11px; fill: #8B7C68; }
+  .label { font-size: 13px; font-weight: 600; }
+  .small { font-size: 10px; fill: #4A453E; }
+  .tiny { font-size: 9px; fill: #8B7C68; }
+  .arrow { stroke: #C9A96E; stroke-width: 1.8; fill: none; marker-end: url(#arrow); }
+  .arrow-thin { stroke: #8B7C68; stroke-width: 1.2; fill: none; marker-end: url(#arrow-mid); }
+  .arrow-include { stroke: #8B3A44; stroke-width: 1.4; fill: none; marker-end: url(#arrow-wine); stroke-dasharray: 5,4; }
+  .box { fill: #FAF6EC; stroke: #C9A96E; stroke-width: 1.5; }
+  .box-dark { fill: #15110D; stroke: #C9A96E; stroke-width: 1.5; }
+  .actor-line { stroke: #15110D; stroke-width: 1.4; fill: none; }
+  .lifeline { stroke: #8B7C68; stroke-width: 1; stroke-dasharray: 4,4; }
+  .activation { fill: #C9A96E; opacity: 0.85; stroke: #C9A96E; stroke-width: 0.5; }
+  .gold-line { stroke: #C9A96E; stroke-width: 0.5; }
+</style>
+
+<rect width="1000" height="650" fill="#FAF6EC"/>
+
+    <text x="500.0" y="38" class="title" text-anchor="middle">Diagrama de Sequência — Login</text>
+    <text x="500.0" y="56" class="subtitle" text-anchor="middle">Autenticação com token Bearer</text>
+    
+            <g transform="translate(150, 95)">
+              <circle cx="0" cy="0" r="12" fill="none" stroke="#15110D" stroke-width="2"/>
+              <line x1="0" y1="12" x2="0" y2="40" class="actor-line"/>
+              <line x1="-15" y1="22" x2="15" y2="22" class="actor-line"/>
+              <line x1="0" y1="40" x2="-12" y2="62" class="actor-line"/>
+              <line x1="0" y1="40" x2="12" y2="62" class="actor-line"/>
+              <text x="0" y="85" text-anchor="middle" font-size="12" font-weight="600">Funcionário</text>
+            </g>
+            <line x1="150" y1="160" x2="150" y2="570" class="lifeline"/>
+            <rect x="280" y="95" width="140" height="50" rx="6" class="box-dark"/>
+            <text x="350" y="120" text-anchor="middle" font-size="12" font-weight="600" fill="#E0C992">Frontend</text>
+            <text x="350" y="134" text-anchor="middle" font-size="10" fill="#ECE3D2">(app.js)</text><line x1="350" y1="160" x2="350" y2="570" class="lifeline"/>
+            <rect x="500" y="95" width="140" height="50" rx="6" class="box-dark"/>
+            <text x="570" y="120" text-anchor="middle" font-size="12" font-weight="600" fill="#E0C992">server.py</text>
+            <text x="570" y="134" text-anchor="middle" font-size="10" fill="#ECE3D2">(Flask)</text><line x1="570" y1="160" x2="570" y2="570" class="lifeline"/>
+            <rect x="750" y="95" width="140" height="50" rx="6" class="box-dark"/>
+            <text x="820" y="120" text-anchor="middle" font-size="12" font-weight="600" fill="#E0C992">MySQL</text>
+            <text x="820" y="134" text-anchor="middle" font-size="10" fill="#ECE3D2">(utilizadores)</text><line x1="820" y1="160" x2="820" y2="570" class="lifeline"/>
+            <line x1="150" y1="190" x2="350" y2="190" stroke="#C9A96E" stroke-width="1.6" marker-end="url(#arrow)"/>
+            <text x="250.0" y="185" text-anchor="middle" font-size="11" font-weight="600" fill="#15110D">1. credenciais (form submit)</text>
+            <text x="250.0" y="205" text-anchor="middle" font-size="10" fill="#8B7C68" font-style="italic">(usuario, password)</text>
+            
+            <line x1="350" y1="240" x2="570" y2="240" stroke="#C9A96E" stroke-width="1.6" marker-end="url(#arrow)"/>
+            <text x="460.0" y="235" text-anchor="middle" font-size="11" font-weight="600" fill="#15110D">2. POST /api/login</text>
+            <text x="460.0" y="255" text-anchor="middle" font-size="10" fill="#8B7C68" font-style="italic">{"usuario","password"}</text>
+            
+            <line x1="570" y1="290" x2="820" y2="290" stroke="#C9A96E" stroke-width="1.6" marker-end="url(#arrow)"/>
+            <text x="695.0" y="285" text-anchor="middle" font-size="11" font-weight="600" fill="#15110D">3. SELECT * FROM utilizadores</text>
+            <text x="695.0" y="305" text-anchor="middle" font-size="10" fill="#8B7C68" font-style="italic">WHERE usuario = %s</text>
+            
+            <line x1="820" y1="340" x2="570" y2="340" stroke="#8B7C68" stroke-width="1.6" stroke-dasharray="5,4" marker-end="url(#arrow-mid)"/>
+            <text x="695.0" y="335" text-anchor="middle" font-size="11" font-weight="600" fill="#15110D">4. row (id, hash, role)</text>
+            <text x="695.0" y="355" text-anchor="middle" font-size="10" fill="#8B7C68" font-style="italic">resposta MySQL</text>
+            
+            <path d="M 570 390 L 615 390 L 615 405 L 575 405" class="arrow-thin"/>
+            <text x="625" y="392" font-size="11" font-weight="600">5. check_password_hash()</text>
+            <text x="625" y="405" font-size="10" fill="#8B7C68">+ token_urlsafe(32)</text>
+            
+            <line x1="570" y1="440" x2="350" y2="440" stroke="#8B7C68" stroke-width="1.6" stroke-dasharray="5,4" marker-end="url(#arrow-mid)"/>
+            <text x="460.0" y="435" text-anchor="middle" font-size="11" font-weight="600" fill="#15110D">6. 200 {token, user}</text>
+            <text x="460.0" y="455" text-anchor="middle" font-size="10" fill="#8B7C68" font-style="italic">(Bearer)</text>
+            
+            <line x1="350" y1="490" x2="150" y2="490" stroke="#8B7C68" stroke-width="1.6" stroke-dasharray="5,4" marker-end="url(#arrow-mid)"/>
+            <text x="250.0" y="485" text-anchor="middle" font-size="11" font-weight="600" fill="#15110D">7. localStorage.setItem</text>
+            <text x="250.0" y="505" text-anchor="middle" font-size="10" fill="#8B7C68" font-style="italic">redirect dashboard</text>
+            
+    <rect x="346" y="190" width="8" height="320" class="activation"/>
+    <rect x="566" y="240" width="8" height="220" class="activation"/>
+    <rect x="816" y="290" width="8" height="60" class="activation"/>
+    
+    <rect x="40" y="595" width="920" height="45" rx="6" fill="white" stroke="#ECE3D2"/>
+    <line x1="60" y1="610" x2="100" y2="610" stroke="#C9A96E" stroke-width="1.6" marker-end="url(#arrow)"/>
+    <text x="110" y="614" font-size="11">chamada síncrona</text>
+    <line x1="240" y1="610" x2="280" y2="610" stroke="#8B7C68" stroke-width="1.6" stroke-dasharray="5,4" marker-end="url(#arrow-mid)"/>
+    <text x="290" y="614" font-size="11">resposta</text>
+    <rect x="400" y="606" width="8" height="9" class="activation"/>
+    <text x="415" y="614" font-size="11">activação (execução)</text>
+    <text x="580" y="614" font-size="11" fill="#8B7C68" font-style="italic">Hash: pbkdf2:sha256 ou scrypt (auto-upgrade no 1.º login)</text>
+    
+</svg>

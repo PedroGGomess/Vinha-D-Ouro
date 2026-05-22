@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 850" width="900" height="850">
+
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+    <path d="M 0 0 L 10 5 L 0 10 z" fill="#C9A96E"/>
+  </marker>
+  <marker id="arrow-mid" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+    <path d="M 0 0 L 10 5 L 0 10 z" fill="#8B7C68"/>
+  </marker>
+  <marker id="arrow-wine" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+    <path d="M 0 0 L 10 5 L 0 10 z" fill="#8B3A44"/>
+  </marker>
+  <marker id="arrow-open" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+    <path d="M 0 0 L 10 5 L 0 10" fill="none" stroke="#15110D" stroke-width="1.5"/>
+  </marker>
+</defs>
+
+
+<style>
+  text { font-family: 'Inter', 'Helvetica', sans-serif; }
+  .title { font-family: 'Playfair Display', 'Georgia', serif; font-size: 22px; font-weight: 700; fill: #15110D; }
+  .subtitle { font-size: 11px; fill: #8B7C68; }
+  .label { font-size: 13px; font-weight: 600; }
+  .small { font-size: 10px; fill: #4A453E; }
+  .tiny { font-size: 9px; fill: #8B7C68; }
+  .arrow { stroke: #C9A96E; stroke-width: 1.8; fill: none; marker-end: url(#arrow); }
+  .arrow-thin { stroke: #8B7C68; stroke-width: 1.2; fill: none; marker-end: url(#arrow-mid); }
+  .arrow-include { stroke: #8B3A44; stroke-width: 1.4; fill: none; marker-end: url(#arrow-wine); stroke-dasharray: 5,4; }
+  .box { fill: #FAF6EC; stroke: #C9A96E; stroke-width: 1.5; }
+  .box-dark { fill: #15110D; stroke: #C9A96E; stroke-width: 1.5; }
+  .actor-line { stroke: #15110D; stroke-width: 1.4; fill: none; }
+  .lifeline { stroke: #8B7C68; stroke-width: 1; stroke-dasharray: 4,4; }
+  .activation { fill: #C9A96E; opacity: 0.85; stroke: #C9A96E; stroke-width: 0.5; }
+  .gold-line { stroke: #C9A96E; stroke-width: 0.5; }
+</style>
+
+<rect width="900" height="850" fill="#FAF6EC"/>
+
+    <text x="450.0" y="38" class="title" text-anchor="middle">Fluxograma — Processo de Venda</text>
+    <text x="450.0" y="56" class="subtitle" text-anchor="middle">the 100's POS</text>
+
+    
+        <ellipse cx="450.0" cy="95" rx="80" ry="22" fill="#C9A96E" stroke="#15110D" stroke-width="1.5"/>
+        <text x="450.0" y="100" text-anchor="middle" font-size="13" font-weight="700" fill="#15110D">INÍCIO</text>
+    
+        <line x1="450.0" y1="117" x2="450.0" y2="135" class="arrow"/>
+        
+    
+        <rect x="340.0" y="135" width="220" height="44" rx="6" class="box"/>
+        <text x="450.0" y="159" text-anchor="middle" font-size="13" font-weight="600">Autenticação (Login)</text>
+        <text x="450.0" y="176" text-anchor="middle" font-size="10" fill="#8B7C68">username + password 1234</text>
+    
+        <line x1="450.0" y1="179" x2="450.0" y2="200" class="arrow"/>
+        
+    
+        <rect x="340.0" y="200" width="220" height="44" rx="6" class="box"/>
+        <text x="450.0" y="224" text-anchor="middle" font-size="13" font-weight="600">Carregar Catálogo</text>
+        <text x="450.0" y="241" text-anchor="middle" font-size="10" fill="#8B7C68">GET /api/vinhos</text>
+    
+        <line x1="450.0" y1="244" x2="450.0" y2="270" class="arrow"/>
+        
+    
+        <rect x="340.0" y="270" width="220" height="44" rx="6" class="box"/>
+        <text x="450.0" y="294" text-anchor="middle" font-size="13" font-weight="600">Selecionar e Adicionar ao Carrinho</text>
+        <text x="450.0" y="311" text-anchor="middle" font-size="10" fill="#8B7C68">tile click -> SoundFX.cartAdd()</text>
+    
+        <line x1="450.0" y1="314" x2="450.0" y2="350" class="arrow"/>
+        
+    
+        <polygon points="450.0,348 520.0,380 450.0,412 380.0,380" fill="#ECE3D2" stroke="#8B3A44" stroke-width="1.6"/>
+        <text x="450.0" y="385" text-anchor="middle" font-size="13" font-weight="600">Stock OK?</text>
+    
+    
+        <line x1="450.0" y1="412" x2="450.0" y2="450" class="arrow"/>
+        <text x="458.0" y="435.0" font-size="11" fill="#C9A96E" font-weight="600">Sim</text>
+    
+        <rect x="340.0" y="448" width="220" height="44" rx="6" class="box"/>
+        <text x="450.0" y="472" text-anchor="middle" font-size="13" font-weight="600">Abrir Checkout (F9)</text>
+        <text x="450.0" y="489" text-anchor="middle" font-size="10" fill="#8B7C68">modal pagamento</text>
+    
+        <line x1="450.0" y1="492" x2="450.0" y2="520" class="arrow"/>
+        
+    
+        <rect x="340.0" y="520" width="220" height="44" rx="6" class="box"/>
+        <text x="450.0" y="544" text-anchor="middle" font-size="13" font-weight="600">Escolher Método</text>
+        <text x="450.0" y="561" text-anchor="middle" font-size="10" fill="#8B7C68">Cartão · MBWay · Numerário · MB</text>
+    
+        <line x1="450.0" y1="564" x2="450.0" y2="595" class="arrow"/>
+        
+    
+        <rect x="340.0" y="595" width="220" height="44" rx="6" class="box"/>
+        <text x="450.0" y="619" text-anchor="middle" font-size="13" font-weight="600">POST /api/vendas</text>
+        <text x="450.0" y="636" text-anchor="middle" font-size="10" fill="#8B7C68">Transação MySQL · INSERT</text>
+    
+        <line x1="450.0" y1="639" x2="450.0" y2="670" class="arrow"/>
+        
+    
+        <rect x="340.0" y="668" width="220" height="44" rx="6" class="box"/>
+        <text x="450.0" y="692" text-anchor="middle" font-size="13" font-weight="600">Emitir Talão Fiscal AT</text>
+        <text x="450.0" y="709" text-anchor="middle" font-size="10" fill="#8B7C68">ATCUD + QR + IVA + Hash</text>
+    
+        <line x1="450.0" y1="712" x2="450.0" y2="745" class="arrow"/>
+        
+    
+        <rect x="340.0" y="743" width="220" height="44" rx="6" class="box"/>
+        <text x="450.0" y="767" text-anchor="middle" font-size="13" font-weight="600">Cash Register Ding  + Toast</text>
+        <text x="450.0" y="784" text-anchor="middle" font-size="10" fill="#8B7C68">SoundFX.saleSuccess()</text>
+    
+        <line x1="450.0" y1="787" x2="450.0" y2="810" class="arrow"/>
+        
+    
+        <ellipse cx="450.0" cy="830" rx="80" ry="22" fill="#7BB78F" stroke="#15110D" stroke-width="1.5"/>
+        <text x="450.0" y="835" text-anchor="middle" font-size="13" font-weight="700" fill="#15110D">FIM</text>
+    
+    <!-- Branch NÃO -->
+    <line x1="520.0" y1="380" x2="650.0" y2="380" class="arrow"/>
+    <text x="535.0" y="372" font-size="11" fill="#C9A96E" font-weight="600">Não</text>
+    <rect x="605.0" y="358" width="180" height="44" rx="6" fill="#ECE3D2" stroke="#B8484A" stroke-width="1.6"/>
+    <text x="695.0" y="378" text-anchor="middle" font-size="13" font-weight="600">Toast: Stock Insuficiente</text>
+    <text x="695.0" y="394" text-anchor="middle" font-size="10" fill="#8B7C68">! avisar gerente</text>
+    <line x1="695.0" y1="358" x2="695.0" y2="280" stroke="#8B7C68" stroke-width="1.2" fill="none"/>
+    <path d="M 695.0 280 L 560.0 280" stroke="#8B7C68" stroke-width="1.2" fill="none" marker-end="url(#arrow-mid)"/>
+    <text x="670.0" y="273" font-size="10" fill="#8B7C68" font-style="italic">retry</text>
+    
+</svg>

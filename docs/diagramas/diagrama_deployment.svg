@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 500" width="900" height="500">
+
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+    <path d="M 0 0 L 10 5 L 0 10 z" fill="#C9A96E"/>
+  </marker>
+  <marker id="arrow-mid" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+    <path d="M 0 0 L 10 5 L 0 10 z" fill="#8B7C68"/>
+  </marker>
+  <marker id="arrow-wine" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+    <path d="M 0 0 L 10 5 L 0 10 z" fill="#8B3A44"/>
+  </marker>
+  <marker id="arrow-open" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+    <path d="M 0 0 L 10 5 L 0 10" fill="none" stroke="#15110D" stroke-width="1.5"/>
+  </marker>
+</defs>
+
+
+<style>
+  text { font-family: 'Inter', 'Helvetica', sans-serif; }
+  .title { font-family: 'Playfair Display', 'Georgia', serif; font-size: 22px; font-weight: 700; fill: #15110D; }
+  .subtitle { font-size: 11px; fill: #8B7C68; }
+  .label { font-size: 13px; font-weight: 600; }
+  .small { font-size: 10px; fill: #4A453E; }
+  .tiny { font-size: 9px; fill: #8B7C68; }
+  .arrow { stroke: #C9A96E; stroke-width: 1.8; fill: none; marker-end: url(#arrow); }
+  .arrow-thin { stroke: #8B7C68; stroke-width: 1.2; fill: none; marker-end: url(#arrow-mid); }
+  .arrow-include { stroke: #8B3A44; stroke-width: 1.4; fill: none; marker-end: url(#arrow-wine); stroke-dasharray: 5,4; }
+  .box { fill: #FAF6EC; stroke: #C9A96E; stroke-width: 1.5; }
+  .box-dark { fill: #15110D; stroke: #C9A96E; stroke-width: 1.5; }
+  .actor-line { stroke: #15110D; stroke-width: 1.4; fill: none; }
+  .lifeline { stroke: #8B7C68; stroke-width: 1; stroke-dasharray: 4,4; }
+  .activation { fill: #C9A96E; opacity: 0.85; stroke: #C9A96E; stroke-width: 0.5; }
+  .gold-line { stroke: #C9A96E; stroke-width: 0.5; }
+</style>
+
+<rect width="900" height="500" fill="#FAF6EC"/>
+
+    <text x="450.0" y="38" class="title" text-anchor="middle">Diagrama de Deployment (Localhost)</text>
+    <text x="450.0" y="56" class="subtitle" text-anchor="middle">Single-tenant — Computador da Loja</text>
+
+    <!-- Computador da Loja (outer node) -->
+    <rect x="80" y="95" width="740" height="370" rx="14" fill="#FAF6EC" stroke="#15110D" stroke-width="2.5"/>
+    <rect x="80" y="95" width="740" height="38" rx="14" fill="#15110D"/>
+    <text x="100" y="120" fill="#C9A96E" font-size="13" font-weight="700" letter-spacing="2">«device»  COMPUTADOR DA LOJA  (macOS / Windows / Linux)</text>
+
+    <!-- Browser node -->
+    <rect x="130" y="170" width="200" height="240" rx="10" fill="white" stroke="#C9A96E" stroke-width="1.6"/>
+    <rect x="130" y="170" width="200" height="30" rx="10" fill="#C9A96E"/>
+    <text x="230" y="190" text-anchor="middle" fill="#15110D" font-size="12" font-weight="700" letter-spacing="1.5">«browser»</text>
+    <text x="230" y="225" text-anchor="middle" font-size="14" font-weight="600">Safari / Chrome</text>
+    <text x="230" y="252" text-anchor="middle" font-size="11" fill="#8B7C68">http://localhost:8080</text>
+    <line x1="160" y1="270" x2="300" y2="270" class="gold-line"/>
+    <text x="230" y="295" text-anchor="middle" font-size="11" fill="#4A453E">index.html · loja.html</text>
+    <text x="230" y="313" text-anchor="middle" font-size="11" fill="#4A453E">stock.html · gerente.html</text>
+    <text x="230" y="331" text-anchor="middle" font-size="11" fill="#4A453E">style.css · app.js</text>
+    <text x="230" y="355" text-anchor="middle" font-size="10" fill="#8B7C68" font-style="italic">UI: dark luxury + gold</text>
+    <text x="230" y="386" text-anchor="middle" font-size="9" fill="#8B7C68">localStorage:</text>
+    <text x="230" y="398" text-anchor="middle" font-size="9" fill="#8B7C68">sessão, guias, sound</text>
+
+    <!-- Flask node -->
+    <rect x="360" y="170" width="200" height="240" rx="10" fill="white" stroke="#8B3A44" stroke-width="1.6"/>
+    <rect x="360" y="170" width="200" height="30" rx="10" fill="#8B3A44"/>
+    <text x="460" y="190" text-anchor="middle" fill="#FAF6EC" font-size="12" font-weight="700" letter-spacing="1.5">«server»</text>
+    <text x="460" y="225" text-anchor="middle" font-size="14" font-weight="600">Flask 3.1</text>
+    <text x="460" y="252" text-anchor="middle" font-size="11" fill="#8B7C68">porto 8080 (TCP)</text>
+    <line x1="390" y1="270" x2="530" y2="270" class="gold-line"/>
+    <text x="460" y="295" text-anchor="middle" font-size="11" fill="#4A453E">server.py</text>
+    <text x="460" y="313" text-anchor="middle" font-size="11" fill="#4A453E">PyMySQL · werkzeug</text>
+    <text x="460" y="331" text-anchor="middle" font-size="11" fill="#4A453E">openpyxl · secrets</text>
+    <text x="460" y="355" text-anchor="middle" font-size="10" fill="#8B7C68" font-style="italic">25+ endpoints REST</text>
+    <text x="460" y="386" text-anchor="middle" font-size="9" fill="#8B7C68">In-memory token store</text>
+    <text x="460" y="398" text-anchor="middle" font-size="9" fill="#8B7C68">CORS p/ localhost</text>
+
+    <!-- MySQL node -->
+    <rect x="590" y="170" width="200" height="240" rx="10" fill="white" stroke="#15110D" stroke-width="1.6"/>
+    <rect x="590" y="170" width="200" height="30" rx="10" fill="#15110D"/>
+    <text x="690" y="190" text-anchor="middle" fill="#C9A96E" font-size="12" font-weight="700" letter-spacing="1.5">«database»</text>
+    <text x="690" y="225" text-anchor="middle" font-size="14" font-weight="600">MySQL 8.0</text>
+    <text x="690" y="252" text-anchor="middle" font-size="11" fill="#8B7C68">porto 3306 (TCP)</text>
+    <line x1="620" y1="270" x2="760" y2="270" class="gold-line"/>
+    <text x="690" y="295" text-anchor="middle" font-size="11" fill="#4A453E">DB: vinhadouro</text>
+    <text x="690" y="313" text-anchor="middle" font-size="11" fill="#4A453E">utf8mb4</text>
+    <text x="690" y="331" text-anchor="middle" font-size="11" fill="#4A453E">9 tabelas · 3 vistas</text>
+    <text x="690" y="355" text-anchor="middle" font-size="10" fill="#8B7C68" font-style="italic">+ SQLite fallback</text>
+    <text x="690" y="386" text-anchor="middle" font-size="9" fill="#8B7C68">setup_mysql.sql</text>
+
+    <!-- Connections inside the box -->
+    <line x1="330" y1="290" x2="360" y2="290" class="arrow"/>
+    <text x="345" y="280" font-size="10" fill="#C9A96E" font-weight="600" text-anchor="middle">HTTP/JSON</text>
+
+    <line x1="560" y1="290" x2="590" y2="290" class="arrow"/>
+    <text x="575" y="280" font-size="10" fill="#C9A96E" font-weight="600" text-anchor="middle">TCP/3306</text>
+    
+</svg>
