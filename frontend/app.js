@@ -1159,6 +1159,7 @@ async function loadStock() {
   try { allVinhos = await apiFetch('/vinhos'); } catch { allVinhos = FALLBACK.vinhos; }
   renderStock();
   updateStockStats();
+  renderGuiasHistorico();   // Histórico de guias de transporte
   animateEntrance();
 }
 
@@ -2716,15 +2717,17 @@ async function printVendaReceipt(vendaId) {
   }
 }
 
-async function printGuiaTransporte(vinhoId, quantidade, destino) {
+async function printGuiaTransporte(vinhoId, quantidade, destino, guiaNumOverride) {
   try {
-    const vinho = await apiFetch(`/vinhos/${vinhoId}`).catch(() => null);
+    // Tenta API primeiro, depois fallback para catálogo local
+    let vinho = await apiFetch(`/vinhos/${vinhoId}`).catch(() => null);
+    if (!vinho) vinho = (allVinhos || []).find(v => v.id === vinhoId) || (catalog || []).find(v => v.id === vinhoId);
     if (!vinho) { toast('Vinho não encontrado', 'error'); return; }
 
     const hoje = new Date();
     const dataFmt = hoje.toLocaleDateString('pt-PT');
     const horaFmt = hoje.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' });
-    const guiaNum = `GT ${hoje.getFullYear()}/${String(Math.floor(Math.random() * 99999)).padStart(5, '0')}`;
+    const guiaNum = guiaNumOverride || `GT ${hoje.getFullYear()}/${String(Date.now()).slice(-5)}`;
     const user = Session.get();
     const valorUnit = vinho.preco || 0;
     const valorTotal = valorUnit * quantidade;
@@ -2891,16 +2894,42 @@ async function printGuiaTransporte(vinhoId, quantidade, destino) {
 
 let guiaModalVinhoId = null;
 
+/**
+ * Abre o modal de Guia de Transporte para um vinho específico.
+ * Se não receber vinhoId, popula um <select> com todos os vinhos disponíveis.
+ */
 function openGuiaModal(vinhoId) {
-  guiaModalVinhoId = vinhoId;
-  const vinho = allVinhos.find(v => v.id === vinhoId);
+  guiaModalVinhoId = vinhoId || null;
+  const vinho = vinhoId ? (allVinhos || []).find(v => v.id === vinhoId) : null;
   const nameEl = document.getElementById('guia-wine-name');
-  if (nameEl) nameEl.textContent = vinho ? vinho.nome : 'Vinho #' + vinhoId;
-  const qtyEl = document.getElementById('guia-quantity');
+  if (nameEl) nameEl.textContent = vinho ? vinho.nome : (vinhoId ? 'Vinho #' + vinhoId : 'Selecionar abaixo');
+
+  // Se não veio vinhoId, mostra o seletor; caso contrário, esconde
+  const selectorWrap = document.getElementById('guia-wine-selector-wrap');
+  if (selectorWrap) {
+    if (!vinhoId) {
+      selectorWrap.style.display = '';
+      const sel = document.getElementById('guia-wine-selector');
+      if (sel) {
+        sel.innerHTML = '<option value="">— Selecionar vinho —</option>' +
+          (allVinhos || [])
+            .filter(v => (v.quantidade || 0) > 0)
+            .sort((a, b) => (a.nome || '').localeCompare(b.nome || ''))
+            .map(v => `<option value="${v.id}">${escHtml(v.nome)} (${v.quantidade} un. em armazém)</option>`)
+            .join('');
+        sel.value = '';
+      }
+    } else {
+      selectorWrap.style.display = 'none';
+    }
+  }
+
+  const qtyEl  = document.getElementById('guia-quantity');
   const destEl = document.getElementById('guia-destino');
-  if (qtyEl) qtyEl.value = '1';
+  if (qtyEl)  qtyEl.value  = '1';
   if (destEl) destEl.value = '';
   document.getElementById('guia-modal')?.classList.remove('hidden');
+  setTimeout(() => destEl?.focus(), 100);
 }
 
 function closeGuiaModal() {
@@ -2909,22 +2938,102 @@ function closeGuiaModal() {
   guiaModalVinhoId = null;
 }
 
+/**
+ * Valida e gera a Guia de Transporte.
+ * BUG fix: captura o vinhoId ANTES de fechar o modal (closeGuiaModal reseta a null).
+ */
 function generateGuia() {
-  const quantidade = +document.getElementById('guia-quantity')?.value || 1;
-  const destino = document.getElementById('guia-destino')?.value?.trim() || 'Não especificado';
-
-  if (quantidade < 1) {
-    toast('Quantidade deve ser maior que 0', 'error');
-    return;
+  // Se o selector está visível, lê dele; senão usa o guiaModalVinhoId já definido
+  const selectorWrap = document.getElementById('guia-wine-selector-wrap');
+  if (selectorWrap && selectorWrap.style.display !== 'none') {
+    const sel = document.getElementById('guia-wine-selector');
+    const id = parseInt(sel?.value || '', 10);
+    if (id) guiaModalVinhoId = id;
   }
+
+  const quantidade = parseInt(document.getElementById('guia-quantity')?.value || '0', 10);
+  const destino   = (document.getElementById('guia-destino')?.value || '').trim();
 
   if (!guiaModalVinhoId) {
-    toast('Erro: Vinho não selecionado', 'error');
+    toast('Selecione um vinho', 'error');
+    return;
+  }
+  if (!quantidade || quantidade < 1) {
+    toast('Quantidade tem de ser maior que 0', 'error');
+    return;
+  }
+  if (!destino) {
+    toast('Indique um destino', 'error');
+    document.getElementById('guia-destino')?.focus();
+    return;
+  }
+  // Valida stock disponível
+  const vinho = (allVinhos || []).find(v => v.id === guiaModalVinhoId);
+  if (vinho && quantidade > (vinho.quantidade || 0)) {
+    toast(`Stock insuficiente — apenas ${vinho.quantidade || 0} un. disponíveis`, 'error', 5000);
     return;
   }
 
+  // ⚠ Captura o ID ANTES de closeGuiaModal() (que reseta a null)
+  const vinhoIdFinal = guiaModalVinhoId;
   closeGuiaModal();
-  printGuiaTransporte(guiaModalVinhoId, quantidade, destino);
+
+  // Guarda no histórico local (localStorage) — sem dependência do servidor
+  const guiaNum = `GT ${new Date().getFullYear()}/${String(Date.now()).slice(-5)}`;
+  saveGuiaHistorico({
+    numero: guiaNum,
+    vinhoId: vinhoIdFinal,
+    vinhoNome: vinho?.nome || 'Vinho #' + vinhoIdFinal,
+    quantidade,
+    destino,
+    data: new Date().toISOString(),
+    operador: (Session.get() || {}).nome || 'Sistema',
+  });
+
+  printGuiaTransporte(vinhoIdFinal, quantidade, destino, guiaNum);
+  toast(`Guia ${guiaNum} emitida`, 'success', 3500);
+}
+
+/** Histórico de guias emitidas (localStorage). Retorna lista mais recente primeiro. */
+function getGuiasHistorico() {
+  try { return JSON.parse(localStorage.getItem('the100s:guias') || '[]'); }
+  catch { return []; }
+}
+function saveGuiaHistorico(g) {
+  const list = getGuiasHistorico();
+  list.unshift(g);
+  // Mantém apenas as últimas 50
+  localStorage.setItem('the100s:guias', JSON.stringify(list.slice(0, 50)));
+  renderGuiasHistorico();
+}
+
+/** Renderiza a tabela de histórico de guias se a secção existir na página. */
+function renderGuiasHistorico() {
+  const tbody = document.getElementById('guias-historico-body');
+  if (!tbody) return;
+  const list = getGuiasHistorico();
+  if (!list.length) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--text-muted,#8B7C68);font-style:italic;">Ainda não foram emitidas guias de transporte. Clica em "Nova guia" acima ou no botão de uma linha do inventário.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = list.map(g => `
+    <tr>
+      <td><strong style="color:var(--gold,#C9A96E);font-variant-numeric:tabular-nums;">${escHtml(g.numero)}</strong></td>
+      <td>${escHtml(g.vinhoNome)}</td>
+      <td style="text-align:center;font-variant-numeric:tabular-nums;">${g.quantidade}</td>
+      <td>${escHtml(g.destino)}</td>
+      <td style="font-size:11px;color:var(--text-muted,#8B7C68);">${new Date(g.data).toLocaleString('pt-PT', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' })}</td>
+      <td style="text-align:right;">
+        <button class="btn btn-secondary btn-sm" onclick="reprintGuia(${g.vinhoId}, ${g.quantidade}, ${JSON.stringify(g.destino).replace(/"/g,'&quot;')}, ${JSON.stringify(g.numero).replace(/"/g,'&quot;')})" title="Re-imprimir esta guia">🖨️ Re-imprimir</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+/** Re-imprime uma guia anteriormente emitida (mesmo número, mesma data se possível). */
+function reprintGuia(vinhoId, quantidade, destino, numero) {
+  printGuiaTransporte(vinhoId, quantidade, destino, numero);
+  toast(`A re-imprimir ${numero}…`, 'info', 2000);
 }
 
 function newSale() {
