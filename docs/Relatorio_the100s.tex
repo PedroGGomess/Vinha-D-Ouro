@@ -1,0 +1,993 @@
+% =====================================================================
+%  Relatório de Projeto de Software — the 100's (Vinha-D-Ouro)
+%  Grupo 13 · Universidade Lusófona — Centro Universitário do Porto
+%  Compilador: pdfLaTeX (Overleaf default)
+%
+%  IMAGENS NECESSÁRIAS (uploadar no Overleaf na raiz do projeto):
+%    Todas as 13 imagens estão no ZIP: docs/the100s_overleaf_images.zip
+%    Após upload, todas ficam disponíveis na raiz do projeto Overleaf.
+%
+%  Se uma imagem ainda não existir, comenta a linha \includegraphics
+%  correspondente com % no início, ou substitui por uma imagem em branco.
+% =====================================================================
+\documentclass[11pt,a4paper]{report}
+
+% --- Geometria e layout ---
+\usepackage[a4paper,top=2.5cm,bottom=2.5cm,left=2.5cm,right=2.5cm]{geometry}
+\usepackage{setspace}
+\setstretch{1.2}
+
+% --- Codificação e idioma ---
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[portuguese]{babel}
+
+% --- Tipografia ---
+\usepackage{tgpagella}
+\usepackage{tgheros}
+\usepackage{tgcursor}
+\renewcommand{\familydefault}{\rmdefault}
+
+% --- Paleta Bottled Memories (wine + gold institucional) ---
+\usepackage{xcolor}
+\definecolor{ink}{HTML}{1A1414}
+\definecolor{burgundy}{HTML}{5A1A1A}      % cor primária (badges, títulos)
+\definecolor{burgundyLight}{HTML}{E8D8D8} % fundo claro
+\definecolor{gold}{HTML}{C9A96E}          % accent (linhas, separadores)
+\definecolor{golddeep}{HTML}{8A7440}      % accent escuro
+\definecolor{cream}{HTML}{FAF6EF}         % fundo de caixas
+\definecolor{muted}{HTML}{8A8073}
+\definecolor{codeback}{HTML}{F5F5F0}
+\definecolor{codestr}{HTML}{8A1F1F}
+\definecolor{codecmt}{HTML}{668866}
+\definecolor{codekw}{HTML}{5A1A1A}
+
+% --- Imagens ---
+\usepackage{graphicx}
+\usepackage{float}
+\graphicspath{{./}{./img/}{./imagens/}}
+
+% Placeholder: gera uma caixa cinza com legenda se a imagem não existir.
+\usepackage{xparse}
+\IfFileExists{logo_the100s.png}{}{}
+
+% --- Hyperlinks ---
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=burgundy,
+  urlcolor=golddeep,
+  citecolor=burgundy,
+  pdftitle={Relatorio de Projeto de Software - the 100s},
+  pdfauthor={Grupo 13 - Universidade Lusofona},
+  pdfsubject={Engenharia de Software 2025/2026}
+}
+
+% --- Títulos com badge colorido (estilo SGO) ---
+\usepackage{titlesec}
+
+% Capítulo com número grande em quadrado burgundy + linha gold por baixo
+\titleformat{\chapter}[hang]
+  {\huge\bfseries\color{ink}}
+  {\colorbox{burgundy}{\parbox[c][1.1cm][c]{1.3cm}{\centering\color{white}\Huge\thechapter}}\hspace{0.5cm}}
+  {0pt}
+  {}
+  [\vspace{4pt}{\color{gold}\hrule height 1.2pt}\vspace{6pt}]
+\titlespacing*{\chapter}{0pt}{-20pt}{20pt}
+
+% Secção com badge pequeno burgundy
+\titleformat{\section}[hang]
+  {\Large\bfseries\color{ink}}
+  {\colorbox{burgundy}{\color{white}\,\thesection\,}\hspace{0.4em}}
+  {0pt}
+  {}
+\titlespacing*{\section}{0pt}{18pt}{10pt}
+
+% Subsecção
+\titleformat{\subsection}[hang]
+  {\large\bfseries\color{burgundy}}
+  {\thesubsection}{0.6em}{}
+\titlespacing*{\subsection}{0pt}{14pt}{6pt}
+
+\titleformat{\subsubsection}[hang]
+  {\normalsize\bfseries\color{golddeep}}
+  {\thesubsubsection}{0.5em}{}
+
+% --- Cabeçalho e rodapé ---
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\itshape\color{muted}Relatório de Projeto de Software — the 100's}
+\fancyhead[R]{\small\itshape\color{muted}Engenharia de Software}
+\fancyfoot[C]{\small\color{muted}\thepage}
+\fancyfoot[R]{\small\color{muted}2025/2026}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{muted!50}\leaders\hrule height \headrulewidth\hfill}}
+\renewcommand{\footrule}{\hbox to\headwidth{\color{muted!50}\leaders\hrule height \footrulewidth\hfill}}
+
+\fancypagestyle{plain}{
+  \fancyhf{}
+  \fancyfoot[C]{\small\color{muted}\thepage}
+  \fancyfoot[R]{\small\color{muted}2025/2026}
+  \renewcommand{\headrulewidth}{0pt}
+  \renewcommand{\footrulewidth}{0.4pt}
+}
+
+% --- Caixas decorativas (callouts estilo SGO) ---
+\usepackage[most]{tcolorbox}
+\newtcolorbox{infobox}[1][]{
+  enhanced, breakable, sharp corners,
+  colback=cream, colframe=burgundy, boxrule=0pt,
+  leftrule=3pt, left=10pt, right=10pt, top=8pt, bottom=8pt,
+  fonttitle=\bfseries\color{white},
+  colbacktitle=burgundy, coltitle=white,
+  attach boxed title to top left={xshift=-3pt, yshift=-2pt},
+  boxed title style={sharp corners, boxrule=0pt, top=3pt, bottom=3pt, left=8pt, right=8pt},
+  title=#1
+}
+
+% --- Listings (blocos de código) ---
+\usepackage{listings}
+\lstset{
+  backgroundcolor=\color{codeback},
+  basicstyle=\ttfamily\small,
+  keywordstyle=\bfseries\color{codekw},
+  commentstyle=\itshape\color{codecmt},
+  stringstyle=\color{codestr},
+  numbers=left, numberstyle=\tiny\color{muted}, stepnumber=1, numbersep=8pt,
+  frame=leftline, rulecolor=\color{gold}, framerule=2pt,
+  xleftmargin=20pt, xrightmargin=8pt,
+  showstringspaces=false, breaklines=true, captionpos=b,
+  literate={á}{{\'a}}1 {â}{{\^a}}1 {ã}{{\~a}}1 {à}{{\`a}}1
+           {é}{{\'e}}1 {ê}{{\^e}}1 {í}{{\'i}}1 {ó}{{\'o}}1
+           {ô}{{\^o}}1 {õ}{{\~o}}1 {ú}{{\'u}}1 {ç}{{\c c}}1
+           {Á}{{\'A}}1 {É}{{\'E}}1 {Í}{{\'I}}1 {Ó}{{\'O}}1
+           {Ú}{{\'U}}1 {Ç}{{\c C}}1
+}
+
+% --- Tabelas ---
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{ragged2e}
+\newcolumntype{L}[1]{>{\RaggedRight\arraybackslash}p{#1}}
+\newcolumntype{C}[1]{>{\Centering\arraybackslash}p{#1}}
+\renewcommand{\arraystretch}{1.3}
+
+% --- Listas ---
+\usepackage{enumitem}
+\setlist[itemize]{leftmargin=1.4em,topsep=4pt,partopsep=0pt,itemsep=3pt,parsep=0pt}
+\setlist[enumerate]{leftmargin=1.6em,topsep=4pt,partopsep=0pt,itemsep=3pt,parsep=0pt}
+
+% --- Caption styling ---
+\usepackage{caption}
+\captionsetup{
+  font=small, labelfont={bf,color=burgundy},
+  labelsep=period, justification=centering
+}
+
+% --- Microtipografia e parágrafos ---
+\usepackage{microtype}
+\setlength{\parskip}{6pt}
+\setlength{\parindent}{0pt}
+
+% Comando para imagens com fallback (texto se a imagem não existir)
+\newcommand{\figurefallback}[3]{%
+  % #1 = ficheiro, #2 = largura (ex.: 0.85\textwidth), #3 = legenda
+  \begin{figure}[H]
+    \centering
+    \IfFileExists{#1}{%
+      \includegraphics[width=#2]{#1}%
+    }{%
+      \fbox{\parbox[c][6cm][c]{#2}{\centering\color{muted}\itshape%
+        Imagem em falta: \texttt{#1}\\[6pt]\small (faz upload no Overleaf)}}%
+    }
+    \caption{#3}
+  \end{figure}%
+}
+
+\begin{document}
+
+% =====================================================================
+%  CAPA
+% =====================================================================
+\begin{titlepage}
+  \thispagestyle{empty}
+  \vspace*{1.8cm}
+  {\color{gold}\hrule height 1.5pt}
+  \vspace{0.4cm}
+  {\sffamily\bfseries\color{burgundy}\large ENGENHARIA DE SOFTWARE}\\[4pt]
+  {\sffamily\itshape\color{muted}2.º Ano \quad·\quad Ano Letivo 2025/2026}\\[3cm]
+
+  \begin{center}
+    \colorbox{burgundyLight}{\parbox{\dimexpr\textwidth-2cm\relax}{
+      \vspace{0.5cm}
+      \centering
+      {\Huge\bfseries\color{ink}RELATÓRIO DE PROJETO}\\[8pt]
+      {\Huge\bfseries\color{ink}DE SOFTWARE}\\
+      \vspace{0.5cm}
+    }}
+  \end{center}
+
+  \vspace{0.4cm}
+  {\color{gold}\hrule height 1pt width 6cm}
+  \vspace{0.6cm}
+
+  {\LARGE\bfseries\color{burgundy}the 100's}\\[8pt]
+  {\Large\color{ink}Sistema de Gestão de Loja de Vinhos Premium}\\[16pt]
+  {\itshape\color{muted}``Bottled Memories — uma curadoria dos melhores vinhos portugueses, do Douro ao Alentejo, do Porto à Madeira.''}
+
+  \vfill
+
+  {\sffamily\bfseries\color{burgundy}\normalsize REALIZADO POR}\\[6pt]
+  \begin{tabular}{ll}
+    Eduardo Saavedra Lourenço \\
+    Kollan Andre Gafuro Intacua \\
+    Pedro Gabriel Matias Gomes \\
+  \end{tabular}
+  \vspace{1.2cm}
+
+  \rule{\textwidth}{0.4pt}
+  \begin{tabular}{p{0.65\textwidth}r}
+    Universidade Lusófona do Porto & 22 de maio de 2026
+  \end{tabular}
+\end{titlepage}
+
+% =====================================================================
+%  RESUMO
+% =====================================================================
+\pagenumbering{roman}
+\chapter*{Resumo}
+\addcontentsline{toc}{chapter}{Resumo}
+
+O presente documento constitui o \textbf{Relatório de Projeto de Software} do projeto \textit{the 100's --- Sistema de Gestão de Loja de Vinhos Premium}, uma aplicação web desenvolvida no âmbito da unidade curricular de Engenharia de Software do 2.º ano da Licenciatura em Engenharia Informática da Universidade Lusófona do Porto.
+
+O \textit{the 100's} é uma solução integrada e auditável para a gestão de uma loja de vinhos \textit{premium}, cobrindo ponto de venda (POS), inventário, gestão visual de caves, devoluções, \textit{dashboard} executivo e relatórios analíticos com \textit{exports} para Excel. O sistema foi desenvolvido numa arquitetura de três camadas --- \textit{frontend} estático em HTML, CSS e JavaScript Vanilla, \textit{backend} em Python/Flask com API REST e base de dados MySQL~8 (com \textit{fallback} automático para SQLite) ---, com autenticação baseada em \textit{tokens Bearer} e controlo de acessos por papéis.
+
+Este relatório documenta todas as dimensões do projeto: âmbito e decomposição funcional, gestão de dados e modelo relacional, estratégia de testes, plano de formação, segurança, gestão de risco, plano de manutenção e conclusões.
+
+\begin{infobox}[Palavras-chave]
+Gestão de Projeto, API REST, Flask, Python, MySQL, JavaScript \textit{Vanilla}, POS, Loja de Vinhos, RGPD, \textit{Bottled Memories}.
+\end{infobox}
+
+\begin{infobox}[Repositório do Projeto]
+Código-fonte disponível em: \href{https://github.com/PedroGGomess/Vinha-D-Ouro}{github.com/PedroGGomess/Vinha-D-Ouro}
+\end{infobox}
+
+% =====================================================================
+%  TOC + LISTA DE TABELAS + LISTA DE FIGURAS
+% =====================================================================
+\tableofcontents
+\listoftables
+\listoffigures
+
+\clearpage
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+% =====================================================================
+%  1. INTRODUÇÃO
+% =====================================================================
+\chapter{Introdução}
+
+\section{Enquadramento Inicial}
+O desenvolvimento de \textit{software} envolve decisões técnicas, organização do trabalho, gestão de riscos e validação contínua do progresso. Mesmo num contexto académico, a ausência de planeamento tende a gerar retrabalho, inconsistências entre módulos e dificuldade em demonstrar que o sistema cumpre os requisitos definidos.
+
+O \textit{the 100's} surge como resposta às necessidades típicas de uma loja de vinhos \textit{premium}: catálogo extenso, vendas com múltiplos métodos de pagamento, gestão de \textit{stock} sensível, controlo físico de caves com condições específicas de armazenamento e necessidade de manter rasto digital de cada operação para fins de auditoria. O sistema pretende substituir práticas informais --- papel, folhas de cálculo dispersas e aplicações isoladas --- por uma solução centralizada, segura e rastreável.
+
+\section{Definição e Objetivos do Documento}
+Este relatório documenta o ciclo completo de desenvolvimento do \textit{the 100's}, cobrindo os aspetos técnicos, organizacionais e de qualidade do projeto. Os principais objetivos são:
+
+\begin{itemize}
+  \item Documentar o âmbito, a arquitetura e as funcionalidades do sistema;
+  \item Descrever as decisões técnicas tomadas durante o desenvolvimento;
+  \item Apresentar a estratégia de testes e os resultados obtidos;
+  \item Definir os planos de segurança, formação e manutenção;
+  \item Identificar riscos e as respetivas estratégias de mitigação;
+  \item Refletir sobre o trabalho realizado e perspetivas futuras.
+\end{itemize}
+
+\section{Público-Alvo}
+O documento destina-se a:
+\begin{itemize}
+  \item \textbf{Equipa de desenvolvimento} (3 elementos), como registo de decisões e base de conhecimento;
+  \item \textbf{Docente / avaliadores}, como base de verificação de metodologia e consistência;
+  \item \textit{\textbf{Stakeholders}} \textbf{simulados} (Gerente, Funcionário de loja, Armazenista, Administrador), como referência de objetivos funcionais e regras de negócio.
+\end{itemize}
+
+\section{Breve Resumo do Documento}
+O relatório está estruturado em dez capítulos principais, seguindo a estrutura definida para o Relatório de Projeto de Software da unidade curricular. Começa pelo âmbito e decomposição funcional do sistema, avança para a documentação produzida, gestão de dados, testes, formação, segurança, gestão de risco e manutenção, concluindo com reflexões finais e perspetivas de trabalho futuro.
+
+\section{Propósito do Projeto}
+O \textit{the 100's} é uma aplicação web completa para a gestão integral de uma loja de vinhos \textit{premium}, suportando:
+
+\begin{itemize}
+  \item Registo e manutenção de catálogo (vinhos por tipo, região, produtor, preço, \textit{stock});
+  \item Ponto de venda com quatro métodos de pagamento e emissão de fatura digital com QR code;
+  \item Gestão de caves físicas (A, B, C) com mapeamento visual de \textit{slots};
+  \item Devoluções com reposição automática de \textit{stock} e auditoria;
+  \item \textit{Dashboard} executivo editável com KPIs em tempo real;
+  \item Relatórios analíticos com \textit{export} para Excel.
+\end{itemize}
+
+O propósito operacional é reduzir erros manuais, aumentar a rastreabilidade e a transparência das operações, garantir o controlo do \textit{stock} e melhorar a tomada de decisão pela gestão.
+
+\section{Repositório do Código-Fonte}
+Todo o código-fonte do projeto, bem como os \textit{scripts} de inicialização da base de dados, ficheiros de configuração e documentação técnica, estão disponíveis no repositório público do GitHub:
+
+\begin{infobox}[GitHub]
+\href{https://github.com/PedroGGomess/Vinha-D-Ouro}{https://github.com/PedroGGomess/Vinha-D-Ouro}
+\end{infobox}
+
+% =====================================================================
+%  2. ÂMBITO DO PROJETO
+% =====================================================================
+\chapter{Âmbito do Projeto}\label{cap:ambito}
+
+\section{Apresentação do Projeto}
+O \textit{the 100's} é um sistema de informação web desenvolvido para digitalizar e centralizar os processos operacionais de uma loja de vinhos \textit{premium}. O sistema suporta o ciclo completo: \textit{cliente / catálogo $\to$ carrinho $\to$ checkout $\to$ fatura digital $\to$ \textit{stock} atualizado $\to$ análise de vendas}.
+
+A identidade visual --- \textit{Bottled Memories} --- combina uma paleta \textit{gold + ink} com tipografia Cormorant Garamond e Inter, conferindo ao produto uma personalidade premium adequada ao segmento.
+
+\section{Descrição da Área de Negócio}
+O negócio do retalho especializado de vinhos \textit{premium} caracteriza-se por elevada variação de preço unitário, exigências específicas de armazenamento (temperatura, humidade) e por uma relação próxima com clientes habituais cujas preferências importa registar. A operação diária envolve três funções distintas:
+
+\begin{itemize}
+  \item \textbf{Loja:} Atendimento, venda, emissão de fatura, foco no cliente.
+  \item \textbf{Armazém:} Gestão de \textit{stock}, reposição em caves, foco na disponibilidade.
+  \item \textbf{Gestão:} Visão consolidada do desempenho, rentabilidade e controlo.
+\end{itemize}
+
+\section{Problemas no Negócio Antes do Sistema}
+Antes de um sistema integrado, surgem problemas recorrentes:
+
+\begin{enumerate}
+  \item \textbf{Inventário em folhas de cálculo:} dessincronização entre o \textit{stock} real e o registado, com risco de venda de produtos sem disponibilidade.
+  \item \textbf{Faturação manual:} emissão lenta, propensa a erros e sem rasto digital pesquisável.
+  \item \textbf{Ausência de visão consolidada:} gestão sem KPIs em tempo real.
+  \item \textbf{Gestão de caves sem mapeamento:} dificuldade em localizar fisicamente cada garrafa.
+  \item \textbf{Devoluções sem controlo:} reposição manual de \textit{stock}, com falhas de auditoria.
+  \item \textbf{Acesso indiferenciado:} todos os colaboradores partilhavam as mesmas credenciais.
+\end{enumerate}
+
+\section{Como o Sistema Resolve os Problemas}
+O \textit{the 100's} responde a estes problemas através de:
+
+\begin{itemize}
+  \item \textbf{Centralização de dados:} toda a informação numa única base de dados acessível pelos quatro papéis de utilizador.
+  \item \textbf{POS completo:} catálogo agrupado por tipo, carrinho, quatro métodos de pagamento (Cartão, Numerário com cálculo de troco, MB~WAY e Multibanco com referência) e atualização atómica de \textit{stock} por venda.
+  \item \textbf{Fatura digital com QR code:} gerada via \texttt{api.qrserver.com} e enviada por Email, SMS ou WhatsApp.
+  \item \textbf{Cave 3D:} gestão visual de \textit{slots} em 3 caves (A/B/C) com persistência.
+  \item \textbf{Devoluções com auditoria:} pesquisa em tempo real, reposição automática de \textit{stock} e registo do movimento.
+  \item \textbf{Autenticação por \textit{tokens}:} validade de 8 horas, quatro papéis (FUNCIONARIO, GERENTE, ARMAZENISTA, ADMIN) e proteção por \textit{endpoint}.
+  \item \textbf{\textit{Dashboard} de KPIs:} painel editável com vendas do dia, \textit{top} vinhos, alertas de \textit{stock} e estado das operações em tempo real.
+\end{itemize}
+
+\section{Decomposição Funcional do Sistema}
+O sistema é decomposto em sete módulos principais:
+
+\begin{enumerate}
+  \item \textbf{Autenticação \& Sessão} --- \textit{Login}, gestão de \textit{token Bearer} e \textit{logout}.
+  \item \textbf{Catálogo \& POS} --- CRUD de vinhos, carrinho, \textit{checkout} e emissão de fatura.
+  \item \textbf{Inventário (Stock)} --- CRUD, alertas de \textit{stock} mínimo, auditoria de movimentos.
+  \item \textbf{Caves} --- Mapeamento visual A/B/C, alocação de garrafas a \textit{slots}.
+  \item \textbf{Vendas \& Devoluções} --- Histórico de vendas, detalhe, processamento de devoluções.
+  \item \textbf{Dashboard \& Relatórios} --- KPIs agregados, análises mensais, exports Excel.
+  \item \textbf{Equipa \& Utilizadores} --- Gestão de contas e papéis.
+\end{enumerate}
+
+\section{Perfis de Utilizador e Acessos}
+O sistema implementa quatro perfis distintos com segregação de funções:
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabularx}{\textwidth}{L{3.6cm} C{1.8cm} C{1.8cm} C{1.8cm} C{2cm}}
+\toprule
+\rowcolor{burgundy!90}
+\textbf{\textcolor{white}{Módulo / Página}} &
+\textbf{\textcolor{white}{ADMIN}} &
+\textbf{\textcolor{white}{Gerente}} &
+\textbf{\textcolor{white}{Funcionário}} &
+\textbf{\textcolor{white}{Armazenista}} \\
+\midrule
+Catálogo (POS) & Total & Total & Total & Leitura \\
+Inventário (Stock) & Total & Leitura & Negado & Total \\
+Caves & Total & Leitura & Negado & Total \\
+\textit{Dashboard} \& KPIs & Total & Total & Negado & Negado \\
+Vendas e Devoluções & Total & Total & Próprias & Negado \\
+Relatórios / Excel & Total & Total & Negado & Negado \\
+Gestão de Equipa & Total & Leitura & Negado & Negado \\
+\bottomrule
+\end{tabularx}
+\caption{Matriz de acessos por perfil de utilizador do sistema.}
+\label{tab:permissoes}
+\end{table}
+
+\section{Modelagem do Comportamento (UML e Processos)}
+Para validar e estruturar a reatividade do sistema face às regras impostas, foram desenvolvidos diagramas de Casos de Uso (UML) e fluxogramas operacionais.
+
+\subsection{Diagramas de Casos de Uso (UML)}
+Os diagramas seguintes descrevem a interação dos atores com o limite do sistema do \textit{the 100's}, evidenciando as dependências obrigatórias (\textit{include}) e os desvios de exceção (\textit{extend}).
+
+\figurefallback{uml_uc_venda.png}{0.85\textwidth}{Diagrama UML do Caso de Uso UC01: Realizar Venda no POS.}
+
+\subsection{Fluxogramas de Processo}
+Os fluxogramas detalham a árvore de decisão executada nas camadas aplicacionais durante as operações de venda e gestão de \textit{stock}.
+
+\figurefallback{fluxograma_venda.png}{0.75\textwidth}{Fluxograma de tomada de decisão: Processo de Venda no POS.}
+
+\section{Interface Gráfica (Frontend)}
+A camada visual interage diretamente com o utilizador, renderizando os dados da API em tempo real com a identidade \textit{Bottled Memories}.
+
+\figurefallback{screenshot_dashboard.png}{0.95\textwidth}{Interface gráfica do utilizador: \textit{Dashboard} executivo com KPIs e alertas.}
+
+\figurefallback{screenshot_pos.png}{0.95\textwidth}{Interface gráfica do utilizador: Ponto de venda com catálogo, carrinho e \textit{checkout}.}
+
+\figurefallback{screenshot_caves.png}{0.95\textwidth}{Interface gráfica do utilizador: Gestão visual das caves A, B e C com \textit{slots}.}
+
+\figurefallback{screenshot_relatorios.png}{0.95\textwidth}{Interface gráfica do utilizador: Relatórios analíticos e \textit{export} para Excel.}
+
+\section{Desempenho e Disponibilidade Esperadas}
+Para garantir a fluidez na operação diária da loja, o \textit{the 100's} deverá cumprir as seguintes métricas de serviço:
+
+\begin{infobox}[Métricas de Serviço]
+\begin{itemize}
+  \item \textbf{Disponibilidade (\textit{Uptime}):} 99\% em horário de operação da loja.
+  \item \textbf{Tempo de Resposta:} Listagens e pesquisas em menos de 200~ms; \textit{checkout} em menos de 1~segundo.
+  \item \textbf{Concorrência:} Suporte até 4 utilizadores simultâneos sem degradação percetível.
+  \item \textbf{Tolerância a falhas:} \textit{Fallback} automático para SQLite mantém o catálogo e o POS operacionais perante falhas do MySQL.
+\end{itemize}
+\end{infobox}
+
+\section{Constrangimentos do Processo}
+As principais regras de negócio e limites do âmbito são:
+
+\begin{itemize}
+  \item \textit{Stock} validado a nível atómico --- uma venda só é aceite se o \textit{stock} disponível for igual ou superior à quantidade pedida.
+  \item Toda a venda gera obrigatoriamente um código único no formato \texttt{VD-AAAA-NNN}.
+  \item As \textit{passwords} são guardadas exclusivamente em \textit{hash} (\texttt{pbkdf2:sha256} ou \texttt{scrypt}); \textit{plaintext} apenas no \textit{seed} inicial, com \textit{auto-upgrade} no primeiro \textit{login}.
+  \item O sistema está desenhado para correr em \texttt{localhost} --- sem dependência de \textit{cloud}.
+\end{itemize}
+
+Ficam \textbf{fora do âmbito} desta versão: certificação fiscal AT, integrações externas com terminais de pagamento ou ERP, e arquitetura multi-loja.
+
+% =====================================================================
+%  3. DOCUMENTAÇÃO
+% =====================================================================
+\chapter{Documentação}\label{cap:documentacao}
+
+\section{Enumeração dos Documentos Produzidos}
+No âmbito deste projeto foram produzidos os seguintes documentos, todos versionados em \texttt{docs/} no repositório Git:
+
+\begin{table}[H]
+\centering\small
+\begin{tabularx}{\textwidth}{c L{6.2cm} L{3cm} L{3cm}}
+\toprule
+\rowcolor{burgundy!90}
+\textbf{\textcolor{white}{N.º}} &
+\textbf{\textcolor{white}{Documento}} &
+\textbf{\textcolor{white}{Redator}} &
+\textbf{\textcolor{white}{Aprovado por}} \\
+\midrule
+D1 & Plano de Projeto de Software & Equipa (todos) & Pedro Strecht \\
+D2 & Especificação de Requisitos (RF/RNF) & Pedro G. & Equipa \\
+D3 & Modelo de Dados (ER + \textit{script} SQL) & Eduardo L. & Grupo 13 \\
+D4 & Documentação da API REST (25 \textit{endpoints}) & Eduardo L. & Equipa \\
+D5 & Plano de Testes & Pedro G. & Equipa \\
+D6 & Guias de Instalação (Mac/Linux + Windows) & Kollan I. & Equipa \\
+D7 & Relatório de Projeto de Software (este documento) & Pedro G. & Pedro Strecht \\
+\bottomrule
+\end{tabularx}
+\caption{Documentos produzidos no âmbito do projeto \textit{the 100's}.}
+\label{tab:documentos}
+\end{table}
+
+\section{Descrição de Cada Documento}
+
+\subsection{Plano de Projeto de Software (D1)}
+Documento orientador do ciclo de desenvolvimento, com calendário em \textit{sprints} de duas semanas. Define âmbito, responsabilidades, \textit{standards} de codificação (PEP-8 no \textit{backend}, BEM no CSS) e gestão de riscos.
+
+\subsection{Especificação de Requisitos (D2)}
+Levantamento sistemático dos requisitos funcionais e não funcionais. Identifica atores, casos de uso principais (\textit{login}, venda, devolução, gestão de \textit{stock}, relatórios) e qualidades exigidas (segurança, desempenho, usabilidade).
+
+\subsection{Modelo de Dados (D3)}
+Diagrama Entidade-Relacionamento (ER) da base de dados \texttt{vinhadouro}, incluindo o \textit{script} \texttt{setup\_mysql.sql} de criação do esquema (9 tabelas, 4 vistas, 13 índices) e os dados de \textit{seed} (22 vinhos, 8 vendas históricas, 12 movimentos de \textit{stock}).
+
+\subsection{Documentação da API REST (D4)}
+Tabela com os 25 \textit{endpoints} REST do sistema (método HTTP, rota, \textit{roles} autorizados e descrição). Todas as escritas estão protegidas por decoradores Python \texttt{@requires\_auth} ou \texttt{@requires\_role(...)}.
+
+\subsection{Plano de Testes (D5)}
+Documento com objetivos, níveis de integridade, tipos de teste (unitário, integração, sistema, aceitação), cenários e critérios de aceitação por fase.
+
+\subsection{Guias de Instalação (D6)}
+Dois ficheiros Markdown --- \texttt{COMO\_CORRER.md} para macOS/Linux e \texttt{WINDOWS.md} para Windows --- com instruções passo-a-passo, \textit{troubleshooting} (porta 8080 ocupada, \textit{password} do MySQL, etc.) e o procedimento de \textit{fallback} para SQLite.
+
+\subsection{Relatório de Projeto de Software (D7)}
+O presente documento, que sumariza e documenta todo o projeto conforme a estrutura definida pelo docente.
+
+% =====================================================================
+%  4. GESTÃO DE DADOS
+% =====================================================================
+\chapter{Gestão de Dados}\label{cap:dados}
+
+\section{Arquitetura de Software em Camadas}
+A infraestrutura aplicacional do \textit{the 100's} baseia-se no padrão arquitetural de três camadas, isolando as responsabilidades de UI, processamento e persistência relacional. Os dados são introduzidos pelos utilizadores através da interface web e enviados para o \textit{backend} via pedidos HTTP/JSON. O \textit{backend} Flask valida e persiste os dados numa base de dados relacional MySQL~8, acedida via PyMySQL com \texttt{DictCursor}, com \textit{fallback} automático para SQLite. Não existe transferência de dados para sistemas externos.
+
+\figurefallback{diagrama_arquitetura.png}{0.85\textwidth}{Diagrama da arquitetura de \textit{software} lógica em 3 camadas do \textit{the 100's}.}
+
+A camada intermédia de \textit{Services} no Flask valida as transações antes de invocar a camada de persistência. O excerto seguinte ilustra o encapsulamento da regra de negócio de débito atómico de \textit{stock} numa venda:
+
+\begin{lstlisting}[language=Python, caption={Validação atómica de stock no \textit{checkout} (excerto de \texttt{server.py}).}]
+@app.route("/api/vendas", methods=["POST"])
+@requires_auth
+def criar_venda():
+    payload = request.get_json()
+    itens = payload.get("itens", [])
+
+    with db_transaction() as cur:
+        for item in itens:
+            cur.execute(
+                "SELECT quantidade FROM vinhos WHERE id = %s FOR UPDATE",
+                (item["vinho_id"],),
+            )
+            stock_atual = cur.fetchone()["quantidade"]
+            if stock_atual < item["quantidade"]:
+                raise StockInsuficienteError(
+                    f"Vinho {item['vinho_id']}: stock = {stock_atual}, "
+                    f"pedido = {item['quantidade']}"
+                )
+            cur.execute(
+                "UPDATE vinhos SET quantidade = quantidade - %s WHERE id = %s",
+                (item["quantidade"], item["vinho_id"]),
+            )
+        # ... persistir cabecalho de venda + itens_venda + movimento de stock
+        return jsonify({"codigo": novo_codigo}), 201
+\end{lstlisting}
+
+\section{Apresentação da Base de Dados}
+A base de dados \texttt{vinhadouro} usa o \textit{charset} \texttt{utf8mb4} com \textit{collation} \texttt{utf8mb4\_unicode\_ci}. Está composta pelas seguintes entidades principais:
+
+\begin{itemize}
+  \item \texttt{pessoas} --- Base de pessoas (clientes e funcionários).
+  \item \texttt{clientes} --- Especialização de pessoa para cliente (NIF, preferências em JSON).
+  \item \texttt{funcionarios} --- Dados laborais (cargo, salário, nível).
+  \item \texttt{utilizadores} --- Credenciais (\texttt{username}, \texttt{password\_hash}, \texttt{role}).
+  \item \texttt{vinhos} --- Catálogo (22 referências \textit{seed}; preço, quantidade, \textit{stock} mínimo).
+  \item \texttt{caves} --- Locais de armazenamento (3 caves; temperatura e humidade ideais).
+  \item \texttt{vendas} --- Cabeçalho de venda (código único, método de pagamento, estado).
+  \item \texttt{itens\_venda} --- Linhas de cada venda (quantidade, preço unitário, subtotal).
+  \item \texttt{movimentos\_stock} --- Auditoria de entradas/saídas (tipo, motivo, funcionário).
+\end{itemize}
+
+Foram ainda definidas 4 vistas SQL (\texttt{v\_stock\_baixo}, \texttt{v\_vendas\_hoje}, \texttt{v\_top\_vinhos}, \texttt{v\_movimentos\_resumo}) e 13 índices secundários que mantêm tempos de resposta abaixo dos 200~ms.
+
+\figurefallback{diagrama_er.png}{\textwidth}{Diagrama Entidade-Relacionamento (ER) completo da base de dados \texttt{vinhadouro}.}
+
+\section{Permissões de Acesso a Dados}
+O acesso aos dados é controlado a dois níveis:
+
+\begin{itemize}
+  \item \textbf{Nível de API (RBAC):} cada \textit{endpoint} REST é protegido com decoradores Python (\texttt{@requires\_auth} para \textit{token} válido e \texttt{@requires\_role(...)} para um papel específico), antes de executar qualquer operação.
+  \item \textbf{Nível de base de dados:} a aplicação liga ao MySQL com um utilizador dedicado (\texttt{sgo\_user}) com permissões limitadas ao esquema \texttt{vinhadouro} (\texttt{SELECT}, \texttt{INSERT}, \texttt{UPDATE}, \texttt{DELETE}). Não são concedidos privilégios de DDL em produção.
+\end{itemize}
+
+A matriz completa de permissões está apresentada na Tabela~\ref{tab:permissoes} (capítulo~\ref{cap:ambito}).
+
+\section{Medidas de Conformidade com o RGPD}
+Dado que o sistema armazena dados pessoais de clientes (nome, NIF, telefone, morada), foram adotadas as seguintes medidas de conformidade com o Regulamento Geral sobre a Proteção de Dados (RGPD):
+
+\begin{itemize}
+  \item \textbf{Minimização de dados:} apenas se recolhem os dados estritamente necessários.
+  \item \textit{\textbf{Passwords}} \textbf{cifradas:} \textit{hash pbkdf2:sha256} ou \texttt{scrypt} via \texttt{werkzeug.security}, nunca em texto claro.
+  \item \textbf{Controlo de acessos:} apenas GERENTE e ADMIN consultam a lista completa de clientes.
+  \item \textbf{Direito ao esquecimento:} \textit{soft delete} via campo \texttt{ativo}, preservando integridade referencial mas removendo o cliente da operação.
+  \item \textbf{Rastreabilidade:} todas as escritas registam o utilizador autor e o \textit{timestamp}.
+\end{itemize}
+
+\section{Estado Inicial da Base de Dados}
+A base de dados é criada a partir do \textit{script} \texttt{setup\_mysql.sql}, que define o esquema relacional completo com restrições de integridade (\textit{foreign keys}, \textit{unique constraints}). O \textit{script} é idempotente: utiliza \texttt{INSERT IGNORE} e \texttt{CREATE TABLE IF NOT EXISTS}, podendo ser executado várias vezes sem destruir dados existentes.
+
+\section{Tarefas de Carregamento Inicial de Dados}
+Para fins de desenvolvimento e demonstração, o \textit{script} povoa a base de dados com:
+
+\begin{itemize}
+  \item 8 pessoas (4 funcionários, 4 clientes, 1 cliente balcão).
+  \item 4 utilizadores (\texttt{gerente}, \texttt{loja}, \texttt{stock}, \texttt{admin}) com \textit{password} inicial \texttt{1234} --- atualizada para \textit{hash} no primeiro \textit{login}.
+  \item 3 caves configuradas (Principal, Secundária, Montra Loja).
+  \item 22 vinhos \textit{seed} distribuídos por Tinto, Branco, Rosé, Espumante, Porto e Madeira.
+  \item 8 vendas históricas (últimos 7 dias) com 20 linhas de itens.
+  \item 12 movimentos de \textit{stock} (entradas iniciais e saídas correspondentes às vendas).
+\end{itemize}
+
+\section{Ambiente de Execução e Instalação Física}
+O \textit{deployment} corre localmente na máquina do estabelecimento. O servidor Flask responde na porta 8080, o MySQL na porta 3306 (apenas \texttt{localhost}), e o utilizador acede via \textit{browser} a \texttt{http://localhost:8080}.
+
+\figurefallback{diagrama_deployment.png}{0.85\textwidth}{Diagrama de arquitetura física e \textit{deployment} em ambiente \texttt{localhost}.}
+
+% =====================================================================
+%  5. REALIZAÇÃO DE TESTES
+% =====================================================================
+\chapter{Realização de Testes}\label{cap:testes}
+
+\section{Objetivos do Plano de Testes}
+O plano de testes do \textit{the 100's} tem como objetivos:
+
+\begin{itemize}
+  \item Verificar que cada \textit{endpoint} da API REST responde com os códigos HTTP corretos e o \textit{payload} esperado.
+  \item Validar as regras de negócio críticas (débito atómico de \textit{stock}, geração única de códigos de venda, integridade na devolução).
+  \item Garantir que o controlo de acessos (\textit{tokens Bearer} + papéis) funciona corretamente em todos os cenários.
+  \item Confirmar os fluxos completos \textit{end-to-end} (E2E) da perspetiva do utilizador.
+\end{itemize}
+
+\section{Descrição dos Níveis de Integridade}
+Foram definidos três níveis de integridade:
+
+\begin{itemize}
+  \item \textbf{Nível 1 --- Crítico:} funcionalidades sem as quais o sistema não é utilizável (autenticação, cálculo do total, débito de \textit{stock}, persistência da venda). Cobertura obrigatória.
+  \item \textbf{Nível 2 --- Importante:} funcionalidades que afetam a qualidade da experiência (relatórios, \textit{dashboard}, \textit{exports} Excel). Cobertura desejável.
+  \item \textbf{Nível 3 --- Acessório:} animações, transições visuais, mensagens informativas. Cobertura opcional.
+\end{itemize}
+
+\section{Diagramas de Sequência de Integração}
+Os diagramas de sequência seguintes representam o fluxo de mensagens trocado entre as camadas aplicacionais durante a execução dos testes e validações E2E.
+
+\figurefallback{sequencia_login.png}{0.85\textwidth}{Diagrama de Sequência DS01: Processo de \textit{login} e emissão de \textit{token}.}
+
+\figurefallback{sequencia_venda.png}{0.85\textwidth}{Diagrama de Sequência DS02: Processo de \textit{checkout} com débito atómico de \textit{stock}.}
+
+\section{Tipos de Testes Realizados}
+
+\subsection{Testes Unitários}
+Foram realizados testes unitários a funções auxiliares do \textit{backend} (cálculo de subtotais, geração de códigos de venda, formatação de respostas JSON) e do \textit{frontend} (\texttt{escHtml} para \textit{escape} de HTML, \texttt{fmt} para formatação de valores monetários).
+
+\subsection{Testes de Integração da API}
+Os \textit{endpoints} foram testados com o \textit{Postman / Insomnia}, verificando:
+
+\begin{itemize}
+  \item \texttt{POST /api/login} --- retorna \textit{token} válido com credenciais corretas; \texttt{401} com credenciais inválidas.
+  \item \texttt{GET /api/vinhos} --- retorna lista com \textit{token} válido; \texttt{401} sem \textit{token}.
+  \item \texttt{POST /api/vendas} --- cria venda com sucesso; \texttt{409} quando o \textit{stock} é insuficiente.
+  \item \texttt{POST /api/devolucoes} --- processa devolução; \texttt{404} para venda inexistente.
+  \item \texttt{GET /api/export/relatorio.xlsx} --- gera ficheiro Excel com 4 folhas.
+\end{itemize}
+
+\subsection{Testes E2E (Fluxos Completos)}
+Foram executados manualmente os seguintes fluxos completos:
+
+\begin{enumerate}
+  \item \textbf{Fluxo de Loja:} \textit{login} $\to$ catálogo $\to$ adicionar ao carrinho $\to$ \textit{checkout} $\to$ emissão de fatura QR $\to$ envio por Email/SMS/WhatsApp.
+  \item \textbf{Fluxo de Armazém:} \textit{login} como armazenista $\to$ consulta de \textit{stock} baixo $\to$ registo de entrada $\to$ atualização visual da cave.
+  \item \textbf{Fluxo de Gestão:} \textit{login} como gerente $\to$ \textit{dashboard} $\to$ relatório mensal $\to$ \textit{export} Excel $\to$ análise.
+  \item \textbf{Fluxo de Devolução:} pesquisa de venda $\to$ seleção de itens $\to$ confirmar $\to$ verificar reposição de \textit{stock} e registo de movimento.
+\end{enumerate}
+
+\section{Geração de Dados para Testes}
+Os dados de teste foram gerados de três formas:
+
+\begin{itemize}
+  \item \textbf{Automaticamente} via \textit{seed} do \texttt{setup\_mysql.sql} (22 vinhos, 8 vendas, 12 movimentos).
+  \item \textbf{Manualmente} via Postman, enviando \textit{payloads} JSON específicos para testar cenários de erro (\textit{stock} insuficiente, \textit{token} expirado).
+  \item \textbf{Programaticamente} via pequeno gerador em Python que produz centenas de vendas pseudoaleatórias para testes de carga dos relatórios.
+\end{itemize}
+
+\section{Critérios de Aceitação por Fase}
+
+\begin{table}[H]
+\centering\small
+\begin{tabularx}{\textwidth}{L{2.5cm} X}
+\toprule
+\rowcolor{burgundy!90}
+\textbf{\textcolor{white}{Fase}} & \textbf{\textcolor{white}{Critério de Aceitação}} \\
+\midrule
+\textit{Backend} & \textit{Login} gera \textit{token} válido; CRUDs retornam códigos HTTP corretos; débito atómico de \textit{stock} retorna \texttt{409} quando aplicável. \\
+Integração & UI autentica e carrega dados reais da API; erros apresentados ao utilizador de forma clara; fluxos E2E executáveis sem passos manuais externos. \\
+Testes & Todos os testes unitários passam; fluxos E2E manuais concluídos sem falhas críticas; \textit{fallback} para SQLite validado. \\
+\bottomrule
+\end{tabularx}
+\caption{Critérios de aceitação por fase de desenvolvimento.}
+\label{tab:aceitacao}
+\end{table}
+
+% =====================================================================
+%  6. FORMAÇÃO
+% =====================================================================
+\chapter{Formação}\label{cap:formacao}
+
+\section{Métodos de Formação}
+A formação dos utilizadores finais do \textit{the 100's} assenta nos seguintes métodos:
+
+\begin{itemize}
+  \item \textbf{Manual em PDF:} documento estruturado por perfil (Gerente, Funcionário, Armazenista, Admin), descrevendo cada funcionalidade com capturas de ecrã anotadas. Disponível como \texttt{Manual\_Codigo\_the100s.docx} no repositório.
+  \item \textbf{Ajuda \textit{online} integrada:} \textit{tooltips} contextuais e mensagens informativas na interface web.
+  \item \textbf{Vídeos curtos:} demonstração geral (3--5 min), fluxo POS (2--3 min) e \textit{dashboard} de gestão (3--4 min).
+  \item \textbf{Sessão presencial de \textit{onboarding}:} sessão de formação prática realizada no ato de entrega, com demonstração dos fluxos principais.
+\end{itemize}
+
+\section{Recursos para Cada Método}
+
+\begin{table}[H]
+\centering\small
+\begin{tabularx}{\textwidth}{L{3cm} X L{2.6cm}}
+\toprule
+\rowcolor{burgundy!90}
+\textbf{\textcolor{white}{Método}} &
+\textbf{\textcolor{white}{Recursos Necessários}} &
+\textbf{\textcolor{white}{Responsável}} \\
+\midrule
+Manual PDF & Word/Pages, capturas de ecrã anotadas & Pedro G. \\
+Ajuda integrada & HTML/CSS/JS, ícones de informação & Kollan I. \\
+Vídeos & Captura de ecrã (QuickTime/OBS), edição & Pedro G. \\
+Sessão presencial & Computador com o sistema instalado, projetor & Equipa \\
+\bottomrule
+\end{tabularx}
+\caption{Recursos necessários para cada método de formação.}
+\label{tab:formacao}
+\end{table}
+
+\section{Bases de Dados da Formação}
+Para as sessões de formação e demonstração é utilizada uma cópia da base de dados \texttt{vinhadouro\_demo} com dados fictícios, idêntica à de produção. Permite que cada formando experimente livremente as operações (criar vendas, devolver, alterar \textit{stock}) sem qualquer risco. A base de dados é reposta automaticamente ao fim de cada sessão.
+
+\section{Duração da Formação}
+
+\begin{itemize}
+  \item \textbf{Funcionário de loja:} 30~minutos (POS + emissão de fatura).
+  \item \textbf{Armazenista:} 45~minutos (\textit{stock} + caves + devoluções).
+  \item \textbf{Gerente:} 60~minutos (\textit{dashboard}, relatórios, gestão de equipa).
+  \item \textbf{Administrador / IT:} 90~minutos (sessão técnica, instalação, \textit{backups}).
+\end{itemize}
+
+\section{Participantes, Responsabilidades e Avaliação}
+
+\begin{itemize}
+  \item \textbf{Participantes:} grupos reduzidos de 3 a 5 pessoas por sessão, maximizando a interação.
+  \item \textbf{Responsável pela formação:} Grupo 13 durante o período de garantia; depois, o gerente da loja.
+  \item \textbf{Avaliação:} (i) exercício prático guiado durante a sessão; (ii) questionário curto de satisfação; (iii) verificação informal duas semanas depois sobre uso efetivo.
+\end{itemize}
+
+% =====================================================================
+%  7. SEGURANÇA
+% =====================================================================
+\chapter{Segurança}\label{cap:seguranca}
+
+\section{Segurança no Desenvolvimento}
+As práticas de segurança foram aplicadas desde o início, seguindo o princípio \textit{defesa em profundidade}:
+
+\begin{itemize}
+  \item \textbf{Autenticação por \textit{tokens Bearer}:} os \textit{tokens} têm validade de 8~horas, são gerados com \texttt{secrets.token\_urlsafe} e revogados em \textit{logout}.
+  \item \textit{\textbf{Passwords}} \textbf{com hash:} \texttt{pbkdf2:sha256} / \texttt{scrypt} via \texttt{werkzeug.security}; \textit{auto-upgrade} do \textit{seed} \textit{plaintext} no primeiro \textit{login}.
+  \item \textbf{RBAC com decoradores:} cada \textit{endpoint} sensível tem \texttt{@requires\_auth} ou \texttt{@requires\_role(...)}, garantindo que nenhum recurso fica acidentalmente exposto.
+  \item \textbf{CORS restrito:} configurado via \texttt{flask-cors} para \texttt{localhost:8080} e \texttt{127.0.0.1:8080} apenas.
+  \item \textbf{Validação de entrada:} \textit{payloads} JSON validados antes de processamento; IDs tipados pelo \textit{routing} do Flask.
+  \item \textbf{Proteção contra SQL Injection:} 100\% das \textit{queries} parametrizadas (\textit{placeholders} \texttt{\%s} no PyMySQL, \texttt{?} no SQLite).
+  \item \textbf{Proteção contra XSS:} função \texttt{escHtml()} aplicada a todo o conteúdo da API; \textit{toasts} construídos com \texttt{textContent}, nunca \texttt{innerHTML}.
+  \item \textbf{Segredos fora do código:} \texttt{.env} no \texttt{.gitignore}; apenas \texttt{.env.example} versionado.
+\end{itemize}
+
+\section{Testes de Segurança}
+Foram realizados os seguintes testes:
+
+\begin{itemize}
+  \item Tentativa de acesso a \textit{endpoints} protegidos sem \textit{token} (esperado: \texttt{401 Unauthorized}).
+  \item Tentativa de acesso com \textit{token} de FUNCIONARIO a recursos de GERENTE (esperado: \texttt{403 Forbidden}).
+  \item Tentativa de acesso com \textit{token} expirado (esperado: \texttt{401 Unauthorized}).
+  \item Tentativa de \textit{SQL injection} em campos de pesquisa --- todas devolveram texto inerte sem alteração da \textit{query}.
+  \item Tentativa de execução de \textit{scripts} via campos de nota --- todos foram exibidos como texto sem execução.
+  \item Verificação de que \textit{passwords} nunca aparecem em respostas da API.
+\end{itemize}
+
+\section{Segurança no Alojamento da Base de Dados}
+
+\subsection{Segurança contra Acessos Não Autorizados (\textit{Security})}
+\begin{itemize}
+  \item MySQL configurado para aceitar apenas conexões locais (\texttt{bind-address = 127.0.0.1}).
+  \item Utilizador da aplicação com privilégios mínimos (\texttt{SELECT}, \texttt{INSERT}, \texttt{UPDATE}, \texttt{DELETE}; sem \texttt{GRANT}, sem \texttt{CREATE USER}).
+  \item \textit{Password} do MySQL via variável de ambiente, nunca em código.
+  \item Em produção, recomenda-se TLS na ligação cliente-MySQL e \textit{firewall} a bloquear a porta 3306 a partir do exterior.
+\end{itemize}
+
+\subsection{Integridade dos Dados (\textit{Safety})}
+\begin{itemize}
+  \item \textit{Constraints} de chave primária e estrangeira em todas as tabelas.
+  \item Tipos estritos (\texttt{DECIMAL} para preços, \texttt{INT} para quantidades, \texttt{ENUM} para estados).
+  \item Transações SQL com \texttt{ROLLBACK} explícito em caso de erro; \texttt{COMMIT} apenas no sucesso.
+  \item \textit{Charset} \texttt{utf8mb4} evita corrupção de caracteres acentuados.
+\end{itemize}
+
+\section{Realização de Backups}
+A estratégia de \textit{backups} assenta na regra 3-2-1 (três cópias, em dois suportes, com uma fora-do-local):
+
+\begin{itemize}
+  \item \textbf{\textit{Backup} da base de dados:} \texttt{mysqldump} diário automático para \texttt{/backups/db/}, com retenção de 30 dias.
+  \item \textbf{\textit{Backup} semanal completo:} sincronizado para disco externo na loja e para \textit{bucket cloud} (opcional).
+  \item \textbf{\textit{Backup} da aplicação:} Git --- cada \textit{commit} é um ponto de restauro.
+  \item \textbf{Tempo médio de recuperação:} inferior a 15~minutos, documentado em \texttt{COMO\_CORRER.md}.
+\end{itemize}
+
+% =====================================================================
+%  8. GESTÃO DE RISCO
+% =====================================================================
+\chapter{Gestão de Risco}\label{cap:risco}
+
+\section{Impacto do Risco}
+Os riscos foram classificados de acordo com dois eixos: probabilidade (Baixa / Média / Alta) e impacto (Baixo / Médio / Alto / Crítico). A revisão dos riscos é feita no final de cada \textit{sprint}.
+
+\section{Identificação e Análise dos Riscos}
+
+\begin{table}[H]
+\centering\small
+\begin{tabularx}{\textwidth}{c X L{2cm} L{1.6cm} L{1.6cm}}
+\toprule
+\rowcolor{burgundy!90}
+\textbf{\textcolor{white}{ID}} &
+\textbf{\textcolor{white}{Descrição do Risco}} &
+\textbf{\textcolor{white}{Categoria}} &
+\textbf{\textcolor{white}{Prob.}} &
+\textbf{\textcolor{white}{Impacto}} \\
+\midrule
+R1 & Atraso por sobreposição com outras UC & Processo & Alta & Alto \\
+R2 & Falha do MySQL em demonstração ao vivo & Técnico & Média & Médio \\
+R3 & Dificuldades de instalação em Windows & Técnico & Média & Médio \\
+R4 & Indisponibilidade de elemento da equipa & Pessoas & Média & Alto \\
+R5 & Perda de dados por \textit{bug} no \textit{checkout} & Técnico & Baixa & Alto \\
+R6 & Inconsistência de \textit{stock} após devolução & Técnico & Baixa & Médio \\
+R7 & Conflitos de \textit{merge} no Git & Processo & Alta & Baixo \\
+R8 & Violação acidental de RGPD nos dados de teste & Processo & Baixa & Médio \\
+\bottomrule
+\end{tabularx}
+\caption{Matriz de identificação e análise de riscos do projeto.}
+\label{tab:riscos}
+\end{table}
+
+\section{Plano de Resposta aos Riscos Identificados}
+
+\begin{table}[H]
+\centering\small
+\begin{tabularx}{\textwidth}{c L{4cm} X}
+\toprule
+\rowcolor{burgundy!90}
+\textbf{\textcolor{white}{ID}} &
+\textbf{\textcolor{white}{Risco}} &
+\textbf{\textcolor{white}{Estratégia de Mitigação}} \\
+\midrule
+R1 & Atraso por sobreposição & \textit{Sprints} curtos (2 semanas), revisão semanal do \textit{backlog}, alocação de \textit{slack}. \\
+R2 & Falha do MySQL & \textit{Fallback} automático para SQLite implementado e testado antes de cada demonstração. \\
+R3 & Instalação Windows & \texttt{WINDOWS.md} dedicado com \textit{troubleshooting}; testes regulares em máquina Windows. \\
+R4 & Indisponibilidade & Documentação cruzada de cada módulo; \textit{pair programming} nos pontos críticos. \\
+R5 & Perda de dados & Transações SQL com \texttt{ROLLBACK} em todas as operações de escrita; testes específicos. \\
+R6 & Inconsistência \textit{stock} & Testes de devolução; monitorização nos \textit{logs} de produção. \\
+R7 & Conflitos Git & \textit{Branches} por \textit{feature}; \textit{merges} frequentes para \texttt{main}; revisão obrigatória. \\
+R8 & RGPD & Dados de teste exclusivamente fictícios; auditoria periódica do \textit{seed}. \\
+\bottomrule
+\end{tabularx}
+\caption{Estratégias de mitigação e resposta aos riscos identificados.}
+\label{tab:mitigacao}
+\end{table}
+
+% =====================================================================
+%  9. MANUTENÇÃO
+% =====================================================================
+\chapter{Manutenção}\label{cap:manutencao}
+
+\section{Modelo de Manutenção Adotado}
+Para o \textit{the 100's} adopta-se um modelo baseado em três categorias clássicas (Lehman):
+
+\begin{itemize}
+  \item \textbf{Corretiva:} correção de defeitos reportados após a entrega.
+  \item \textbf{Adaptativa:} acompanhar mudanças do ambiente (nova versão do MySQL, alteração de \textit{browser}).
+  \item \textbf{Perfectiva:} melhoria de funcionalidades existentes a pedido do utilizador.
+\end{itemize}
+
+\section{Apoio ao Utilizador Após a Entrega}
+\begin{itemize}
+  \item \textbf{Período de garantia:} 3~meses, com correção gratuita de defeitos críticos.
+  \item \textbf{Canal de suporte:} \textit{email} do grupo ou abertura de \textit{issue} no GitHub; SLA de 48~horas em dias úteis.
+  \item \textbf{Documentação:} sempre disponível e atualizada após cada \textit{release}.
+\end{itemize}
+
+\section{Periodicidade da Manutenção}
+
+\begin{table}[H]
+\centering\small
+\begin{tabularx}{\textwidth}{L{5cm} L{3cm} X}
+\toprule
+\rowcolor{burgundy!90}
+\textbf{\textcolor{white}{Tipo de Manutenção}} &
+\textbf{\textcolor{white}{Periodicidade}} &
+\textbf{\textcolor{white}{Observações}} \\
+\midrule
+Corretiva (defeitos críticos) & Resposta imediata & SLA: correção até 48h \\
+Corretiva (defeitos menores) & Mensal & Incluída na \textit{release} mensal \\
+Adaptativa & Trimestral & Acompanha versões de Python, Flask, MySQL \\
+Perfectiva & Sob procura & Avaliada caso a caso \\
+Atualização de segurança & Sempre que necessário & Vulnerabilidades conhecidas (CVE) \\
+\bottomrule
+\end{tabularx}
+\caption{Periodicidade da manutenção por tipo.}
+\label{tab:manutencao}
+\end{table}
+
+\section{Ações a Realizar na Manutenção}
+\begin{itemize}
+  \item Análise de \textit{logs} do servidor para identificar erros recorrentes.
+  \item Atualização de dependências em \texttt{requirements.txt} e validação em testes.
+  \item Revisão de \textit{queries} com tempo elevado, identificadas via \textit{slow query log}.
+  \item Auditoria periódica das \textit{passwords} (atualização anual ou após incidente).
+  \item Teste de restauro de \textit{backup} (uma vez por trimestre).
+  \item Atualização do conteúdo das páginas de ajuda e do manual.
+\end{itemize}
+
+\section{Modo de Realizar a Manutenção}
+As intervenções seguem um fluxo controlado por Git: cada alteração é desenvolvida numa \textit{branch} específica (\texttt{fix/...}, \texttt{feat/...}, \texttt{chore/...}), submetida via \textit{Pull Request}, revista por outro elemento da equipa e fundida em \texttt{main} apenas após validação dos testes. Quando exigem acesso ao ambiente do cliente, são agendadas fora do horário de operação.
+
+\section{Responsáveis pela Manutenção}
+
+\begin{itemize}
+  \item \textbf{Eduardo Saavedra Lourenço} --- \textit{Backend} (\texttt{server.py}, autenticação) e Base de Dados.
+  \item \textbf{Kollan Andre Gafuro Intacua} --- \textit{Frontend} (HTML, CSS, JavaScript) e POS.
+  \item \textbf{Pedro Gabriel Matias Gomes} --- Arquitetura, \textit{dashboard}, QA e coordenação (PM).
+\end{itemize}
+
+% =====================================================================
+%  10. CONCLUSÕES
+% =====================================================================
+\chapter{Conclusões}\label{cap:conclusoes}
+
+\section{Reflexões Finais sobre a Condução do Projeto}
+O desenvolvimento do \textit{the 100's} permitiu à equipa aplicar, num contexto prático e completo, os conceitos de Engenharia de \textit{Software} abordados na unidade curricular: planeamento estruturado em \textit{sprints}, desenvolvimento incremental por módulos, arquitetura em camadas, controlo de versões colaborativo e documentação técnica.
+
+A separação clara entre \textit{frontend} e \textit{backend}, aliada à segurança baseada em \textit{tokens Bearer} e RBAC, produziu um sistema modular e extensível. A escolha de uma \textit{stack} ligeira (Flask, MySQL, JavaScript \textit{vanilla}) revelou-se acertada para o prazo do projeto: garantiu rapidez de desenvolvimento, demonstrabilidade local sem dependências de \textit{cloud} e uma curva de aprendizagem reduzida, libertando esforço para o cuidado com a qualidade do código, da interface e da documentação.
+
+O trabalho em equipa revelou-se fundamental: a divisão de responsabilidades por domínio técnico, com colaboração transversal, permitiu entregar um produto funcional dentro do prazo estabelecido. A identidade \textit{Bottled Memories} conferiu ao \textit{the 100's} uma personalidade distintiva, raramente presente em projetos académicos, e que valoriza o trabalho perante uma audiência mais ampla.
+
+\section{Áreas a Melhorar}
+
+\begin{itemize}
+  \item \textbf{Cobertura de testes automatizados:} a cobertura atual deve evoluir para uma \textit{suite} com \texttt{pytest} e \texttt{jest}, integrada em CI/CD via GitHub Actions.
+  \item \textbf{Internacionalização:} o sistema está hoje apenas em português; preparar para inglês alargaria o público potencial.
+  \item \textbf{Acessibilidade (\textit{a11y}):} aumentar o contraste de alguns elementos da paleta \textit{gold + ink} e completar a navegação por teclado.
+  \item \textbf{Certificação fiscal (AT):} o sistema já está preparado arquiteturalmente (ATCUD, QR, \textit{hash}), mas falta percorrer o processo formal de certificação.
+  \item \textbf{Modularização do \texttt{server.py}:} o ficheiro tem mais de 1700 linhas e beneficiaria de reorganização em \textit{blueprints} Flask.
+  \item \textbf{Observabilidade:} adicionar métricas estruturadas (Prometheus) e \textit{logs} JSON para facilitar a operação em produção.
+\end{itemize}
+
+\section{Perspetivas de Trabalho Futuro}
+O \textit{roadmap} de evolução prevê:
+
+\begin{itemize}
+  \item \textbf{Módulo de Faturação fiscal:} certificação AT e emissão de faturas com valor fiscal.
+  \item \textbf{Pagamentos reais:} integração com MB~WAY via API oficial e terminais de pagamento físicos.
+  \item \textbf{Cobertura automática de código:} integração de \texttt{pytest} e \texttt{jest} em \textit{pipeline} CI/CD.
+  \item \textbf{App nativa:} versão móvel para os vendedores no espaço da loja.
+  \item \textbf{Analítica avançada:} previsões de vendas e recomendações personalizadas via \textit{machine learning}.
+  \item \textbf{Arquitetura multi-loja:} suporte a múltiplas lojas sob a mesma plataforma, com sincronização \textit{cloud}.
+\end{itemize}
+
+\begin{infobox}[Código-Fonte do Projeto]
+O código-fonte completo do \textit{the 100's}, incluindo \textit{backend}, \textit{frontend}, \textit{scripts} de base de dados e documentação técnica, está disponível em:\\[4pt]
+\href{https://github.com/PedroGGomess/Vinha-D-Ouro}{https://github.com/PedroGGomess/Vinha-D-Ouro}
+\end{infobox}
+
+% =====================================================================
+%  REFERÊNCIAS
+% =====================================================================
+\chapter*{Referências}
+\addcontentsline{toc}{chapter}{Referências}
+
+\begin{enumerate}[label={[\arabic*]}]
+  \item Pressman, R.~S., \& Maxim, B.~R. (2020). \textit{Software Engineering: A Practitioner's Approach} (9.\textsuperscript{a} ed.). McGraw-Hill.
+  \item Sommerville, I. (2016). \textit{Software Engineering} (10.\textsuperscript{a} ed.). Pearson.
+  \item Strecht, P. (2025). \textit{ESW\_P12 --- O Relatório de Projeto de Software}. Universidade Lusófona, Centro Universitário do Porto.
+  \item Elmasri, R., \& Navathe, S.~B. (2016). \textit{Fundamentals of Database Systems} (7.\textsuperscript{a} ed.). Pearson.
+  \item OWASP Foundation (2021). \textit{OWASP Top 10:2021 --- The Ten Most Critical Web Application Security Risks}. \url{https://owasp.org/Top10/}
+  \item Comissão Europeia (2016). \textit{Regulamento (UE) 2016/679 --- Regulamento Geral sobre a Proteção de Dados (RGPD)}. \url{https://eur-lex.europa.eu/eli/reg/2016/679/oj}
+  \item Pallets Projects. \textit{Flask Documentation (v3.x)}. \url{https://flask.palletsprojects.com/}
+  \item Oracle Corporation. \textit{MySQL 8.0 Reference Manual}. \url{https://dev.mysql.com/doc/refman/8.0/en/}
+  \item Python Software Foundation. \textit{The Python Language Reference (3.10+)}. \url{https://docs.python.org/3/}
+  \item Mozilla Developer Network. \textit{Web Docs --- HTML, CSS, JavaScript}. \url{https://developer.mozilla.org/}
+  \item openpyxl. \textit{A Python library to read/write Excel 2010 xlsx/xlsm files}. \url{https://openpyxl.readthedocs.io/}
+  \item Gomes, P.~G.~M., Lourenço, E.~S., \& Intacua, K.~A.~G. (2026). \textit{Repositório do projeto the 100's --- Vinha-D-Ouro}. \url{https://github.com/PedroGGomess/Vinha-D-Ouro}
+\end{enumerate}
+
+\end{document}
