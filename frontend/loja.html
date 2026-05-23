@@ -262,16 +262,18 @@
       gap: 18px;
     }
 
-    /* Secções por tipo (modo "Todos") */
-    .pos-section { margin-bottom: 32px; }
+    /* ─────────────────────────────────────────────────────────
+       Secções por tipo (modo "Todos") — premium header
+       ───────────────────────────────────────────────────────── */
+    .pos-section { margin-bottom: 36px; }
     .pos-section:last-child { margin-bottom: 0; }
     .pos-section-head {
       display: flex;
       align-items: baseline;
       justify-content: space-between;
-      padding-bottom: 12px;
-      margin-bottom: 16px;
-      border-bottom: 1px solid rgba(201,169,110,0.18);
+      padding-bottom: 14px;
+      margin-bottom: 18px;
+      border-bottom: 1px solid rgba(201,169,110,0.14);
       position: relative;
     }
     .pos-section-head::after {
@@ -279,22 +281,38 @@
       position: absolute;
       bottom: -1px;
       left: 0;
-      width: 64px;
-      height: 1px;
-      background: linear-gradient(90deg, #C9A96E, transparent);
+      width: 80px;
+      height: 2px;
+      background: linear-gradient(90deg, #C9A96E 0%, rgba(201,169,110,0.4) 60%, transparent 100%);
+      border-radius: 1px;
     }
     .pos-section-name {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 22px;
+      font-family: 'Cormorant Garamond', 'Playfair Display', serif;
+      font-size: 26px;
       font-weight: 600;
       color: #F5F0E8;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.01em;
+      position: relative;
+      padding-left: 14px;
+    }
+    .pos-section-name::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 4px;
+      height: 22px;
+      background: linear-gradient(180deg, #E0C992, #8B7048);
+      border-radius: 2px;
     }
     .pos-section-count {
-      font-size: 11px;
-      color: #9B9590;
-      letter-spacing: 0.05em;
+      font-size: 10.5px;
+      color: #8B7C68;
+      letter-spacing: 0.16em;
       font-variant-numeric: tabular-nums;
+      text-transform: uppercase;
+      font-weight: 600;
     }
     .pos-section-grid {
       display: grid;
@@ -302,51 +320,90 @@
       gap: 18px;
     }
 
-    /* POS quick-stats strip (KPIs do dia) */
+    /* ─────────────────────────────────────────────────────────
+       POS quick-stats — premium card row with icons + glow
+       ───────────────────────────────────────────────────────── */
     .pos-stats {
-      display: flex;
-      gap: 14px;
-      flex-wrap: wrap;
-      padding: 12px 18px;
-      background: linear-gradient(180deg, rgba(58,50,42,0.55), rgba(28,24,20,0.55));
-      border: 1px solid rgba(201,169,110,0.14);
-      border-radius: 14px;
-      margin-bottom: 16px;
-      position: relative;
-      overflow: hidden;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 18px;
     }
-    .pos-stats::before {
+    .pos-stat {
+      position: relative;
+      display: grid;
+      grid-template-columns: 40px 1fr;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      background:
+        radial-gradient(ellipse at top right, rgba(201,169,110,0.08), transparent 60%),
+        linear-gradient(135deg, rgba(40,32,26,0.6) 0%, rgba(20,16,14,0.7) 100%);
+      border: 1px solid rgba(201,169,110,0.14);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: border-color .25s ease, transform .25s cubic-bezier(.2,.7,.2,1);
+    }
+    .pos-stat::before {
       content: '';
       position: absolute;
-      top: 0; left: 16px; right: 16px;
+      top: 0; left: 0; right: 0;
       height: 1px;
       background: linear-gradient(90deg, transparent, rgba(201,169,110,0.35), transparent);
     }
-    .pos-stat {
+    .pos-stat:hover {
+      border-color: rgba(201,169,110,0.28);
+      transform: translateY(-1px);
+    }
+    .pos-stat-icon {
+      grid-row: 1 / 3;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, rgba(201,169,110,0.18), rgba(201,169,110,0.05));
+      color: #E0C992;
+      box-shadow: inset 0 0 0 1px rgba(201,169,110,0.22);
+    }
+    .pos-stat-icon svg {
+      width: 18px;
+      height: 18px;
+    }
+    .pos-stat-text {
       display: flex;
       flex-direction: column;
       gap: 2px;
-      flex: 1;
-      min-width: 100px;
-      position: relative;
+      min-width: 0;
     }
-    .pos-stat + .pos-stat { padding-left: 14px; border-left: 1px solid rgba(201,169,110,0.1); }
     .pos-stat-label {
       font-size: 9px;
       font-weight: 700;
-      letter-spacing: 0.18em;
+      letter-spacing: 0.2em;
       text-transform: uppercase;
-      color: #B89060;
+      color: #9B8060;
+      white-space: nowrap;
     }
     .pos-stat-value {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 18px;
+      font-family: 'Cormorant Garamond', 'Playfair Display', serif;
+      font-size: 22px;
       font-weight: 600;
       color: #F5F0E8;
-      letter-spacing: -0.01em;
+      letter-spacing: -0.015em;
       font-variant-numeric: tabular-nums;
+      line-height: 1.1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
-    .pos-stat-value.gold { color: #E0C992; }
+    .pos-stat-value.gold {
+      color: #E0C992;
+      text-shadow: 0 0 16px rgba(201,169,110,0.18);
+    }
+    @media (max-width: 1100px) {
+      .pos-stats { grid-template-columns: repeat(2, 1fr); }
+    }
 
     /* PRODUCT CARD — Premium curated tiles (The100s style) */
     .wine-tile {
@@ -389,9 +446,19 @@
     }
 
     .wine-tile:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(201,169,110,0.2), inset 0 1px 0 rgba(255,255,255,0.06);
-      border-color: rgba(201, 169, 110, 0.32);
+      transform: translateY(-4px) scale(1.015);
+      box-shadow:
+        0 18px 44px rgba(0, 0, 0, 0.42),
+        0 0 0 1px rgba(201,169,110,0.3),
+        0 0 30px -8px rgba(201,169,110,0.22),
+        inset 0 1px 0 rgba(255,255,255,0.08);
+      border-color: rgba(201, 169, 110, 0.38);
+    }
+    .wine-tile:hover::after {
+      opacity: 0.95;
+      width: 24px;
+      height: 24px;
+      border-color: rgba(224,201,146,0.55);
     }
 
     .wine-tile:focus-visible {
@@ -611,25 +678,59 @@
       border-radius: 3px;
     }
 
+    /* ─────────────────────────────────────────────────────────
+       Cart empty state — elegante, poético
+       ───────────────────────────────────────────────────────── */
     .cart-empty-state {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       height: 100%;
-      color: #9B9590;
-      gap: 12px;
-      padding: 40px;
-    }
-
-    .cart-empty-state svg {
-      opacity: 0.25;
-    }
-
-    .cart-empty-state p {
-      font-size: 0.8rem;
+      gap: 18px;
+      padding: 60px 32px;
       text-align: center;
-      line-height: 1.6;
+    }
+    .cart-empty-state .cart-empty-icon {
+      position: relative;
+      width: 80px;
+      height: 80px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: radial-gradient(circle at center, rgba(201,169,110,0.10) 0%, transparent 70%);
+    }
+    .cart-empty-state .cart-empty-icon::before {
+      content: '';
+      position: absolute;
+      inset: 4px;
+      border-radius: 50%;
+      border: 1px solid rgba(201,169,110,0.18);
+    }
+    .cart-empty-state .cart-empty-icon svg {
+      width: 36px;
+      height: 36px;
+      color: #C9A96E;
+      opacity: 0.72;
+    }
+    .cart-empty-state .cart-empty-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 18px;
+      font-weight: 500;
+      color: #C9B895;
+      letter-spacing: 0.01em;
+      line-height: 1.35;
+      margin: 0;
+    }
+    .cart-empty-state .cart-empty-hint {
+      font-size: 11px;
+      color: #756B5C;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      font-weight: 600;
+      margin: 0;
     }
 
     /* Cart item */
@@ -759,38 +860,65 @@
       color: #E0C992;
     }
 
-    /* Cart footer */
+    /* ─────────────────────────────────────────────────────────
+       Cart footer — premium tabular numbers
+       ───────────────────────────────────────────────────────── */
     .cart-footer {
-      padding: 16px 20px;
-      border-top: 1px solid rgba(201, 169, 110, 0.12);
-      background: #453D33;
+      padding: 18px 22px 20px;
+      border-top: 1px solid rgba(201, 169, 110, 0.16);
+      background:
+        radial-gradient(ellipse at top, rgba(201,169,110,0.05) 0%, transparent 70%),
+        linear-gradient(180deg, #2E2620 0%, #1E1A16 100%);
       flex-shrink: 0;
+      position: relative;
+    }
+    .cart-footer::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 22px; right: 22px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(201,169,110,0.4), transparent);
     }
 
     .cart-totals {
-      margin-bottom: 14px;
+      margin-bottom: 16px;
     }
 
     .ct-row {
       display: flex;
       justify-content: space-between;
-      padding: 4px 0;
-      font-size: 0.8rem;
-      color: #9B9590;
+      align-items: baseline;
+      padding: 5px 0;
+      font-size: 12.5px;
+      color: #9B8E7E;
+      letter-spacing: 0.01em;
+      font-variant-numeric: tabular-nums;
+    }
+    .ct-row .ct-v {
+      color: #C9B895;
+      font-weight: 500;
     }
 
     .ct-row.total {
-      font-size: 1.3rem;
-      font-weight: 700;
-      color: #F5F0E8;
-      padding-top: 10px;
-      margin-top: 8px;
-      border-top: 1px solid rgba(201, 169, 110, 0.12);
-      font-family: 'Playfair Display', serif;
+      padding: 12px 0 0;
+      margin-top: 10px;
+      border-top: 1px dashed rgba(201, 169, 110, 0.22);
+      align-items: baseline;
     }
-
+    .ct-row.total > span:first-child {
+      font-family: 'Cormorant Garamond', 'Playfair Display', serif;
+      font-size: 22px;
+      font-weight: 600;
+      color: #F5F0E8;
+      letter-spacing: 0.01em;
+    }
     .ct-row.total .ct-v {
-      color: #C9A96E;
+      font-family: 'Cormorant Garamond', 'Playfair Display', serif;
+      font-size: 26px;
+      font-weight: 600;
+      color: #E0C992;
+      text-shadow: 0 0 18px rgba(201,169,110,0.25);
+      letter-spacing: -0.01em;
     }
 
     .btn-pay {
@@ -1602,23 +1730,59 @@
 
     <!-- ═══ LEFT: PRODUCTS ═══ -->
     <div class="products-panel">
-      <!-- Quick stats do dia (vendas, ticket, top categoria) -->
+      <!-- Quick stats do dia (vendas, receita, ticket médio, top categoria) -->
       <div class="pos-stats" aria-label="Resumo do dia">
         <div class="pos-stat">
-          <span class="pos-stat-label">Vendas Hoje</span>
-          <span class="pos-stat-value" id="pos-stat-vendas">0</span>
+          <span class="pos-stat-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 00-2 2v16l3-2 3 2 3-2 3 2V8z"/>
+              <line x1="9" y1="9" x2="15" y2="9"/>
+              <line x1="9" y1="13" x2="15" y2="13"/>
+            </svg>
+          </span>
+          <div class="pos-stat-text">
+            <span class="pos-stat-label">Vendas Hoje</span>
+            <span class="pos-stat-value" id="pos-stat-vendas">0</span>
+          </div>
         </div>
         <div class="pos-stat">
-          <span class="pos-stat-label">Receita Hoje</span>
-          <span class="pos-stat-value gold" id="pos-stat-receita">0,00 €</span>
+          <span class="pos-stat-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="1" x2="12" y2="23"/>
+              <path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
+            </svg>
+          </span>
+          <div class="pos-stat-text">
+            <span class="pos-stat-label">Receita Hoje</span>
+            <span class="pos-stat-value gold" id="pos-stat-receita">0,00 €</span>
+          </div>
         </div>
         <div class="pos-stat">
-          <span class="pos-stat-label">Ticket Médio</span>
-          <span class="pos-stat-value" id="pos-stat-ticket">0,00 €</span>
+          <span class="pos-stat-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="20" x2="18" y2="10"/>
+              <line x1="12" y1="20" x2="12" y2="4"/>
+              <line x1="6"  y1="20" x2="6"  y2="14"/>
+            </svg>
+          </span>
+          <div class="pos-stat-text">
+            <span class="pos-stat-label">Ticket Médio</span>
+            <span class="pos-stat-value" id="pos-stat-ticket">0,00 €</span>
+          </div>
         </div>
         <div class="pos-stat">
-          <span class="pos-stat-label">Top Categoria</span>
-          <span class="pos-stat-value" id="pos-stat-top">—</span>
+          <span class="pos-stat-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 9a6 6 0 0012 0V3H6z"/>
+              <line x1="6" y1="3" x2="18" y2="3"/>
+              <path d="M12 15v6"/>
+              <line x1="8" y1="21" x2="16" y2="21"/>
+            </svg>
+          </span>
+          <div class="pos-stat-text">
+            <span class="pos-stat-label">Top Categoria</span>
+            <span class="pos-stat-value" id="pos-stat-top">—</span>
+          </div>
         </div>
       </div>
 
@@ -1657,11 +1821,17 @@
 
       <div class="cart-body" id="cart-items">
         <div class="cart-empty-state" id="cart-empty">
-          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
-            <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
-            <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/>
-          </svg>
-          <p>Toque num produto<br>para adicionar</p>
+          <span class="cart-empty-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+              <!-- Cálice de vinho elegante -->
+              <path d="M8 22h8"/>
+              <path d="M12 15v7"/>
+              <path d="M7 3h10v6a5 5 0 01-10 0V3z"/>
+              <path d="M7 6h10"/>
+            </svg>
+          </span>
+          <p class="cart-empty-title">Comece uma nova memória.</p>
+          <p class="cart-empty-hint">Toque num produto</p>
         </div>
       </div>
 
