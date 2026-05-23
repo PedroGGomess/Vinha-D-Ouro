@@ -439,35 +439,65 @@ async function apiFetch(path, opts = {}) {
 /* ══════════════════════════════════════════════
    4. TOAST NOTIFICATIONS
    ══════════════════════════════════════════════ */
+/**
+ * Notificação toast — premium, glassmorphic, bottom-right.
+ * Tipos: 'success' | 'error' | 'warning' | 'info'
+ * Auto-fecha após `ms` ms; clicável para dismiss imediato.
+ * Limita a 4 toasts visíveis (FIFO — o mais antigo desaparece).
+ */
 function toast(msg, type = 'success', ms = 3500) {
   const c = document.getElementById('toasts'); if (!c) return;
+
+  // Limita stack a 4 toasts visíveis — remove o mais antigo se exceder
+  while (c.querySelectorAll('.toast:not(.toast-leaving)').length >= 4) {
+    const oldest = c.querySelector('.toast:not(.toast-leaving)');
+    if (oldest) dismissToast(oldest);
+    else break;
+  }
+
   const icons = {
-    success: '<polyline points="20 6 9 17 4 12"/>',
+    success: '<path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>',
     error:   '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>',
-    warning: '<path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/>',
+    warning: '<path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>',
     info:    '<circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>',
   };
+
   const t = document.createElement('div');
   t.className = `toast toast-${type}`;
   t.setAttribute('role', type === 'error' ? 'alert' : 'status');
   t.style.setProperty('--toast-dur', ms + 'ms');
-  // Ícone como innerHTML (estático, sem dados externos), texto via textContent (seguro contra XSS)
+
+  // Ícone (SVG inline, fill=none + stroke=currentColor) — width/height explícitos para evitar overflow
   const iconWrap = document.createElement('span');
   iconWrap.className = 'toast-icon';
-  iconWrap.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">${icons[type] || icons.info}</svg>`;
+  iconWrap.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${icons[type] || icons.info}</svg>`;
+
+  // Texto principal (via textContent — XSS-safe)
   const txt = document.createElement('span');
   txt.textContent = String(msg);
-  txt.style.flex = '1';
+
   t.appendChild(iconWrap);
   t.appendChild(txt);
   c.appendChild(t);
-  // Permitir clicar para fechar
-  t.addEventListener('click', () => {
-    t.classList.remove('show');
-    setTimeout(() => t.remove(), 320);
-  });
+
+  // Clica para dismiss imediato
+  t.addEventListener('click', () => dismissToast(t));
+
+  // Anima entrada
   requestAnimationFrame(() => t.classList.add('show'));
-  setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 320); }, ms);
+
+  // Auto-dismiss
+  const timer = setTimeout(() => dismissToast(t), ms);
+  t._dismissTimer = timer;
+}
+
+/** Remove um toast com animação de saída. */
+function dismissToast(el) {
+  if (!el || el.classList.contains('toast-leaving')) return;
+  clearTimeout(el._dismissTimer);
+  el.classList.remove('show');
+  el.classList.add('toast-leaving');
+  setTimeout(() => el.remove(), 320);
 }
 
 /* ══════════════════════════════════════════════
@@ -3589,3 +3619,11 @@ document.addEventListener('DOMContentLoaded', () => {
       break;
   }
 });
+if (location.search.includes('_toast_demo')) {
+  setTimeout(() => {
+    toast('Murganheira Bruto (0.75L) adicionado', 'success');
+    setTimeout(() => toast('Stock crítico: Barca Velha (3un)', 'warning'), 250);
+    setTimeout(() => toast('Pagamento recusado — tente novamente', 'error'), 500);
+    setTimeout(() => toast('Cave A — temperatura ideal (14°C)', 'info'), 750);
+  }, 1500);
+}
